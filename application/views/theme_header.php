@@ -29,7 +29,7 @@
         <?php echo js('bootstrap.js?v=' . $version); ?>
 
         <script type="text/javascript">
-            $(window).scroll(function () {
+            $(window).scroll(function() {
                 if ($(this).scrollTop() > 50) { //use `this`, not `document`
                     $('#top-nav').fadeOut();
                     $(".pace-progress").css("margin-top", "58px");
@@ -59,10 +59,13 @@
             <div class="navbar-collapse collapse">
                 <div class="subnavbar">
                     <div class="subnavbar-inner">
-                        <div class="container">
+                        <div class="container" id="mainmenu">
                             <ul class="mainnav">
-                                <li class="active"><a href="index.html"><i class="icon-dashboard"></i><span>Dashboard</span> </a> </li>
-                                <li><a href="reports.html"><i class="icon-list-alt"></i><span>Reports</span> </a> </li>
+                                <li class="active"><a href="<?= base_url('home/') ?>"><i class="fa fa-dashboard"></i><span>Dashboard</span> </a> </li>
+                                <li id="btnCandidate"><a href="<?= base_url('candidate/') ?>"><i class="fa fa-bullhorn"></i><span>สมัครงาน</span> </a> </li>
+                                <li><a href="<?= base_url('employee/') ?>"><i class="fa fa-users"></i><span>พนักงาน</span> </a> </li>
+                                <li><a href="<?= base_url('verhicle/') ?>"><i class="fa fa-car"></i><span>รถ</span> </a> </li>
+                                <li><a href="<?= base_url('candidate/') ?>"><i class="fa fa-users"></i><span>Reports</span> </a> </li>
                                 <li><a href="guidely.html"><i class="icon-facetime-video"></i><span>App Tour</span> </a></li>
                                 <li><a href="charts.html"><i class="icon-bar-chart"></i><span>Charts</span> </a> </li>
                                 <li><a href="shortcodes.html"><i class="icon-code"></i><span>Shortcodes</span> </a> </li>
