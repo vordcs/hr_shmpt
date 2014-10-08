@@ -17,7 +17,7 @@
 
     <div class="row">
         <div class="col-md-12 text-right"> 
-            <a class="btn btn-lg btn-success">เพิ่มผู้สมัครงาน</a>
+           <a href="<?= base_url('candidate/add') ?>" class="btn btn-lg btn-success">เพิ่มผู้สมัครงาน</a>
         </div>
     </div>
     <div class="row animated bounceInUp">

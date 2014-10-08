@@ -2,7 +2,7 @@
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
-class candidate extends CI_Controller {
+class vehicle extends CI_Controller {
 
     public function __construct() {
         parent::__construct();
@@ -15,13 +15,13 @@ class candidate extends CI_Controller {
 
     public function index() {
         $data = array();
-        $this->m_template->set_Content('candidate/candidates', $data);
+        $this->m_template->set_Content('vehicle/vehicles', $data);
         $this->m_template->showTemplate();
     }
     
     public function add() {
         $data = array();
-        $this->m_template->set_Content('candidate/frm_candidate', $data);
+        $this->m_template->set_Content('vehicle/frm_vehicle', $data);
         $this->m_template->showTemplate();
     }
 }

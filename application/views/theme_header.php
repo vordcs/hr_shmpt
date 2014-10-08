@@ -49,7 +49,7 @@
         <!-- Fixed navbar -->
         <div class="navbar navbar-fixed-top sh-nav" role="navigation">
             <div id="top-nav" class="sh-top-nav">
-                <h2 class="color-white" style="font-weight: bold; margin: 4px 0px 4px 4px;">บริษัทสหมิตรภาพ</h2>
+                <h2 class="color-white" style="font-weight: bold; margin: 4px 0px 4px 4px;">บริษัท สหมิตรภาพ(2512) จำกัด</h2>
                 <p class="text-right" style="margin-top: -20px;">
                     <a id="popoverMail" href="#" data-content="ติดต่อกับผู้ให้บริการ ผ่าน support@thaihubhosting.com" rel="popover" data-placement="bottom" data-original-title="ติดต่อผ่านอีเมล์" data-trigger="hover"><i class="fa fa-envelope"></i> Support |</a>
                     <a id="popoverFacebook" class="hidden-xs" href="#" data-content="ติดต่อกับผู้ให้บริการ ผ่าน Facebookpage ThaiHubHosting" rel="popover" data-placement="bottom" data-original-title="ติดต่อผ่านเพจ" data-trigger="hover"> <i class="fa fa-facebook"></i> ThaiHubHosting |</a>
@@ -64,7 +64,7 @@
                                 <li class="active"><a href="<?= base_url('home/') ?>"><i class="fa fa-dashboard"></i><span>Dashboard</span> </a> </li>
                                 <li id="btnCandidate"><a href="<?= base_url('candidate/') ?>"><i class="fa fa-bullhorn"></i><span>สมัครงาน</span> </a> </li>
                                 <li><a href="<?= base_url('employee/') ?>"><i class="fa fa-users"></i><span>พนักงาน</span> </a> </li>
-                                <li><a href="<?= base_url('verhicle/') ?>"><i class="fa fa-car"></i><span>รถ</span> </a> </li>
+                                <li id="btnVehicle"><a href="<?= base_url('vehicle/') ?>"><i class="fa fa-car"></i><span>รถ</span> </a> </li>
                                 <li><a href="<?= base_url('candidate/') ?>"><i class="fa fa-users"></i><span>Reports</span> </a> </li>
                                 <li><a href="guidely.html"><i class="icon-facetime-video"></i><span>App Tour</span> </a></li>
                                 <li><a href="charts.html"><i class="icon-bar-chart"></i><span>Charts</span> </a> </li>
