@@ -64,7 +64,7 @@
                             <ul class="mainnav">
                                 <li class="active"><a href="<?= base_url('home/') ?>"><i class="fa fa-dashboard"></i><span>Dashboard</span> </a> </li>
                                 <li id="btnCandidate"><a href="<?= base_url('candidate/') ?>"><i class="fa fa-bullhorn"></i><span>สมัครงาน</span> </a> </li>
-                                <li><a href="<?= base_url('employee/') ?>"><i class="fa fa-users"></i><span>พนักงาน</span> </a> </li>
+                                <li id="btnHR"><a href="<?= base_url('hr/') ?>"><i class="fa fa-users"></i><span>งานบุคคล</span> </a> </li>
                                 <li id="btnVehicle"><a href="<?= base_url('vehicle/') ?>"><i class="fa fa-car"></i><span>รถ</span> </a> </li>
                                 <li><a href="<?= base_url('candidate/') ?>"><i class="fa fa-users"></i><span>Reports</span> </a> </li>
                                 <li><a href="guidely.html"><i class="icon-facetime-video"></i><span>App Tour</span> </a></li>
