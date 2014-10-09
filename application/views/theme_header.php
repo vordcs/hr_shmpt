@@ -19,6 +19,7 @@
         <!-- Bootstrap core CSS ans JS -->
         <?php echo js('pace.min.js?v=' . $version); ?>
         <?php echo css('bootstrap.css?v=' . $version); ?>
+        <?php echo css('bootflat.min.css?v=' . $version); ?>
         <?php echo css('pace.css?v=' . $version); ?>
         <?php echo css('theme.css?v=' . $version); ?>
         <?php echo css('label.min.css?v=' . $version); ?>
