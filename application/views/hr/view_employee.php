@@ -1,7 +1,7 @@
 <script>
     jQuery(document).ready(function ($) {
         $("#mainmenu ul li").removeAttr('class');
-        $("#btnCandidate").addClass("active");
+        $("#btnHR").addClass("active");
     });
 </script>
 <div class="container">
@@ -17,14 +17,28 @@
                 <li class="active">Data</li>
             </ul>
             <div class="page-header">
-                <h1>สมัครงาน
+                <h2>ระบบบริหารงานบุคคล
                     <font color="#777777">
-                    <span style="font-size: 23px; line-height: 23.399999618530273px;">ระบบรับสมัครพนักงานใหม่</span>
+                    <span style="font-size: 23px; line-height: 23.399999618530273px;">ข้อมูลพนักงาน</span>
                     </font>
-                </h1>
+                </h2>
             </div>
         </div>
     </div>
+    <div class="row">   
+        <div class="col-md-12">
+            <ul class="nav nav-pills nav-justified">
+                <li><a href="<?= base_url('hr/') ?>">หน้าหลัก</a></li>
+                <li class="active"><a href="<?= base_url('employee/') ?>">พนักงาน</a></li>
+                <li><a href="<?= base_url('master_data/') ?>">ข้อมูลหลัก</a></li>
+                <li><a href="<?= base_url('work_history/') ?>" >ประวัติการทำงาน</a></li>
+                <li><a href="<?= base_url('role_permission/') ?>" >กำหนดสิทธิ์การเข้าใช้</a></li>
+                <li><a href="<?= base_url('username/') ?>" >ข้อมูลการเข้าใช้ระบบ</a></li>    
+            </ul>
+        </div>
+    </div>
+    <br>
+
     <form class="form-horizontal" role="form">
         <div class="row">
             <div class="col-md-3">
@@ -518,14 +532,15 @@
                                                 <a class="btn btn-danger btn-xs"><i class="fa fa-minus"></i></a>     
                                             </td>
                                         </tr>  
-
+                                        <tr>
+                                            <td colspan="7" class="text-center">
+                                                <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#modal_work_expreince">
+                                                    เพิ่ม
+                                                </button>
+                                            </td>
+                                        </tr>
                                     </tbody>
                                 </table>
-                                <div class="col-sm-12">
-                                    <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#modal_work_expreince">
-                                        เพิ่ม
-                                    </button>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -632,14 +647,16 @@
                                                 <a class="btn btn-danger btn-xs"><i class="fa fa-minus"></i></a>     
                                             </div>                                                                                                           
                                         </td>
-                                    </tr>                                    
+                                    </tr>
+                                    <tr>
+                                        <td colspan="7" class="text-center">
+                                            <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#modal_work_expreince">
+                                                เพิ่มประวัติการทำงาน
+                                            </button>
+                                        </td>
+                                    </tr>
                                 </tbody>
                             </table>
-                            <div class="col-md-12 text-center">
-                                <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#modal_work_expreince">
-                                    เพิ่มประวัติการทำงาน
-                                </button>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -711,29 +728,4 @@
                 </div>
             </div>
     </form>
-
-
 </div>
-
-
-
-<!-- Modal work expreince -->
-<div class="modal fade" id="modal_work_expreince" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                <h4 class="modal-title" id="myModalLabel">Modal title</h4>
-            </div>
-            <div class="modal-body">
-                ...
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-

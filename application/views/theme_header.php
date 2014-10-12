@@ -26,8 +26,10 @@
         <?php echo css('segment.min.css?v=' . $version); ?>
         <?php echo css('font-awesome.css?v=' . $version); ?>
         <?php echo css('animate.css?v=' . $version); ?>
+        <?php echo css('custom.css?v=' . $version); ?>
         <?php echo js('jquery.js?v=' . $version); ?>
         <?php echo js('bootstrap.js?v=' . $version); ?>
+        <?php echo js('customJS.js?v=' . $version); ?>
 
         <script type="text/javascript">
             $(window).scroll(function() {
@@ -66,8 +68,10 @@
                                 <li id="btnCandidate"><a href="<?= base_url('candidate/') ?>"><i class="fa fa-bullhorn"></i><span>สมัครงาน</span> </a> </li>
                                 <li id="btnHR"><a href="<?= base_url('hr/') ?>"><i class="fa fa-users"></i><span>งานบุคคล</span> </a> </li>
                                 <li id="btnVehicle"><a href="<?= base_url('vehicle/') ?>"><i class="fa fa-car"></i><span>รถ</span> </a> </li>
-                                <li><a href="<?= base_url('candidate/') ?>"><i class="fa fa-users"></i><span>Reports</span> </a> </li>
-                                <li><a href="guidely.html"><i class="icon-facetime-video"></i><span>App Tour</span> </a></li>
+                                <li id="btnRoute"><a href="<?= base_url('route/') ?>"><i class="fa fa-share-alt"></i><span>เส้นทาง</span></a></li>
+                                <li id="btnSchedule"><a><i class="fa fa-list"></i><span>ตารางเดินรถ</span></a></li>
+                                <li id="btnCost"><a><i class="fa fa-pencil-square-o"></i><span>ค่าใช้จ่าย</span></a></li>
+                                <li><a href="<?= base_url('candidate/') ?>"><i class="fa fa-calendar-o"></i><span>รายงาน</span> </a> </li>
                                 <li><a href="charts.html"><i class="icon-bar-chart"></i><span>Charts</span> </a> </li>
                                 <li><a href="shortcodes.html"><i class="icon-code"></i><span>Shortcodes</span> </a> </li>
                                 <li class="dropdown"><a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown"> <i class="icon-long-arrow-down"></i><span>Drops</span> <b class="caret"></b></a>
