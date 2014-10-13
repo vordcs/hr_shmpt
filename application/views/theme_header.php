@@ -27,9 +27,12 @@
         <?php echo css('font-awesome.css?v=' . $version); ?>
         <?php echo css('animate.css?v=' . $version); ?>
         <?php echo css('custom.css?v=' . $version); ?>
+        <?php echo css('site.min.css?v=' . $version); ?>
+        
         <?php echo js('jquery.js?v=' . $version); ?>
         <?php echo js('bootstrap.js?v=' . $version); ?>
         <?php echo js('customJS.js?v=' . $version); ?>
+        <?php echo js('site.min.js?v=' . $version); ?>
 
         <script type="text/javascript">
             $(window).scroll(function() {
