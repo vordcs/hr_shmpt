@@ -31,6 +31,13 @@
         </div>
     </div>
     <div class="row"> 
+        <div class="col-md-12">
+            <div class="well">
+                <input type="text" value="02-16-2014" >
+            </div>
+        </div>
+    </div>
+    <div class="row"> 
         <form class="form-horizontal" role="form">
             <div class="row">
                 <div class="col-md-6">
@@ -194,7 +201,7 @@
                                             <div class="form-group">
                                                 <label for="inputEmail3" class="col-sm-3 control-label">วันที่เริ่มกรมธรรม์</label>
                                                 <div class="col-sm-8">
-                                                    <input type="text" class="form-control" id="" placeholder="">
+                                                    <input type="text" class="form-control datepicker" id="" placeholder="">
                                                 </div>
                                             </div>
                                             <div class="form-group">

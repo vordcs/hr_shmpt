@@ -1,5 +1,5 @@
 <script language="javascript">
-    $(document).ready(function () {
+    $(document).ready(function() {
         $("#mainmenu ul li").removeAttr('class');
         $("#btnRoute").addClass("active");
     });
@@ -69,17 +69,17 @@
         newCell.innerHTML = '<a class="btn btn-danger btn-sm" onClick="RemoveDes()"><i class="fa fa-minus"</a>';
 
     }
-    
+
 
     function RemoveDes()
     {
-        var intLine = $('#tableStation tbody tr').length-1;
+        var intLine = $('#tableStation tbody tr').length - 1;
         if (parseInt(intLine) >= 0)
         {
             theTable = document.getElementById("tableStation");
             theTableBody = theTable.tBodies[0];
             theTableBody.deleteRow(intLine);
-           
+
         }
     }
 </script>
@@ -97,7 +97,7 @@
             </h2>
         </div>
     </div>
-    <form id="frm_route">
+    <form id="frm_route" class="form-control">
         <div class="row">
             <div class="col-md-4">
                 <div class="row">                
@@ -109,9 +109,23 @@
                             <div class="col-sm-12">
                                 <div class="form-group">
                                     <label for="">เวลาเที่ยวแรก</label>
-                                    <input type="" class="form-control" id="exampleInputEmail1" placeholder="Enter email">
+                                    <div class="input-append bootstrap-timepicker">
+                                        <input id="timepicker2" type="text" class="input-small">
+                                        <span class="add-on">
+                                            <i class="fa fa-clock-o"></i>
+                                        </span>
+                                    </div>
+                                    <script type="text/javascript">
+                                        $('#timepicker2').timepicker({
+                                            minuteStep: 1,
+                                            template: 'modal',
+                                            appendWidgetTo: 'body',
+                                            showSeconds: true,
+                                            showMeridian: false,
+                                            defaultTime: false
+                                        });
+                                    </script>
                                 </div>
-
                             </div>
                         </div>
                     </div>

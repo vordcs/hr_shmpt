@@ -31,15 +31,18 @@
         <?php echo js('bootstrap.js?v=' . $version); ?>
         <?php echo js('customJS.js?v=' . $version); ?>
 
+        <!--time picker-->    
+        <?php echo css('bootstrap-timepicker.min.css?v=' . $version); ?>  
+        <?php echo js('bootstrap-timepicker.min.js?v=' . $version); ?> 
         <!--datetime picker-->    
-        <?php echo css('datepicker.css'); ?> 
-        <?php echo css('bootstarp-datetimepicker.css'); ?>  
-        <?php echo js('bootstrap-datepicker.js'); ?>  
-        <?php echo js('bootstrap-datepicker-thai.js'); ?>  
-        <?php echo js('/locales/bootstrap-datepicker.th.js'); ?>  
+        <?php echo css('datepicker.css?v=' . $version); ?>         
+        <?php echo js('bootstrap-datepicker.js?v=' . $version); ?> 
+        <!-- thai extension -->
+        <?php echo js('bootstrap-datepicker-thai.js?v=' . $version); ?>  
+        <?php echo js('/locales/bootstrap-datepicker.th.js?v=' . $version); ?>  
 
         <script type="text/javascript">
-            $(window).scroll(function () {
+            $(window).scroll(function() {
                 if ($(this).scrollTop() > 50) { //use `this`, not `document`
                     $('#top-nav').fadeOut();
                     $(".pace-progress").css("margin-top", "58px");

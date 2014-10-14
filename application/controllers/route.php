@@ -24,4 +24,7 @@ class route extends CI_Controller {
         $this->m_template->set_Content('routes/frm_route', $data);
         $this->m_template->showTemplate();
     }
+      public function time() {
+        $this->load->view('routes/time');
+    }
 }
