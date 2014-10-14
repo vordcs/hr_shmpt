@@ -4,7 +4,7 @@
         $("#btnCandidate").addClass("active");
     });
 </script>
-<div class="container">
+<div class="container" style="margin-top: 60px;">
     <div class="row">
         <div class="col-md-12">
             <ul class="breadcrumb">
@@ -141,7 +141,7 @@
                             <div class="col-sm-1"></div>
                             <div class="col-sm-3">
                                 <label class="col-sm-4 control-label">เพศ</label>
-                                <div class="col-sm-8">
+                                <div class="col-sm-8 radio">
                                     <label class="radio-inline">
                                         <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3">ชาย
                                     </label> 
@@ -240,7 +240,7 @@
                         </div>
                         <div class="form-group">
                             <div class="col-md-8 col-md-offset-2">
-                                <div class="has-error">
+                                <div class="has-error radio">
                                     <div class="col-md-3">
                                         <label class="radio-inline">
                                             <input type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1"> อาศัยกับครอบครัว
@@ -266,9 +266,9 @@
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">ภาวะทางทหาร</label>
-                            <div class="col-sm-10">
-                                <label class="radio-inline">
-                                    <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3"> ได้รับการยกเว้น
+                            <div class="col-sm-10 radio">
+                                <label class="radio-inline">                                    
+                                    <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3"> ได้รับการยกเว้น                                    
                                 </label> 
                                 <label class="radio-inline">
                                     <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3"> ปลดเป็นทหารกองหนุ่น
@@ -326,7 +326,7 @@
                                     <input type="text" class="form-control" placeholder="">
                                 </div>
                             </div>
-                            <div class="">
+                            <div class="radio">
                                 <label class="radio-inline">
                                     <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3"> ยังมีชีวิต
                                 </label> 
@@ -365,7 +365,7 @@
                                     <input type="text" class="form-control" placeholder="">
                                 </div>
                             </div>
-                            <div class="">
+                            <div class="radio">
                                 <label class="radio-inline">
                                     <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3"> ยังมีชีวิต
                                 </label> 
@@ -376,7 +376,7 @@
                         </div> 
                         <div class="form-group">
                             <label class="col-sm-2 control-label">สถานภาพ</label>
-                            <div class="col-sm-10">
+                            <div class="col-sm-10 radio">
                                 <label class="radio-inline">
                                     <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3"> โสด
                                 </label> 
@@ -423,7 +423,7 @@
                                         <input type="text" class="form-control" placeholder="">
                                     </div>
                                 </div>
-                                <div class="">
+                                <div class="radio">
                                     <label class="radio-inline">
                                         <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3"> ยังมีชีวิต
                                     </label> 
