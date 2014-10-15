@@ -1,161 +1,70 @@
 <!DOCTYPE html>
+<?php $version = 1; ?>
 <html lang="en">
-<head>
-<meta charset="utf-8">
-<title>เข้าระบบ</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="">
-<meta name="author" content="">
 
-<!-- Le styles -->
-<?php
-echo css ( 'bootstrap.css' );
-echo css ( 'bootstrap-responsive.css' );
-?>
-<style type="text/css">
-body {
-	padding-top: 40px;
-	padding-bottom: 40px;
-	background-color: #142849;
-	background-image: -webkit-gradient(radial, center center, 0, center center, 460, from(#165387
-		), to(#142849) );
-	background-image: -webkit-radial-gradient(circle, #165387, #142849);
-	background-image: -moz-radial-gradient(circle, #165387, #142849);
-	background-image: -o-radial-gradient(circle, #165387, #142849);
-	background-color: #142849;
-	background-image: -webkit-gradient(radial, center center, 0, center center, 460, from(#165387
-		), to(#142849) );
-	background-image: -webkit-radial-gradient(circle, #165387, #142849);
-	background-image: -moz-radial-gradient(circle, #165387, #142849);
-	background-image: -o-radial-gradient(circle, #165387, #142849);
-	background-repeat: repeat;
-	background-image: -webkit-gradient(radial, center center, 0, center center, 460, from(#165387
-		), to(#142849) );
-	background-image: -webkit-radial-gradient(circle, #165387, #142849);
-	background-image: -moz-radial-gradient(circle, #165387, #142849);
-	background-image: -o-radial-gradient(circle, #165387, #142849);
-	background-color: #142849;
-	background-image: -webkit-gradient(radial, center center, 0, center center, 460, from(#165387
-		), to(#142849) );
-	background-image: -webkit-radial-gradient(circle, #165387, #142849);
-	background-image: -moz-radial-gradient(circle, #165387, #142849);
-	background-image: -o-radial-gradient(circle, #165387, #142849);
-	background-image: -webkit-radial-gradient(circle, #165387, #142849);
-	background-image: -moz-radial-gradient(circle, #165387, #142849);
-	background-image: -o-radial-gradient(circle, #165387, #142849);
-	background-color: #142849;
-	background-image: -webkit-gradient(radial, center center, 0, center center, 460, from(#165387
-		), to(#142849) );
-	background-image: -webkit-radial-gradient(circle, #165387, #142849);
-	background-image: -moz-radial-gradient(circle, #165387, #142849);
-	background-image: -o-radial-gradient(circle, #165387, #142849);
-	background-image: -webkit-radial-gradient(circle, #165387, #142849);
-	background-image: -moz-radial-gradient(circle, #165387, #142849);
-	background-image: -o-radial-gradient(circle, #165387, #142849);
-	background-color: #142849;
-	background-image: -webkit-gradient(radial, center center, 0, center center, 460, from(#165387
-		), to(#142849) );
-	background-image: -webkit-radial-gradient(circle, #165387, #142849);
-	background-image: -moz-radial-gradient(circle, #165387, #142849);
-	background-image: -o-radial-gradient(circle, #165387, #142849);
-	background-repeat: repeat;
-	background-image: -webkit-gradient(radial, center center, 0, center center, 460, from(#165387
-		), to(#142849) );
-	background-image: -webkit-radial-gradient(circle, #165387, #142849);
-	background-image: -moz-radial-gradient(circle, #165387, #142849);
-	background-image: -o-radial-gradient(circle, #165387, #142849);
-	background-color: #142849;
-	background-image: -webkit-gradient(radial, center center, 0, center center, 460, from(#165387
-		), to(#142849) );
-	background-image: -webkit-radial-gradient(circle, #165387, #142849);
-	background-image: -moz-radial-gradient(circle, #165387, #142849);
-	background-image: -o-radial-gradient(circle, #165387, #142849);
-	background-image: -webkit-radial-gradient(circle, #165387, #142849);
-	background-image: -moz-radial-gradient(circle, #165387, #142849);
-	background-image: -o-radial-gradient(circle, #165387, #142849);
-	background-color: #142849;
-	background-image: -webkit-gradient(radial, center center, 0, center center, 460, from(#165387
-		), to(#142849) );
-}
+    <head>
+        <meta charset="utf-8">
+        <title>เข้าสู่ระบบ</title>
 
-.form-signin {
-	max-width: 300px;
-	padding: 19px 29px 29px;
-	margin: 0 auto 20px;
-	background-color: #fff;
-	border: 1px solid #e5e5e5;
-	-webkit-border-radius: 5px;
-	-moz-border-radius: 5px;
-	border-radius: 5px;
-	-webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, .5);
-	-moz-box-shadow: 0 1px 2px rgba(0, 0, 0, .5);
-	box-shadow: 0 1px 2px rgba(0, 0, 0, .5);
-}
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes"> 
+        <!-- Bootstrap core CSS ans JS -->
 
-.form-signin .form-signin-heading,.form-signin .checkbox {
-	margin-bottom: 10px;
-}
+        <?php echo css('bootstrap.css?v=' . $version); ?>
+        <?php echo css('bootflat.min.css?v=' . $version); ?>
+        <?php echo css('font-awesome.css?v=' . $version); ?>
+        <?php echo css('animate.css?v=' . $version); ?>
+        <?php echo css('login/signin.css?v=' . $version); ?>
+        <?php echo js('jquery.js?v=' . $version); ?>
+        <?php echo js('bootstrap.js?v=' . $version); ?>
 
-.form-signin input[type="text"],.form-signin input[type="password"] {
-	font-size: 16px;
-	height: auto;
-	margin-bottom: 15px;
-	padding: 7px 9px;
-}
-</style>
-<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
-<!--[if lt IE 9]>
-      <script src="../assets/js/html5shiv.js"></script>
-    <![endif]-->
 
-<!-- Fav and touch icons -->
-<link rel="apple-touch-icon-precomposed" sizes="144x144"
-	href="../assets/ico/apple-touch-icon-144-precomposed.png">
-<link rel="apple-touch-icon-precomposed" sizes="114x114"
-	href="../assets/ico/apple-touch-icon-114-precomposed.png">
-<link rel="apple-touch-icon-precomposed" sizes="72x72"
-	href="../assets/ico/apple-touch-icon-72-precomposed.png">
-<link rel="apple-touch-icon-precomposed"
-	href="../assets/ico/apple-touch-icon-57-precomposed.png">
-<link rel="shortcut icon" href="../assets/ico/favicon.png">
-</head>
 
-<body>
-	<div class="container">
-		<?php echo $form;?>
-		<h2 class="form-signin-heading">เข้าระบบ</h2>
-		<div
-			class="control-group <?php if(form_error('username'))echo 'error'; ?>"
-			style="padding: 0px; margin: 0px;">
-			<div class="input-prepend">
-				<span class="add-on" style="padding: 7px 14px;"><i class="icon-user"></i>
-				</span>
-				<?php echo $input['username'];?>
-			</div>
-		</div>
-		<div
-			class="control-group <?php if(form_error('password'))echo 'error'; ?>"
-			style="padding: 0px; margin: 0px;">
-			<div class="input-prepend">
-				<span class="add-on" style="padding: 7px 14px;"><i class="icon-lock"></i>
-				</span>
-				<?php echo $input['password'];?>
-				placeholder="Password">
-			</div>
-		</div>
-		<button class="btn btn-large btn-block btn-primary" type="submit">เข้าระบบ</button>
-		<p></p>
-		<?php if(isset($message))echo $message;?>
-		<?php echo form_close();?>
-	</div>
-	<!-- /container -->
+    </head>
+    <body>
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-2">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#">บริษัท สหมิตรภาพ(2512) จำกัด</a>
+                </div>
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-2">
+                    <p class="navbar-text navbar-right">Signed in as Mark Otto</p>
+                </div>
+            </div>
+        </div>
 
-	<!-- Le javascript
-    ================================================== -->
-	<!-- Placed at the end of the document so the pages load faster -->
-	<?php
-	echo js ( 'jquery.js' );
-	echo js ( 'bootstrap.js' );
-	?>
-</body>
+        <div class="login-container">
+
+
+
+            <form class="form-signin" role="form">
+                <h2 class="form-signin-heading">Member Login</h2>
+
+                <input type="text" class="form-control" placeholder="Username" required autofocus>
+                <input type="password" class="form-control" placeholder="Password" required>
+                <!--                <div class="input-group">
+                                    <span class="input-group-addon"><i class="fa fa-user"></i></span>        
+                                    <input type="text" class="form-control" placeholder="Username" required autofocus>                    
+                                </div>
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="fa fa-key fa-fw"></i></span>
+                                    <input type="password" class="form-control" placeholder="Password" required>
+                                </div>-->
+
+                <button class="btn btn-lg btn-success btn-block" type="submit">Sign in</button>
+            </form>
+
+            <!-- /container -->
+
+
+        </div> <!-- /login-container -->
+
+    </body>
+
 </html>
