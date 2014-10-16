@@ -80,20 +80,8 @@
                                 <li id="btnVehicle"><a href="<?= base_url('vehicle/') ?>"><i class="fa fa-car"></i><span>รถ</span> </a> </li>
                                 <li id="btnRoute"><a href="<?= base_url('route/') ?>"><i class="fa fa-share-alt"></i><span>เส้นทาง</span></a></li>
                                 <li id="btnSchedule"><a href="<?= base_url('schedule/') ?>"><i class="fa fa-list"></i><span>ตารางเดินรถ</span></a></li>
-                                <li id="btnCost"><a><i class="fa fa-pencil-square-o"></i><span>ค่าใช้จ่าย</span></a></li>
-                                <li><a href="<?= base_url('candidate/') ?>"><i class="fa fa-calendar-o"></i><span>รายงาน</span> </a> </li>
-                                <li><a href="charts.html"><i class="icon-bar-chart"></i><span>Charts</span> </a> </li>
-                                <li><a href="shortcodes.html"><i class="icon-code"></i><span>Shortcodes</span> </a> </li>
-                                <li class="dropdown"><a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown"> <i class="icon-long-arrow-down"></i><span>Drops</span> <b class="caret"></b></a>
-                                    <ul class="dropdown-menu">
-                                        <li><a href="icons.html">Icons</a></li>
-                                        <li><a href="faq.html">FAQ</a></li>
-                                        <li><a href="pricing.html">Pricing Plans</a></li>
-                                        <li><a href="login.html">Login</a></li>
-                                        <li><a href="signup.html">Signup</a></li>
-                                        <li><a href="error.html">404</a></li>
-                                    </ul>
-                                </li>
+                                <li id="btnExpenditure"><a href="<?=  base_url('expenditure/')?>"><i class="fa fa-pencil-square-o"></i><span>ค่าใช้จ่าย</span></a></li>
+                                <li id="btnReport"><a href="<?= base_url('report/') ?>"><i class="fa fa-calendar-o"></i><span>รายงาน</span> </a> </li>                              
                             </ul>
                         </div>
                         <!-- /container --> 

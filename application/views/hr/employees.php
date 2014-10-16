@@ -8,14 +8,7 @@
 
 <div class="container">
     <br>
-    <div class="row">
-        <div class="col-md-12">
-            <ol class="breadcrumb breadcrumb-arrow">
-                <li><a href="#">Home</a></li>
-                <li><a href="#">Library</a></li>
-                <li class="active"><span>Data</span></li>
-            </ol>
-        </div>
+    <div class="row">      
         <div class="col-md-12">
             <div class="page-header">
                 <h2>ระบบบริหารงานบุคคล <small>พนักงาน</small></h2>

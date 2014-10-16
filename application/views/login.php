@@ -7,14 +7,17 @@
         <title>เข้าสู่ระบบ</title>
 
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-        <meta name="apple-mobile-web-app-capable" content="yes"> 
+        <!-- Favicons -->
+        <link rel="apple-touch-icon-precomposed" sizes="144x144"
+              href="<?= asset_url() ?>img/apple-touch-icon-144-precomposed.png<?= '?v=' . $version ?>">
+        <link rel="shortcut icon" href="<?= asset_url() ?>img/favicon.ico<?= '?v=' . $version ?>"> 
         <!-- Bootstrap core CSS ans JS -->
 
         <?php echo css('bootstrap.css?v=' . $version); ?>
         <?php echo css('bootflat.min.css?v=' . $version); ?>
         <?php echo css('font-awesome.css?v=' . $version); ?>
         <?php echo css('animate.css?v=' . $version); ?>
-        <?php echo css('login/signin.css?v=' . $version); ?>
+        <?php echo css('signin.css?v=' . $version); ?>
         <?php echo js('jquery.js?v=' . $version); ?>
         <?php echo js('bootstrap.js?v=' . $version); ?>
 
