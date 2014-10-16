@@ -31,16 +31,9 @@ Class m_template extends CI_Model {
     }
 
     function check_permission() {
-        $sess = $this->session->userdata('user');
-        if ($sess == NULL) {
+        $sess = $this->session->userdata('login');
+        if ($sess == NULL || $sess== FALSE) {
             redirect('login');
-        }
-        if ($this->permission != 'ALL' && $sess['u_permit'] != $this->permission) {
-            $this->session->set_userdata('alert', '<div class="alert alert-warning">
-					<button type="button" class="close" data-dismiss="alert">&times;</button>
-					<strong>สิทธิ์ไม่ถูกต้อง!</strong> คุณไม่มีสิทธิ์ในการใช้งานส่วนนี้
-					</div>');
-            return FALSE;
         }
         return TRUE;
     }
@@ -60,7 +53,10 @@ Class m_template extends CI_Model {
         foreach ($this->lang_value as $path) {
             $this->lang->load($path, $site_lang); //Load message
         }
-        
+
+        //Check login
+        $this->check_permission();
+
         //Load version for Cache CSS and JS
         $data['version'] = $this->version;
 

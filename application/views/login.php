@@ -43,22 +43,15 @@
 
 
 
-            <form class="form-signin" role="form">
+            <!--<form class="form-signin" role="form">-->
+                <?= $form_action ?>
                 <h2 class="form-signin-heading">Member Login</h2>
 
-                <input type="text" class="form-control" placeholder="Username" required autofocus>
-                <input type="password" class="form-control" placeholder="Password" required>
-                <!--                <div class="input-group">
-                                    <span class="input-group-addon"><i class="fa fa-user"></i></span>        
-                                    <input type="text" class="form-control" placeholder="Username" required autofocus>                    
-                                </div>
-                                <div class="input-group">
-                                    <span class="input-group-addon"><i class="fa fa-key fa-fw"></i></span>
-                                    <input type="password" class="form-control" placeholder="Password" required>
-                                </div>-->
-
+                <?= $form_input['user'] ?>
+                <?= $form_input['pass'] ?>               
                 <button class="btn btn-lg btn-success btn-block" type="submit">Sign in</button>
-            </form>
+                <?= form_close() ?>
+<!--            </form>-->
 
             <!-- /container -->
 
