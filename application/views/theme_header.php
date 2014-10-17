@@ -34,6 +34,7 @@
         <!--time picker-->    
         <?php echo css('bootstrap-timepicker.min.css?v=' . $version); ?>  
         <?php echo js('bootstrap-timepicker.min.js?v=' . $version); ?> 
+        
         <!--datetime picker-->    
         <?php echo css('datepicker.css?v=' . $version); ?>         
         <?php echo js('bootstrap-datepicker.js?v=' . $version); ?> 

@@ -10,11 +10,7 @@
     jQuery(document).ready(function($) {
         $('#top').click(function() {
             $("html, body").animate({scrollTop: 0}, 500);
-        });
-        $('.datepicker').datepicker({
-            language: 'th-th',
-            format: 'dd/mm/yyyy'
-        });
+        });       
     });
 </script>
 

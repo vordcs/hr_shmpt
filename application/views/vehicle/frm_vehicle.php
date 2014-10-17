@@ -5,9 +5,14 @@
     }
 </style>
 <script>
-    jQuery(document).ready(function($) {
+    jQuery(document).ready(function ($) {
         $("#mainmenu ul li").removeAttr('class');
         $("#btnVehicle").addClass("active");
+
+        $('.datepicker').datepicker({
+            language: 'th-th',
+            format: 'dd/mm/yyyy'
+        });
     });
 </script>
 <div class="container">
@@ -20,7 +25,7 @@
                 <li>
                     <a href="#">Library</a>
                 </li>
-                <li class="active">Data</li>
+                <li class="active datepicker">Data</li>
             </ul>
             <div class="page-header">
                 <h1>
@@ -33,7 +38,10 @@
     <div class="row"> 
         <div class="col-md-12">
             <div class="well">
-                <input type="text" value="02-16-2014" >
+                <input type="text" class="datepicker" value="" >
+            </div>
+            <div class="well">
+                <input type="text" class="datepicker" value="" >
             </div>
         </div>
     </div>

@@ -1,35 +1,40 @@
-<!DOCTYPE html>
+
+<!DOCTYPE HTML>
 <html>
     <head>
         <?php $version = 1; ?>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <?php echo js('pace.min.js?v=' . $version); ?>
         <?php echo css('bootstrap.css?v=' . $version); ?>
-        <?php echo css('bootstrap-timepicker.min.css?v=' . $version); ?>  
-        <?php echo js('bootstrap-timepicker.min.js?v=' . $version); ?> 
-        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+        <?php echo css('bootflat.min.css?v=' . $version); ?>
+        <?php echo css('pace.css?v=' . $version); ?>
+        <?php echo css('theme.css?v=' . $version); ?>
+        <?php echo css('label.min.css?v=' . $version); ?>
+        <?php echo css('segment.min.css?v=' . $version); ?>
+        <?php echo css('font-awesome.css?v=' . $version); ?>
+        <?php echo css('animate.css?v=' . $version); ?>
+        <?php echo css('customCSS.css?v=' . $version); ?>
         <?php echo js('jquery.js?v=' . $version); ?>
         <?php echo js('bootstrap.js?v=' . $version); ?>
-
+        <?php echo js('customJS.js?v=' . $version); ?>
+        
+        <?php echo css('bootstrap-combined.min.css?v=' . $version); ?>
+        <?php echo css('bootstrap-datetimepicker.min.css?v=' . $version); ?>
     </head>
     <body>
-        <div class="container">
-            <hr>
-
-            <div class="input-append bootstrap-timepicker">
-                <input id="timepicker2" type="text" class="input-small">
-                <span class="add-on">
-                    <i class="icon-time"></i>
-                </span>
-            </div>
+        <div id="datetimepicker" class="input-append">
+            <input class="form-control" type="text"></input>
+            <span class="add-on">
+                <i class="fa fa-clock-o"></i>
+            </span>
         </div>
+
+        
+        <?php echo js('bootstrap-datetimepicker.min.js?v=' . $version); ?>
+
         <script type="text/javascript">
-            $('#timepicker2').timepicker({
-                minuteStep: 1,
-                template: 'modal',
-                appendWidgetTo: 'body',
-                showSeconds: true,
-                showMeridian: false,
-                defaultTime: false
+            $('#datetimepicker').datetimepicker({
+                format: 'hh:mm:ss',
+                pickDate: false
             });
         </script>
     </body>
