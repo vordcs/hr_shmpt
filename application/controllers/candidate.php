@@ -7,6 +7,7 @@ class candidate extends CI_Controller {
     public function __construct() {
         parent::__construct();
         $this->load->model('m_template');
+        $this->load->model('m_candidate');
         $this->load->library('form_validation');
 
         //Initial language
@@ -21,6 +22,11 @@ class candidate extends CI_Controller {
     
     public function add() {
         $data = array();
+        
+        
+        $data['form_input'] = $this->m_candidate->set_form();
+        
+        
         $this->m_template->set_Content('candidate/frm_candidate', $data);
         $this->m_template->showTemplate();
     }

@@ -47,8 +47,7 @@
                 <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label" contenteditable="true">เงินเดือนที่ต้องการ</label>
                     <div class="col-sm-5">
-                        <input type="email" class="form-control" id="inputEmail3" placeholder="เงินเดือนที่ต้องการ">                                    
-
+                        <?= $form_input['ExpectedPermanantSalary'] ?>
                     </div>
                     <div class="col-sm-3">
                         บาท/เดือน
@@ -64,23 +63,23 @@
                         </select>
                     </div>
                     <div class="col-sm-4">
-                        <input type="email" class="form-control" id="inputEmail3" placeholder="ชื่อ">
+                        <?= $form_input['FirstName'] ?>
                     </div>
                     <label class="col-sm-1 control-label">นามสกุล</label>
                     <div class="col-sm-4">
-                        <input type="text" class="form-control" placeholder="นามสกุล">
+                        <?= $form_input['LastName'] ?>
                     </div>
                 </div>                 
                 <div class="form-group">
                     <label for="inputEmail3" class="col-sm-3 control-label">เลขประจำตัวประชาชน</label>
                     <div class="col-sm-7">
-                        <input type="email" class="form-control" id="inputEmail3" placeholder="เลขประจำตัวประชาชน">
+                        <?= $form_input['PersonalID'] ?>
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="inputEmail3" class="col-sm-3 control-label">เริ่มงานได้วันที่</label>
                     <div class="col-sm-3">
-                        <input type="email" class="form-control" id="inputEmail3" placeholder="">
+                        <?= $form_input['AvaliableStartDate'] ?>
                     </div>
                 </div>
             </div>
