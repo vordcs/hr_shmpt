@@ -45,7 +45,7 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="inputEmail3" class="col-sm-2 control-label" contenteditable="true">เงินเดือนที่ต้องการ</label>
+                    <label class="col-sm-2 control-label" contenteditable="true">เงินเดือนที่ต้องการ</label>
                     <div class="col-sm-5">
                         <?= $form_input['ExpectedPermanantSalary'] ?>
                     </div>
@@ -54,7 +54,7 @@
                     </div>
                 </div>               
                 <div class="form-group">
-                    <label for="inputEmail3" class="col-sm-1 control-label">ชื่อ</label>
+                    <label class="col-sm-1 control-label">ชื่อ</label>
                     <div class="col-sm-2">
                         <select class="form-control">
                             <option>นาย</option>
@@ -71,13 +71,13 @@
                     </div>
                 </div>                 
                 <div class="form-group">
-                    <label for="inputEmail3" class="col-sm-3 control-label">เลขประจำตัวประชาชน</label>
+                    <label class="col-sm-3 control-label">เลขประจำตัวประชาชน</label>
                     <div class="col-sm-7">
                         <?= $form_input['PersonalID'] ?>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="inputEmail3" class="col-sm-3 control-label">เริ่มงานได้วันที่</label>
+                    <label class="col-sm-3 control-label">เริ่มงานได้วันที่</label>
                     <div class="col-sm-3">
                         <?= $form_input['AvaliableStartDate'] ?>
                     </div>
@@ -105,9 +105,7 @@
                                 <div class="col-sm-6">
                                     <input type="text" class="form-control" id="inputEmail3" placeholder="">                                                
                                 </div>
-                                <div class="col-sm-2">
-                                    ปี
-                                </div>
+                                <label class="col-sm-2 control-label">ปี</label>
                             </div>
                             <div class="col-sm-5">
                                 <label for="" class="col-sm-3 control-label">ชื่อเล่น</label>
@@ -141,12 +139,8 @@
                             <div class="col-sm-3">
                                 <label class="col-sm-4 control-label">เพศ</label>
                                 <div class="col-sm-8 radio">
-                                    <label class="radio-inline">
-                                        <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3">ชาย
-                                    </label> 
-                                    <label class="radio-inline">
-                                        <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3">หญิง
-                                    </label>                                     
+                                    <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3">ชาย
+                                    <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3">หญิง                                   
                                 </div>
                             </div>
                             <div class="col-sm-4">
@@ -155,7 +149,7 @@
                                     <div class="input-group">                                                        
                                         <input type="text" class="form-control" placeholder="">
                                         <div class="input-group-addon">กก.</div>
-                                    </div> 
+                                    </div>
                                 </div>
                             </div>  
                             <div class="col-sm-4">
@@ -238,43 +232,38 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <div class="col-md-8 col-md-offset-2">
-                                <div class="has-error radio">
-                                    <div class="col-md-3">
-                                        <label class="radio-inline">
-                                            <input type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1"> อาศัยกับครอบครัว
-                                        </label>  
+                            <label class="col-sm-2 control-label">ที่พักอาศัย</label>
+                            <div class="col-md-10">
+                                <div class="row radio">
+                                    <div class="col-md-2">
+                                        <input type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1"> อาศัยกับครอบครัว
                                     </div>
-                                    <div class="col-md-3">
-                                        <label class="radio-inline">
-                                            <input type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2"> บ้านตัวเอง
-                                        </label> 
+                                    <div class="col-md-2">
+                                        <input type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2"> บ้านตัวเอง
                                     </div>
-                                    <div class="col-md-3">
-                                        <label class="radio-inline">
-                                            <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3"> บ้านเช่า
-                                        </label>   
+                                    <div class="col-md-2">
+                                        <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3"> บ้านเช่า
                                     </div>
-                                    <div class="col-md-3">
-                                        <label class="radio-inline">
-                                            <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3"> หอพัก
-                                        </label> 
+                                    <div class="col-md-2">
+                                        <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3"> หอพัก
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">ภาวะทางทหาร</label>
-                            <div class="col-sm-10 radio">
-                                <label class="radio-inline">                                    
-                                    <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3"> ได้รับการยกเว้น                                    
-                                </label> 
-                                <label class="radio-inline">
-                                    <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3"> ปลดเป็นทหารกองหนุ่น
-                                </label> 
-                                <label class="radio-inline">
-                                    <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3"> ยังไม่ได้รับการเกณฑ์
-                                </label>                                            
+                            <div class="col-sm-10">
+                                <div class="row radio">
+                                    <div class="col-md-2">                                  
+                                        <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3"> ได้รับการยกเว้น
+                                    </div>
+                                    <div class="col-md-3">
+                                        <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3"> ปลดเป็นทหารกองหนุ่น
+                                    </div>
+                                    <div class="col-md-3">
+                                        <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3"> ยังไม่ได้รับการเกณฑ์
+                                    </div> 
+                                </div>
                             </div>
                         </div>
 
