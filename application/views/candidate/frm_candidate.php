@@ -37,7 +37,7 @@
                 <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">ตำแหน่ง</label>
                     <div class="col-sm-5">
-                        <select class="form-control">
+                        <select class="selecter_1">
                             <option>งานที่ 1</option>
                             <option>งานที่ 2</option>
                             <option>งานที่ 3</option>
@@ -56,7 +56,7 @@
                 <div class="form-group">
                     <label class="col-sm-1 control-label">ชื่อ</label>
                     <div class="col-sm-2">
-                        <select class="form-control">
+                        <select class="selecter_1">
                             <option>นาย</option>
                             <option>นาง</option>
                             <option>นางสาว</option>
@@ -235,7 +235,7 @@
                             <label class="col-sm-2 control-label">ที่พักอาศัย</label>
                             <div class="col-md-10">
                                 <div class="row radio">
-                                    <div class="col-md-2">
+                                    <div class="col-md-3">
                                         <input type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1"> อาศัยกับครอบครัว
                                     </div>
                                     <div class="col-md-2">
@@ -267,123 +267,30 @@
                             </div>
                         </div>
 
-                    </div>
-                </div> 
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-12">
-                <div class="panel panel-primary">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">ประวัติครอบครัว</h3>
-                    </div>
-                    <div class="panel-body">
-
-                        <div class="form-group">                                   
-                            <div class="col-sm-1">
-                                <label for="inputEmail3" class="control-label">ชื่อบิดา</label>
-                            </div>
-                            <div class="col-sm-2">
-                                <select class="form-control">
-                                    <option>นาย</option>
-                                    <option>นาง</option>
-                                    <option>นางสาว</option>
-                                </select>
-                            </div>                                       
-                            <div class="col-sm-4">
-                                <input type="email" class="form-control" id="inputEmail3" placeholder="ชื่อ">
-                            </div>
-                            <div class="col-sm-4">
-                                <label class="col-sm-2 control-label">นามสกุล</label>
-                                <div class="col-sm-8">
-                                    <input type="text" class="form-control" placeholder="นามสกุล">
-                                </div>
-                            </div>
-                        </div>  
-                        <div class="form-group">
-                            <div class="">
-                                <label class="col-sm-1 control-label">อายุ</label>
-                                <div class="col-sm-1">
-                                    <input type="text" class="form-control" placeholder="">
-                                </div>
-                            </div>
-                            <div class="">
-                                <label class="col-sm-1 control-label">อาชีพ</label>
-                                <div class="col-sm-4">
-                                    <input type="text" class="form-control" placeholder="">
-                                </div>
-                            </div>
-                            <div class="radio">
-                                <label class="radio-inline">
-                                    <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3"> ยังมีชีวิต
-                                </label> 
-                                <label class="radio-inline">
-                                    <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3"> ถึงแก่กรรม
-                                </label> 
-                            </div>
-                        </div>    
-                        <div class="form-group">
-                            <label for="inputEmail3" class="col-sm-1 control-label">ชื่อมารดา</label>
-                            <div class="col-sm-2">
-                                <select class="form-control">
-                                    <option>นาย</option>
-                                    <option>นาง</option>
-                                    <option>นางสาว</option>
-                                </select>
-                            </div>
-                            <div class="col-sm-4">
-                                <input type="email" class="form-control" id="inputEmail3" placeholder="ชื่อ">
-                            </div>
-                            <label class="col-sm-1 control-label">นามสกุล</label>
-                            <div class="col-sm-4">
-                                <input type="text" class="form-control" placeholder="">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="">
-                                <label class="col-sm-1 control-label">อายุ</label>
-                                <div class="col-sm-1">
-                                    <input type="text" class="form-control" placeholder="">
-                                </div>
-                            </div>
-                            <div class="">
-                                <label class="col-sm-1 control-label">อาชีพ</label>
-                                <div class="col-sm-4">
-                                    <input type="text" class="form-control" placeholder="">
-                                </div>
-                            </div>
-                            <div class="radio">
-                                <label class="radio-inline">
-                                    <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3"> ยังมีชีวิต
-                                </label> 
-                                <label class="radio-inline">
-                                    <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3"> ถึงแก่กรรม
-                                </label> 
-                            </div>
-                        </div> 
                         <div class="form-group">
                             <label class="col-sm-2 control-label">สถานภาพ</label>
-                            <div class="col-sm-10 radio">
-                                <label class="radio-inline">
-                                    <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3"> โสด
-                                </label> 
-                                <label class="radio-inline">
-                                    <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3"> แต่งงานเเล้ว
-                                </label> 
-                                <label class="radio-inline">
-                                    <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3"> หม้าย
-                                </label> 
-                                <label class="radio-inline">
-                                    <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3"> แยกกันอยู่
-                                </label> 
+                            <div class="col-sm-10">
+                                <div class="row radio">
+                                    <div class="col-md-2">
+                                        <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3"> โสด
+                                    </div> 
+                                    <div class="col-md-2">
+                                        <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3"> แต่งงานเเล้ว
+                                    </div> 
+                                    <div class="col-md-2">
+                                        <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3"> หม้าย
+                                    </div> 
+                                    <div class="col-md-2">
+                                        <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3"> แยกกันอยู่
+                                    </div> 
+                                </div>
                             </div>
                         </div>
                         <div id="not_single">
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">ชื่อคู่สมรส</label>
                                 <div class="col-sm-2">
-                                    <select class="form-control">
+                                    <select class="selecter_1">
                                         <option>นาย</option>
                                         <option>นาง</option>
                                         <option>นางสาว</option>
@@ -433,8 +340,8 @@
                                 <table id="childen" class="table table-hover">
                                     <thead>
                                         <tr>
-                                            <th style="width: 5%;"></th>
-                                            <th style="width: 35%;" class="text-center">ชื่อ</th>
+                                            <th style="width: 2%;"></th>
+                                            <th style="width: 38%;" class="text-center">ชื่อ</th>
                                             <th style="width: 20%;" class="text-center">นามสกุล</th>
                                             <th style="width: 10%;" class="text-center">อายุ</th>
                                             <th style="width: 20%;" class="text-center">อาชีพ</th>
@@ -448,7 +355,7 @@
                                             </td>
                                             <td>
                                                 <div class="col-sm-4">
-                                                    <select class="form-control">
+                                                    <select class="selecter_1">
                                                         <option>นาย</option>
                                                         <option>นาง</option>
                                                         <option>นางสาว</option>
@@ -480,7 +387,7 @@
                                             </td>
                                             <td>
                                                 <div class="col-sm-4">
-                                                    <select class="form-control">
+                                                    <select class="selecter_1">
                                                         <option>นาย</option>
                                                         <option>นาง</option>
                                                         <option>นางสาว</option>
@@ -515,6 +422,102 @@
                                     </button>
                                 </div>
                             </div>
+
+                        </div>
+                    </div> 
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">ประวัติครอบครัว</h3>
+                        </div>
+                        <div class="panel-body">
+
+                            <div class="form-group">                                   
+                                <div class="col-sm-1">
+                                    <label for="inputEmail3" class="control-label">ชื่อบิดา</label>
+                                </div>
+                                <div class="col-sm-2">
+                                    <select class="form-control">
+                                        <option>นาย</option>
+                                        <option>นาง</option>
+                                        <option>นางสาว</option>
+                                    </select>
+                                </div>                                       
+                                <div class="col-sm-4">
+                                    <input type="email" class="form-control" id="inputEmail3" placeholder="ชื่อ">
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="col-sm-2 control-label">นามสกุล</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" placeholder="นามสกุล">
+                                    </div>
+                                </div>
+                            </div>  
+                            <div class="form-group">
+                                <div class="">
+                                    <label class="col-sm-1 control-label">อายุ</label>
+                                    <div class="col-sm-1">
+                                        <input type="text" class="form-control" placeholder="">
+                                    </div>
+                                </div>
+                                <div class="">
+                                    <label class="col-sm-1 control-label">อาชีพ</label>
+                                    <div class="col-sm-4">
+                                        <input type="text" class="form-control" placeholder="">
+                                    </div>
+                                </div>
+                                <div class="radio">
+                                    <label class="radio-inline">
+                                        <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3"> ยังมีชีวิต
+                                    </label> 
+                                    <label class="radio-inline">
+                                        <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3"> ถึงแก่กรรม
+                                    </label> 
+                                </div>
+                            </div>    
+                            <div class="form-group">
+                                <label for="inputEmail3" class="col-sm-1 control-label">ชื่อมารดา</label>
+                                <div class="col-sm-2">
+                                    <select class="form-control">
+                                        <option>นาย</option>
+                                        <option>นาง</option>
+                                        <option>นางสาว</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-4">
+                                    <input type="email" class="form-control" id="inputEmail3" placeholder="ชื่อ">
+                                </div>
+                                <label class="col-sm-1 control-label">นามสกุล</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control" placeholder="">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="">
+                                    <label class="col-sm-1 control-label">อายุ</label>
+                                    <div class="col-sm-1">
+                                        <input type="text" class="form-control" placeholder="">
+                                    </div>
+                                </div>
+                                <div class="">
+                                    <label class="col-sm-1 control-label">อาชีพ</label>
+                                    <div class="col-sm-4">
+                                        <input type="text" class="form-control" placeholder="">
+                                    </div>
+                                </div>
+                                <div class="radio">
+                                    <label class="radio-inline">
+                                        <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3"> ยังมีชีวิต
+                                    </label> 
+                                    <label class="radio-inline">
+                                        <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3"> ถึงแก่กรรม
+                                    </label> 
+                                </div>
+                            </div> 
                         </div>
                     </div>
                 </div>
