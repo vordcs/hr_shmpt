@@ -26,7 +26,7 @@ class candidate extends CI_Controller {
         
         $data['form_input'] = $this->m_candidate->set_form();
         
-        
+        $this->m_template->set_Debug($this->m_candidate->check_miscellaneous('sss'));
         $this->m_template->set_Content('candidate/frm_candidate', $data);
         $this->m_template->showTemplate();
     }

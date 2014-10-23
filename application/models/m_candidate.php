@@ -5,6 +5,11 @@ if (!defined('BASEPATH'))
 
 class m_candidate extends CI_Model {
 
+    function check_miscellaneous($MiscName) {
+        $query = $this->db->get_where('miscellaneous', array('MiscName' => $MiscName));
+        return $query->result();
+    }
+
     function set_form() {
         $i_ExpectedPermanantSalary = array(
             'name' => 'ExpectedPermanantSalary',
@@ -143,7 +148,7 @@ class m_candidate extends CI_Model {
             'value' => set_value('pass'),
             'placeholder' => 'Password',
             'class' => 'form-control');
-        
+
         // Education information
         $i_pass = array(
             'name' => 'pass',
@@ -160,7 +165,12 @@ class m_candidate extends CI_Model {
             'value' => set_value('pass'),
             'placeholder' => 'Password',
             'class' => 'form-control');
-        
+        $i_pass = array(
+            'name' => 'pass',
+            'value' => set_value('pass'),
+            'placeholder' => 'Password',
+            'class' => 'form-control');
+
         // Experience information
         $i_pass = array(
             'name' => 'DateForm',
@@ -191,8 +201,39 @@ class m_candidate extends CI_Model {
             'value' => set_value('pass'),
             'placeholder' => 'Password',
             'class' => 'form-control');
-        
-        
+
+        // Emergency_contact
+        $i_pass = array(
+            'name' => 'pass',
+            'value' => set_value('pass'),
+            'placeholder' => 'Password',
+            'class' => 'form-control');
+        $i_pass = array(
+            'name' => 'pass',
+            'value' => set_value('pass'),
+            'placeholder' => 'Password',
+            'class' => 'form-control');
+        $i_pass = array(
+            'name' => 'pass',
+            'value' => set_value('pass'),
+            'placeholder' => 'Password',
+            'class' => 'form-control');
+        $i_pass = array(
+            'name' => 'pass',
+            'value' => set_value('pass'),
+            'placeholder' => 'Password',
+            'class' => 'form-control');
+        $i_pass = array(
+            'name' => 'pass',
+            'value' => set_value('pass'),
+            'placeholder' => 'Password',
+            'class' => 'form-control');
+        $i_pass = array(
+            'name' => 'pass',
+            'value' => set_value('pass'),
+            'placeholder' => 'Password',
+            'class' => 'form-control');
+
         $data = array(
             'ExpectedPermanantSalary' => form_input($i_ExpectedPermanantSalary),
             'FirstName' => form_input($i_FirstName),

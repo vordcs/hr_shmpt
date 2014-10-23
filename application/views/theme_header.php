@@ -36,7 +36,7 @@
         <!--time picker-->    
         <?php echo css('bootstrap-timepicker.min.css?v=' . $version); ?>  
         <?php echo js('bootstrap-timepicker.min.js?v=' . $version); ?> 
-        
+
         <!--datetime picker-->    
         <?php echo css('datepicker.css?v=' . $version); ?>         
         <?php echo js('bootstrap-datepicker.js?v=' . $version); ?> 
@@ -45,7 +45,7 @@
         <?php echo js('/locales/bootstrap-datepicker.th.js?v=' . $version); ?>  
 
         <script type="text/javascript">
-            $(window).scroll(function() {
+            $(window).scroll(function () {
                 if ($(this).scrollTop() > 50) { //use `this`, not `document`
                     $('#top-nav').fadeOut();
                     $(".pace-progress").css("margin-top", "58px");
@@ -83,7 +83,7 @@
                                 <li id="btnVehicle"><a href="<?= base_url('vehicle/') ?>"><i class="fa fa-car"></i><span>รถ</span> </a> </li>
                                 <li id="btnRoute"><a href="<?= base_url('route/') ?>"><i class="fa fa-share-alt"></i><span>เส้นทาง</span></a></li>
                                 <li id="btnSchedule"><a href="<?= base_url('schedule/') ?>"><i class="fa fa-list"></i><span>ตารางเดินรถ</span></a></li>
-                                <li id="btnExpenditure"><a href="<?=  base_url('expenditure/')?>"><i class="fa fa-pencil-square-o"></i><span>ค่าใช้จ่าย</span></a></li>
+                                <li id="btnExpenditure"><a href="<?= base_url('expenditure/') ?>"><i class="fa fa-pencil-square-o"></i><span>ค่าใช้จ่าย</span></a></li>
                                 <li id="btnReport"><a href="<?= base_url('report/') ?>"><i class="fa fa-calendar-o"></i><span>รายงาน</span> </a> </li>                              
                             </ul>
                         </div>
@@ -96,16 +96,16 @@
         </div>
 
         <?php
-        if (isset($debug)) {
-            echo '<div class="container">';
+        if (isset($debug) && $debug != NULL) {
+            echo '<div class="container" style="margin-top: 60px;">';
             print '<pre>';
             print_r($debug);
             print '</pre>';
             echo '</div>';
         }
 
-        if (isset($alert)) {
-            echo '<div class="container">';
+        if (isset($alert) && $alert != NULL) {
+            echo '<div class="container" style="margin-top: 60px;">';
             echo $alert;
             echo '</div>';
         }
