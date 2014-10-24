@@ -7,10 +7,15 @@ class m_candidate extends CI_Model {
 
     function check_miscellaneous($MiscName) {
         $query = $this->db->get_where('miscellaneous', array('MiscName' => $MiscName));
-        return $query->result();
+        return $query->result_array();
     }
 
     function set_form() {
+        $temp = $this->m_candidate->check_miscellaneous('title');
+        $i_Title = array();
+        foreach ($temp as $row) {
+            $i_Title[trim($row['StringValue'])] = trim($row['StringValue']);
+        }
         $i_ExpectedPermanantSalary = array(
             'name' => 'ExpectedPermanantSalary',
             'type' => 'number',
@@ -235,6 +240,7 @@ class m_candidate extends CI_Model {
             'class' => 'form-control');
 
         $data = array(
+            'Title' => form_dropdown('Title', $i_Title, set_value('Title'), "class=\"selecter_1\""),
             'ExpectedPermanantSalary' => form_input($i_ExpectedPermanantSalary),
             'FirstName' => form_input($i_FirstName),
             'LastName' => form_input($i_LastName),
