@@ -13,50 +13,50 @@
             </h1>
         </div>
     </div>
+
     <div class="row">
+        <div class="col-md-12">
+
+
+        </div>
         <div class="col-md-12">
             <div class="panel panel-primary">
                 <div class="panel-heading">
                     <h3 class="panel-title"><i class="fa fa-search"></i>&nbsp;&nbsp;ค้นหา</h3>
                 </div>
                 <div class="panel-body">
-                    <div class="col-md-8 col-md-offset-2"> 
-
-                        <form id="search_route" class="form-horizontal" role="form">
-                            <div class="form-group">
+                    <div class="col-md-8 col-md-offset-2">                        
+                        <form id="frm_search_route" class="form-horizontal" role="form">
+                            <div class="col-md-6">
                                 <label for="" class="col-sm-2 control-label">ต้นทาง</label>
-                                <div class="col-sm-5">
-                                    <input type="text" class="form-control" placeholder="">
-
-                                </div>
+                                <input type="text" class="form-control" placeholder="">
                             </div>
-                            <div class="form-group">
-                                <label for="" class="col-sm-2 control-label">ปลายทาง</label>
-                                <div class="col-sm-5">
-                                    <input type="text" class="form-control" placeholder="">
-                                </div>
-                            </div>
-                            <div class="form-group">
+                            <div class="col-md-6">                                
+                                <label for="">ปลายทาง</label>
+                                <input type="text" class="form-control" placeholder="">                                
+                            </div>                           
+                            <div class="col-md-12">
+                                <br>
                                 <label for="" class="col-sm-2 control-label">ประเภทรถ</label>
                                 <div class="col-sm-10">
-                                    <label class="checkbox-inline">
-                                        <input type="checkbox" id="inlineCheckbox1" value="option1"> ทั้งหมด
-                                    </label>
-                                    <label class="checkbox-inline">
-                                        <input type="checkbox" id="inlineCheckbox2" value="option2"> รถตู้
-                                    </label>
-                                    <label class="checkbox-inline">
-                                        <input type="checkbox" id="inlineCheckbox3" value="option3"> รถบัส(แอร์)
-                                    </label>
-                                    <label class="checkbox-inline">
-                                        <input type="checkbox" id="inlineCheckbox3" value="option3"> รถบัส(พัดลม)
-                                    </label>
+                                    <div class="checkbox"> 
+                                        <label class="checkbox-inline">
+                                            <input type="checkbox" id="" value="option1"> ทั้งหมด
+                                        </label>
+                                        <?php
+//                                        for ($i = 0; $i < 3; $i++) { 
+                                        foreach ($vehicles_type as $v_type) {
+                                            ?>
+                                            <label class="checkbox-inline">
+                                                <input type="checkbox" id="" value="<?= $v_type['VTID'] ?>"> <?= $v_type['VTDescription'] ?>
+                                            </label>
+                                        <?php } ?>
+                                    </div>    
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <div class="col-sm-offset-2 col-sm-10">
-                                    <button type="submit" class="btn btn-default">ค้นหา</button> 
-                                </div>
+                            <br>
+                            <div class="col-md-12 text-center">
+                                <button type="submit" class="btn btn-default">ค้นหา</button>
                             </div>
                         </form>          
                     </div>
@@ -65,20 +65,25 @@
         </div>
     </div>
     <div class="row">
-
         <?php
         $time = date('H:i');
-        for ($i = 5; $i >= 1; $i--) {
+        $i = 0;
+//        for ($i = 5; $i >= 1; $i--) {
+        foreach ($vehicles_type as $v_type) {
+            $add = array(
+                'type' => "button",
+                'class' => "btn badge-success btn-lg pull-right",                
+            );
             ?>
             <div class="col-md-12">
                 <div class="col-xs-8">
-                    <h3 class="">รถ <?= $i ?></h3> 
+                    <h3 class=""><?= $v_type['VTDescription'] ?></h3> 
                 </div>
                 <div class="col-xs-4">
-                    <a href="<?= base_url('route/add') ?>" class="btn badge-success btn-lg pull-right"><i class="fa fa-plus">&nbsp;&nbsp;เพิ่มเส้นทาง</i></a>
+                    <?php echo anchor('route/add/'.$v_type['VTID'], '<i class="fa fa-plus"></i>&nbsp;เพิ่มเส้นทาง&nbsp' . $v_type['VTDescription'], $add); ?>
                 </div>
             </div>
-            <?php for ($j = 1; $j <= 5; $j++) { ?>
+            <?php for ($j = 1; $j <= 2; $j++) { ?>
                 <div class="col-md-offset-1 col-sm-10">
                     <div class="panel panel-primary">
                         <div class="panel-heading">
@@ -143,8 +148,9 @@
                     </div>
                 </div>
                 <?php
-            }
+            } $i++;
         }
         ?>
     </div>
 </div>
+

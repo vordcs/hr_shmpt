@@ -1,219 +1,65 @@
-<script language="javascript">
-    $(document).ready(function() {
+<script>
+    jQuery(document).ready(function ($) {
         $("#mainmenu ul li").removeAttr('class');
         $("#btnRoute").addClass("active");
     });
-    function CreateNewRow()
-    {
-        var intLine = $('#tableStation tbody tr').length;
-        intLine++;
-        var theTable = document.getElementById("tableBodyStation");
-        var newRow = theTable.insertRow(theTable.rows.length);
-        newRow.id = newRow.uniqueID;
-
-        var newCell;
-
-        //*** Column 1 ***//
-        newCell = newRow.insertCell(0);
-        newCell.id = newCell.uniqueID;
-        newCell.setAttribute("class", "text-center");
-        newCell.innerHTML = "<DIV CLASS=\"checkbox\"><INPUT TYPE=\"checkbox\" CLASS=\"form-control\" NAME=\"flat-checkbox-" + intLine + "\"  ID=\"flat-checkbox-" + intLine + "\" VALUE=\"\"></DIV>";
-
-        //*** Column 2 ***//
-        newCell = newRow.insertCell(1);
-        newCell.id = newCell.uniqueID;
-
-        newCell.innerHTML = "<INPUT TYPE=\"TEXT\" CLASS=\"form-control\" NAME=\"Column2_" + intLine + "\" ID=\"Column2_" + intLine + "\"  VALUE=\"\">";
-        //*** Column 2 ***//
-        newCell = newRow.insertCell(2);
-        newCell.id = newCell.uniqueID;
-        newCell.setAttribute("colspan", "4");
-
-    }
-
-    function CreateDestination()
-    {
-        var intLine = $('#tableStation tbody tr').length;
-        intLine++;
-        var theTable = document.getElementById("tableBodyStation");
-        var newRow = theTable.insertRow(theTable.rows.length);
-        newRow.id = newRow.uniqueID;
-
-        var newCell;
-
-        //*** Column 1 ***//
-        newCell = newRow.insertCell(0);
-
-        //*** Column 2 ***//
-        newCell = newRow.insertCell(1);
-
-        //*** Column 3 ***//
-        newCell = newRow.insertCell(2);
-        newCell.id = newCell.uniqueID;
-        newCell.setAttribute("className", "text-center");
-        newCell.innerHTML = "<center><INPUT TYPE=\"TEXT\" CLASS=\"form-control\" NAME=\"Column3_" + intLine + "\"  ID=\"Column3_" + intLine + "\" VALUE=\"\"></center>";
-        //*** Column 4 ***//
-        newCell = newRow.insertCell(3);
-        newCell.id = newCell.uniqueID;
-        newCell.setAttribute("className", "css-name");
-        newCell.innerHTML = "<center><INPUT TYPE=\"TEXT\" CLASS=\"form-control\" NAME=\"Column4_" + intLine + "\"  ID=\"Column4_" + intLine + "\" VALUE=\"\"></center>";
-        //*** Column 5 ***//
-        newCell = newRow.insertCell(4);
-        newCell.id = newCell.uniqueID;
-        newCell.setAttribute("className", "css-name");
-        newCell.innerHTML = "<INPUT TYPE=\"TEXT\" CLASS=\"form-control\" NAME=\"Column6_" + intLine + "\"  ID=\"Column1_" + intLine + "\" VALUE=\"\">";
-
-        //*** Column 6 ***//
-        newCell = newRow.insertCell(5);
-        newCell.id = newCell.uniqueID;
-        newCell.innerHTML = '<a class="btn btn-danger btn-sm" onClick="RemoveDes()"><i class="fa fa-minus"</a>';
-
-    }
-
-
-    function RemoveDes()
-    {
-        var intLine = $('#tableStation tbody tr').length - 1;
-        if (parseInt(intLine) >= 0)
-        {
-            theTable = document.getElementById("tableStation");
-            theTableBody = theTable.tBodies[0];
-            theTableBody.deleteRow(intLine);
-
-        }
-    }
 </script>
 
 <div class="container">
+    <br>
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="">
+                        <h3>
+                            <?php echo $page_title; ?>
+                            <small></small>
+                        </h3>
+                    </div>                    
+                    <?php echo $form_route['form_route'] ?>
+                    <p>Feel free to contact us for any issues you might have with our products.</p>
+                    <div class="alert alert-danger">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                        <strong>Oh snap!</strong> Change a few things up and try submitting again.
+                    </div>
+                    <div class="form-group <?= (form_error('RID')) ? 'has-error' : '' ?>">
+                        <label class="col-sm-3 control-label">รหัสเส้นทาง</label>
+                        <div class="col-sm-6">
+                            <?php echo $form_route['RID']; ?>
+                        </div>
+                    </div>
+                    <div class="form-group <?= (form_error('RSource')) ? 'has-error' : '' ?>">
+                        <label class="col-sm-3 control-label">ต้นทาง</label>
+                        <div class="col-sm-8">
+                            <?php echo $form_route['RSource']; ?>
+                        </div>
+                    </div>
+                    <div class="form-group <?= (form_error('RDestination')) ? 'has-error' : '' ?>">
+                        <label class="col-sm-3 control-label">ปลายทาง</label>
+                        <div class="col-sm-8">
+                            <?php echo $form_route['RDestination']; ?>
+                        </div>
+                    </div>
 
-    <div class="row">        
-        <div class="page-header">
-            <h2>
-                เพิ่มเส้นทางเดินรถ&nbsp;
-                <small>รถตู้ รถบัส</small>
-                <br>
-                แก้ไขข้อมูลเส้นทาง : 234 ขอนแก่น มุกดาหาร
-                <small>รถตู้ รถบัส</small>
-            </h2>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10 text-center">
+                            <?php
+                            $cancle = array(
+                                'type' => "button",
+                                'class' => "btn btn-danger",
+                            );
+                            ?>
+                            <?php echo anchor('route/', '<i class="fa fa-times" ></i>&nbsp;ยกเลิก', $cancle); ?>
+                            <button type="submit" class="btn btn-success  " id="btn_save" ><i class="fa fa-save"></i>&nbsp;บันทึกเส้นทาง</button>
+                        </div>
+                    </div>
+                    <?php echo form_close(); ?>
+                </div>
+
+            </div>
+
         </div>
     </div>
-    <form id="frm_route" class="form-control">
-        <div class="row">
-            <div class="col-md-4">
-                <div class="row">                
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h3 class="panel-title">ไป มุกดาหาร</h3>
-                        </div>
-                        <div class="panel-body">
-                            <div class="col-sm-12">
-                                <div class="form-group">
-                                    <label for="">เวลาเที่ยวแรก</label>
-                                    <div class="input-append bootstrap-timepicker">
-                                        <input id="timepicker2" type="text" class="input-small">
-                                        <span class="add-on">
-                                            <i class="fa fa-clock-o"></i>
-                                        </span>
-                                    </div>
-                                    <script type="text/javascript">
-                                        $('#timepicker2').timepicker({
-                                            minuteStep: 1,
-                                            template: 'modal',
-                                            appendWidgetTo: 'body',
-                                            showSeconds: true,
-                                            showMeridian: false,
-                                            defaultTime: false
-                                        });
-                                    </script>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h3 class="panel-title">ไป ขอนแก่น</h3>
-                        </div>
-                        <div class="panel-body">
-                            <div class="col-sm-12">
-
-                                <div class="form-group">
-                                    <label for="">เวลาเที่ยวแรก</label>
-                                    <input class="datepicker" data-date-format="mm/dd/yyyy">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-8">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">จุดจอดและค่าโดยสาร</h3>
-                    </div>
-                    <div class="panel-body">
-                        <table id="tableStation" class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th rowspan="2" class="text-center" style="width:11%;">ขายตั๋ว</th>
-                                    <th rowspan="2" class="text-center" style="width:20%;">ต้นทาง</th>
-                                    <th rowspan="2" class="text-center" style="width:20%;">ปลายทาง</th>
-                                    <th colspan="2" class="text-center" style="width:20%;">ค่าโดยสาร</th>
-                                    <th rowspan="2"></th>
-                                    <th rowspan="2"></th>
-                                </tr>
-                                <tr>
-
-                                    <th class="text-center" style="width:10%;">เต็ม</th>
-                                    <th class="text-center" style="width:10%;">ลด</th>
-
-                                </tr>
-                            </thead>
-                            <tbody id="tableBodyStation">
-                                <tr>
-                                    <td class="text-center">
-                                        <div class="checkbox">
-                                            <input type="checkbox"> 
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control"> 
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control"> 
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control"> 
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control"> 
-                                    </td>
-                                    <td>
-                                        <a class="btn btn-danger btn-sm"><i class="fa fa-minus"</a>
-                                    </td>
-                                </tr>
-                            </tbody>
-                            <tfoot>
-                                <tr>
-                                    <td></td>
-                                    <td>
-                                        <a name="btnAddSource"  id="btnAddSource" class="btn btn-block" onClick="CreateNewRow();"><i class="fa fa-plus"></i>&nbsp;ต้นทาง</a>
-                                    </td>
-                                    <td>                                       
-                                        <a name="btnAddDes" id="btnAddDes" class="btn btn-block" onClick="CreateDestination()"><i class="fa fa-plus"></i>&nbsp;ปลายทาง </a>
-                                    </td>
-
-                                </tr>
-                            </tfoot>
-                        </table>
-                        <div class="col-md-12">
-                            <a class="btn btn-danger btn-sm" onClick="RemoveDes()"><i class="fa fa-minus"></i></a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </form>
 </div>
 
