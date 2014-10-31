@@ -38,8 +38,7 @@ Class m_datetime extends CI_Model {
     }
 
     public function monthTHtoDB($str_date_th) {
-        $month_th = array("", "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม");
-        for ($i = 0; $i < count($month_th); $i++) {
+        for ($i = 0; $i < count($this->month_th); $i++) {
             if ($month_th[$i] == $str_date_th) {
                 return $i;
             }
@@ -51,13 +50,12 @@ Class m_datetime extends CI_Model {
     }
 
     public function DateThai($strDate) {
-        $month_th = array("", "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม");
         if ($strDate == NULL) {
             return '-';
         } else {
             $str = explode('-', $strDate);
             $strYear = $str[0];
-            $strMonthThai = $month_th[(int) $str[1]];
+            $strMonthThai = $this->month_th[(int) $str[1]];
             $strDay = $str[2];
             return "$strDay $strMonthThai $strYear";
         }
@@ -74,7 +72,7 @@ Class m_datetime extends CI_Model {
             $strHour = date("H", strtotime($strDate));
             $strMinute = date("i", strtotime($strDate));
             $strSeconds = date("s", strtotime($strDate));
-            $strMonthCut = Array("", "มกราคม.", "กุมภาพันธ์.", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฏาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม");
+            $strMonthCut = $this->month_th;
             $strMonthThai = $strMonthCut[$strMonth];
             return "$strDay $strMonthThai $strYear " . " เวลา $strHour:$strMinute ";
         }

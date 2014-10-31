@@ -1,5 +1,5 @@
 <script language="javascript">
-    $(document).ready(function() {
+    $(document).ready(function () {
         $("#mainmenu ul li").removeAttr('class');
         $("#btnRoute").addClass("active");
     });
@@ -88,67 +88,59 @@
 
     <div class="row">        
         <div class="page-header">
-            <h2>
-                เพิ่มเส้นทางเดินรถ&nbsp;
-                <small>รถตู้ รถบัส</small>
-                <br>
-                แก้ไขข้อมูลเส้นทาง : 234 ขอนแก่น มุกดาหาร
-                <small>รถตู้ รถบัส</small>
-            </h2>
+            <h3>               
+                <?php echo $page_title; ?>
+            </h3>
         </div>
     </div>
-    <form id="frm_route" class="form-control">
-        <div class="row">
-            <div class="col-md-4">
-                <div class="row">                
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h3 class="panel-title">ไป มุกดาหาร</h3>
-                        </div>
-                        <div class="panel-body">
-                            <div class="col-sm-12">
-                                <div class="form-group">
-                                    <label for="">เวลาเที่ยวแรก</label>
-                                    <div class="input-append bootstrap-timepicker">
-                                        <input id="timepicker2" type="text" class="input-small">
-                                        <span class="add-on">
-                                            <i class="fa fa-clock-o"></i>
-                                        </span>
-                                    </div>
-                                    <script type="text/javascript">
-                                        $('#timepicker2').timepicker({
-                                            minuteStep: 1,
-                                            template: 'modal',
-                                            appendWidgetTo: 'body',
-                                            showSeconds: true,
-                                            showMeridian: false,
-                                            defaultTime: false
-                                        });
-                                    </script>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h3 class="panel-title">ไป ขอนแก่น</h3>
-                        </div>
-                        <div class="panel-body">
-                            <div class="col-sm-12">
 
-                                <div class="form-group">
-                                    <label for="">เวลาเที่ยวแรก</label>
-                                    <input class="datepicker" data-date-format="mm/dd/yyyy">
-                                </div>
+    <div class="row">
+        <form id="frm_route_detail" class="form-horizontal" >   
+            <div class="col-md-6">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">ไป มุกดาหาร</h3>
+                    </div>
+                    <div class="panel-body">                        
+                        <div class="form-group has-feedback">
+                            <label for="" class="col-sm-3 control-label">เวลาเที่ยวแรก</label>
+                            <div class="col-sm-5">
+                                <input type="text" class="form-control" id="" placeholder="">
+                                <span class="fa fa-clock-o form-control-feedback"></span>
                             </div>
                         </div>
+                        <div class="form-group">
+                            <label for="" class="col-sm-3 control-label">เวลาห่าง</label>
+                            <div class="col-sm-2">
+                                <input type="number" class="form-control" id="" placeholder="">
+                            </div>
+                            <div class="col-sm-1">
+                                <p>นาที</p> 
+                            </div>                            
+                            <label for="" class="col-sm-2 control-label">จำนวน</label>
+                            <div class="col-sm-2">
+                                <input type="number" class="form-control" id="" placeholder="">
+                            </div>
+                            <div class="col-sm-2">
+                                <p>เที่ยว / วัน</p>  
+                            </div>
+                        </div>                        
                     </div>
                 </div>
             </div>
-            <div class="col-md-8">
-                <div class="panel panel-default">
+            <div class="col-md-6">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">ไป ขอนแก่น</h3>
+                    </div>
+                    <div class="panel-body">
+                                            
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-12">
+                <div class="panel panel-info">
                     <div class="panel-heading">
                         <h3 class="panel-title">จุดจอดและค่าโดยสาร</h3>
                     </div>
@@ -213,7 +205,7 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </form>
+        </form>
+    </div>
 </div>
 

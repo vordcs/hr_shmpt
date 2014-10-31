@@ -11,40 +11,24 @@
 
         $('.datepicker').datepicker({
             language: 'th-th',
-            format: 'dd/mm/yyyy'
+            format: 'yyyy-m-d'
         });
     });
 </script>
 <div class="container">
+    <br>
     <div class="row">
-        <div class="col-md-12">
-            <ul class="breadcrumb">
-                <li>
-                    <a href="#">Home</a>
-                </li>
-                <li>
-                    <a href="#">Library</a>
-                </li>
-                <li class="active datepicker">Data</li>
-            </ul>
+        <div class="col-md-12">            
             <div class="page-header">
-                <h1>
-                    <p>เพิ่มข้อมูล รถ เส้นทาง 237 ขอนแก่น - อำนาจเจริญ</p>
-                    <p>แก้ไขข้อมูล รถเบอร์ XXXXXX เส้นทาง 237 ขอนแก่น - อำนาจเจริญ</p>     
-                </h1>
+                <h3>
+                    <?php echo $page_title; ?> 
+                </h3>
             </div>
         </div>
-    </div>
-    <div class="row"> 
         <div class="col-md-12">
-            <div class="well">
-                <input type="text" class="datepicker" value="" >
-            </div>
-            <div class="well">
-                <input type="text" class="datepicker" value="" >
-            </div>
+            <p><?php echo validation_errors(); ?></p>   
         </div>
-    </div>
+    </div> 
     <div class="row"> 
         <?= $form['form'] ?>
         <div class="row">
@@ -56,37 +40,64 @@
                     <div class="panel-body" style="min-height: 408px;">
                         <div class="row">
                             <div class="col-sm-12">
-                                <div class="form-group <?= (form_error('VID')) ? 'has-error' : '' ?>">                                  
+                                <?php if ($VID != NULL) { ?>
+                                    <div class="form-group <?= (form_error('RCode')) ? 'has-error' : '' ?>">                                  
+                                        <label for="" class="col-sm-2 control-label">เส้นทาง</label>
+                                        <div class="col-sm-7">
+                                            <?php echo $form['RCode'] ?>
+                                        </div>  
+                                        <div class="col-sm-3">
+                                            <?php echo form_error('RCode', '<font color="error">', '</font>'); ?>
+                                        </div>
+                                    </div>
+                                    <div class="form-group <?= (form_error('VTID')) ? 'has-error' : '' ?>">                                  
+                                        <label for="" class="col-sm-4 control-label">ประเภทรถ</label>
+                                        <div class="col-sm-4">
+                                            <?php echo $form['VTID'] ?>
+                                        </div>  
+                                        <div class="col-sm-4">
+                                            <?php echo form_error('VTID', '<font color="error">', '</font>'); ?>
+                                        </div>
+                                    </div>
+                                <?php } ?>
+                                <div class="form-group <?= (form_error('NumberPlate')) ? 'has-error' : '' ?>">                                  
                                     <label for="" class="col-sm-4 control-label">เลขทะเบียน</label>
                                     <div class="col-sm-4">
-                                        <?php echo $form['VID'] ?>
+                                        <?php echo $form['NumberPlate'] ?>
                                     </div>  
+                                    <div class="col-sm-4">
+                                        <?php echo form_error('NumberPlate', '<font color="error">', '</font>'); ?>
+                                    </div>
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group <?= (form_error('VCode')) ? 'has-error' : '' ?>">
                                     <label for="" class="col-sm-4 control-label">เบอร์รถ</label>
                                     <div class="col-sm-4">
                                         <?php echo $form['VCode'] ?>
+                                        <span class="help-block">ตัวอย่าง <?= $RCode ?>-xx</span>
                                     </div>
+                                    <div class="col-sm-4">
+                                        <?php echo form_error('VCode', '<font color="error">', '</font>'); ?>                                        
+                                    </div>                                  
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group <?= (form_error('VColor')) ? 'has-error' : '' ?>">
                                     <label for="" class="col-sm-4 control-label">สีรถ</label>
                                     <div class="col-sm-4">
                                         <?php echo $form['VColor'] ?>
                                     </div>
+                                    <div class="col-sm-4">
+                                        <?php echo form_error('VColor', '<font color="error">', '</font>'); ?>
+                                    </div>
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group <?= (form_error('VBrand')) ? 'has-error' : '' ?>">
                                     <label for="" class="col-sm-4 control-label">ยี่ห้อ</label>
                                     <div class="col-sm-4">
                                         <?php echo $form['VBrand']; ?>                                        
                                     </div>
+                                    <div class="col-sm-4">
+                                        <?php echo form_error('VBrand', '<font color="error">', '</font>'); ?>
+                                    </div>
                                 </div>
-                                <div class="form-group">
-                                    <label for="" class="col-sm-4 control-label">ประเภทรถ</label>
-                                    <div class="col-sm-5">
-                                        <?php echo $form['VType']; ?>
-                                    </div>                                    
-                                </div>
-                                <div class="form-group">
+                                <div class="form-group <?= (form_error('VSeat')) ? 'has-error' : '' ?>">
                                     <label for="" class="col-sm-4 control-label">จำนวนที่นั่ง</label>
                                     <div class="col-sm-2">
                                         <?php echo $form['VSeat']; ?>
@@ -94,8 +105,11 @@
                                     <div class="col-sm-2">
                                         ที่
                                     </div>
+                                    <div class="col-sm-4">
+                                        <?php echo form_error('VSeat', '<font color="error">', '</font>'); ?>
+                                    </div>
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group <?= (form_error('VStatus')) ? 'has-error' : '' ?>">
                                     <label for="" class="col-sm-4 control-label">สถานะรถ</label>
                                     <div class="col-sm-5">
                                         <?php echo $form['VStatus']; ?>                                        
@@ -160,24 +174,30 @@
                     <div class="panel-body">                       
                         <div class="row">
                             <div class="col-md-6">
-                                <h3>ทะเบียน</h3>
+                                <p class="lead">ทะเบียน</p>
                                 <div class="row">
                                     <div class="col-md-12">
                                         <form class="form-horizontal" role="form">
-                                            <div class="form-group">
+                                            <div class="form-group <?= (form_error('DateRegistered')) ? 'has-error' : '' ?>">
                                                 <label for="" class="col-sm-3 control-label">วันที่ต่อทะเบียน</label>
                                                 <div class="col-sm-5">
                                                     <?php echo $form['DateRegistered']; ?>                                                    
                                                 </div>
+                                                <div class="col-sm-4">
+                                                    <?php echo form_error('DateRegistered', '<font color="error">', '</font>'); ?>
+                                                </div>
                                             </div>
-                                            <div class="form-group">
+                                            <div class="form-group <?= (form_error('DateExpire')) ? 'has-error' : '' ?>">
                                                 <label for="" class="col-sm-3 control-label">วันหมดอายุ</label>
                                                 <div class="col-sm-5">
                                                     <?php echo $form['DateExpire']; ?>
                                                 </div>
+                                                <div class="col-sm-4">
+                                                    <?php echo form_error('DateExpire', '<font color="error">', '</font>'); ?>
+                                                </div>
                                             </div>
                                             <div class="form-group">
-                                                <label for="inputEmail3" class="col-sm-3 control-label">หมายเหตุ</label>
+                                                <label for="" class="col-sm-3 control-label">หมายเหตุ</label>
                                                 <div class="col-sm-8">
                                                     <?php echo $form['VRNote']; ?>
                                                 </div>
@@ -186,34 +206,43 @@
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <h3>ประกันและพรบ</h3>
+                                <p class="lead">ประกันและพรบ</p>
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <div class="form-group">
+                                        <div class="form-group <?= (form_error('InsuranceCompanyName')) ? 'has-error' : '' ?>">
                                             <label for="" class="col-sm-3 control-label">บริษัทประกัน</label>
                                             <div class="col-sm-8">
                                                 <?php echo $form['InsuranceCompanyName']; ?>
                                             </div>
                                         </div>
-                                        <div class="form-group">
+                                        <div class="form-group <?= (form_error('PolicyType')) ? 'has-error' : '' ?>">
                                             <label for="" class="col-sm-3 control-label">ประเภทกรมธรรม์</label>
-                                            <div class="col-sm-8">
+                                            <div class="col-sm-5">
                                                 <?php echo $form['PolicyType']; ?>
                                             </div>
+                                            <div class="col-sm-4">
+                                                <?php echo form_error('PolicyType', '<font color="error">', '</font>'); ?>
+                                            </div>
                                         </div>
-                                        <div class="form-group">
+                                        <div class="form-group <?= (form_error('PolicyStart')) ? 'has-error' : '' ?>">
                                             <label for="" class="col-sm-3 control-label">วันที่เริ่มกรมธรรม์</label>
-                                            <div class="col-sm-8">
+                                            <div class="col-sm-4">
                                                 <?php echo $form['PolicyStart']; ?>
                                             </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="" class="col-sm-3 control-label">วันสิ้นสุดกรมธรรม์</label>
-                                            <div class="col-sm-8">
-                                                <?php echo $form['PolicyEnd']; ?>
+                                            <div class="col-sm-4">
+                                                <?php echo form_error('PolicyStart', '<font color="error">', '</font>'); ?>
                                             </div>
                                         </div>
-                                        <div class="form-group">
+                                        <div class="form-group <?= (form_error('PolicyEnd')) ? 'has-error' : '' ?>">
+                                            <label for="" class="col-sm-3 control-label">วันสิ้นสุดกรมธรรม์</label>
+                                            <div class="col-sm-4">
+                                                <?php echo $form['PolicyEnd']; ?>
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <?php echo form_error('PolicyEnd', '<font color="error">', '</font>'); ?>
+                                            </div>
+                                        </div>
+                                        <div class="form-group <?= (form_error('PolicyNumber')) ? 'has-error' : '' ?>">
                                             <label for="" class="col-sm-3 control-label">เลขที่กรมธรรม์</label>
                                             <div class="col-sm-8">
                                                 <?php echo $form['PolicyNumber']; ?>
@@ -236,8 +265,8 @@
         </div>
         <div class="row">
             <div class="col-md-12 text-center">
-                <a class="btn btn-primary">บันทึก</a>
-                <a href="<?= base_url('vehicle/') ?>" class="btn btn-danger"><i class="fa fa-times"></i>&nbsp;ยกเลิก</a>
+                <a href="<?= base_url('vehicle/') ?>" class="btn btn-danger btn-lg"><i class="fa fa-times"></i>&nbsp;ยกเลิก</a>
+                <button type="submit" class="btn btn-success btn-lg"><i class="fa fa-save"></i>&nbsp;บันทึก</button> 
             </div> 
         </div>
         </form>

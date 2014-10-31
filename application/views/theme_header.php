@@ -64,8 +64,8 @@
     <body>
         <!-- Fixed navbar -->
         <div class="navbar navbar-fixed-top sh-nav" role="navigation">
-            <div id="top-nav" class="sh-top-nav">
-                <h2 class="color-white" style="font-weight: bold; margin: 4px 0px 4px 4px;">บริษัท สหมิตรภาพ(2512) จำกัด</h2>
+            <div id="top-nav" class="sh-top-nav">          
+                <h4 class="color-white" style="margin: 4px 0px 4px 4px;">บริษัท สหมิตรภาพ(2512) จำกัด</h4>
                 <p class="text-right" style="margin-top: -20px;">
                     <a id="popoverMail" href="#" data-content="ติดต่อกับผู้ให้บริการ ผ่าน support@thaihubhosting.com" rel="popover" data-placement="bottom" data-original-title="ติดต่อผ่านอีเมล์" data-trigger="hover"><i class="fa fa-envelope"></i> Support |</a>
                     <a id="popoverFacebook" class="hidden-xs" href="#" data-content="ติดต่อกับผู้ให้บริการ ผ่าน Facebookpage ThaiHubHosting" rel="popover" data-placement="bottom" data-original-title="ติดต่อผ่านเพจ" data-trigger="hover"> <i class="fa fa-facebook"></i> ThaiHubHosting |</a>

@@ -4,13 +4,14 @@
 <footer class="th-footer hidden-print hidden">
 
 </footer>
-<div class="th-footer-bottom">COPYRIGHT &copy; 2014 ThaiHubHosting.com เว็บโฮสติ้งคุณภาพสูง สำหรับคนไทย | Quality web hosting for Thailand</div>
-</div>
+<div class="th-footer-bottom">COPYRIGHT &copy; 2014</div>
+
+
 <script>
-    jQuery(document).ready(function($) {
-        $('#top').click(function() {
+    jQuery(document).ready(function ($) {
+        $('#top').click(function () {
             $("html, body").animate({scrollTop: 0}, 500);
-        });       
+        });
     });
 </script>
 
