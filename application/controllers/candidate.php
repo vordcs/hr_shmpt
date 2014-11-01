@@ -18,9 +18,9 @@ class candidate extends CI_Controller {
     public function index() {
         $data = array();
         
-        $alert['alert_message'] = "test";
-        $alert['alert_mode'] = "success";
-        $this->session->set_flashdata('alert', $alert);
+//        $alert['alert_message'] = "test";
+//        $alert['alert_mode'] = "warning";
+//        $this->session->set_flashdata('alert', $alert);
  
         $this->m_template->set_Content('candidate/candidates', $data);
         $this->m_template->showTemplate();
