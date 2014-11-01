@@ -34,12 +34,12 @@ class vehicle extends CI_Controller {
 
         $data['strtitle'] = '';
         $vtid = $this->input->post('VTID');
-        $rid = $this->input->post('RCode');
+        $rcode = $this->input->post('RCode');
         $vcode = $this->input->post('VCode');
         $number_plate = $this->input->post('NumberPlate');
 
-        if ($vtid != '0' | $rid != '0' | $vcode != NULL || $number_plate != NULL) {
-            $data['strtitle'] = '<strong>ผลการค้นหา </strong>: ';
+        if ($vtid != '0' | $rcode != '0' | $vcode != NULL || $number_plate != NULL) {
+            $data['strtitle'] = '<strong>ผลการค้นหา : </strong> ';
         }
 
         if ($vtid != '0') {
@@ -49,9 +49,9 @@ class vehicle extends CI_Controller {
             $data['vehicle_types'] = $this->m_vehicle->get_vehicle_types();
         }
 
-        if ($rid != '0') {
-            $data['route'] = $this->m_vehicle->get_route($rid);
-            $data['strtitle'] .= 'เส้นทาง ' . $data['route'][0]['RID'] . ' ' . $data['route'][0]['RSource'] . ' - ' . $data['route'][0]['RDestination'] . '  ';
+        if ($rcode != '0') {
+            $data['route'] = $this->m_vehicle->get_route($rcode, NULL);
+            $data['strtitle'] .= 'เส้นทาง ' . $data['route'][0]['RCode'] . ' ' . $data['route'][0]['RSource'] . ' - ' . $data['route'][0]['RDestination'] . '  ';
         } else {
             $data['route'] = $this->m_vehicle->get_route();
         }
@@ -67,13 +67,14 @@ class vehicle extends CI_Controller {
         }
 
         $data_debug = array(
+//            'RCode' => $this->input->post('RCode'),
 //            'strtitle' => $data['strtitle'],
 //            'vehicle_types' => $data['vehicle_types'],
             'route' => $data['route'],
-            'vehicles' => $data['vehicles'],
+//            'vehicles' => $data['vehicles'],
         );
 
-        $this->m_template->set_Debug($data_debug);
+//        $this->m_template->set_Debug($data_debug);
         $this->m_template->set_Content('vehicle/vehicles', $data);
         $this->m_template->showTemplate();
     }
@@ -118,11 +119,11 @@ class vehicle extends CI_Controller {
 //            $this->m_template->set_Debug($form_data);
             //Update data
             $this->m_vehicle->update_vehicle($form_data);
-            redirect('vehicle');
+            redirect('vehicle/');
         }
 
         $route = $this->m_vehicle->get_route($rcode, $vtid);
-        $route_name = $route[0]['RID'] . ' ' . $route[0]['RSource'] . ' - ' . $route[0]['RDestination'];
+        $route_name = $route[0]['RCode'] . ' ' . $route[0]['RSource'] . ' - ' . $route[0]['RDestination'];
         $type_name = $route[0]['VTDescription'];
 
 //      get detail and sent to load form
@@ -131,8 +132,8 @@ class vehicle extends CI_Controller {
             $data = array(
                 'VID' => $vid,
                 'page_title' => 'แก้ไขข้อมูล ' . $type_name . ' เส้นทาง ' . $route_name,
-                'RID' => $route[0]['RID'],
-                'form' => $this->m_vehicle->set_form_edit($rid, $vtid, $detail[0]),
+                'RCode' => $route[0]['RCode'],
+                'form' => $this->m_vehicle->set_form_edit($rcode, $vtid, $detail[0]),
             );
         } else {
             redirect('vehecle');

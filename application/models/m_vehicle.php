@@ -13,7 +13,7 @@ class m_vehicle extends CI_Model {
         $this->db->join('routes_has_vehicles', 'vehicles.VID = routes_has_vehicles.VID');
 
         if ($vid != NULL) {
-            $this->db->where('VID', $vid);
+            $this->db->where('vehicles.VID', $vid);
         }
         $query = $this->db->get('vehicles');
         return $query->result_array();
@@ -80,15 +80,14 @@ class m_vehicle extends CI_Model {
         $this->db->insert('vehicles', $data['data_vehicle']);
         $v_id = $this->db->insert_id();
 
-
+//      insert vehicles has route
         $data_v_r = array(
             'RCode' => $data['RCode'],
             'VID' => $v_id,
         );
         $this->db->insert('routes_has_vehicles', $data_v_r);
 
-
-//        return $vid;
+        return $v_id;
     }
 
     function update_vehicle($data) {
@@ -110,6 +109,15 @@ class m_vehicle extends CI_Model {
 //        update vehicle data  
         $this->db->where('VID', $vid);
         $this->db->update('vehicles', $data['data_vehicle']);
+
+        //      insert vehicles has route
+        $data_v_r = array(
+            'RCode' => $data['RCode'],
+            'VID' => $vid,
+        );
+        $this->db->where('VID', $vid);
+        $this->db->update('routes_has_vehicles', $data_v_r);
+
 //        return $vid;
     }
 
@@ -220,12 +228,12 @@ class m_vehicle extends CI_Model {
         return $form_add;
     }
 
-    function set_form_edit($rid, $vtid, $data) {
+    function set_form_edit($rcode, $vtid, $data) {
 
         //ข้อมูลเส้นทาง
-        $i_RID[0] = 'เลือกเส้นทาง';
+        $i_RCode[0] = 'เลือกเส้นทาง';
         foreach ($this->get_route() as $value) {
-            $i_RID[$value['RID']] = $value['RID'] . ' ' . $value['RSource'] . ' - ' . $value['RDestination'];
+            $i_RCode[$value['RCode']] = $value['RCode'] . ' ' . $value['RSource'] . ' - ' . $value['RDestination'];
         }
         //    ข้อมูลรถ
         $i_VTID[0] = 'เลือกประเภทรถ';
@@ -292,6 +300,7 @@ class m_vehicle extends CI_Model {
             $i_PolicyType[$value['StringValue']] = $value['StringValue'];
         }
 
+
         $i_PolicyStart = array(
             'name' => 'PolicyStart',
             'value' => (set_value('PolicyStart') == NULL) ? $data ['PolicyStart'] : set_value('PolicyStart'),
@@ -314,22 +323,22 @@ class m_vehicle extends CI_Model {
             'placeholder' => '',
             'class' => 'form-control');
 
-
+        $dropdown = 'class="selecter_3" data-selecter-options = \'{"cover":"true"}\' ';
         $form_edit = array(
-            'form' => form_open_multipart('vehicle/edit/' . $rid . '/' . $vtid . '/' . $data['VID'], array('class' => 'form-horizontal', 'id' => 'form_vehicle')),
-            'RID' => form_dropdown('RID', $i_RID, (set_value('RID') == NULL) ? $data ['RID'] : set_value('RID'), 'class="form-control"'),
-            'VTID' => form_dropdown('VTID', $i_VTID, (set_value('VTID') == NULL) ? $data ['VTID'] : set_value('VTID'), 'class="form-control"'),
+            'form' => form_open_multipart('vehicle/edit/' . $rcode . '/' . $vtid . '/' . $data['VID'], array('class' => 'form-horizontal', 'id' => 'form_vehicle')),
+            'RCode' => form_dropdown('RCode', $i_RCode, (set_value('RCode') == NULL) ? $data ['RCode'] : set_value('RCode'), $dropdown),
+            'VTID' => form_dropdown('VTID', $i_VTID, (set_value('VTID') == NULL) ? $data ['VTID'] : set_value('VTID'), $dropdown),
             'NumberPlate' => form_input($i_NumberPlate),
             'VCode' => form_input($i_VCode),
             'VColor' => form_input($i_VColor),
             'VBrand' => form_input($i_VBrand),
             'VSeat' => form_input($i_VSeat),
-            'VStatus' => form_dropdown('VStatus', $i_VStatus, set_value('VStatus'), 'class="form-control"'),
+            'VStatus' => form_dropdown('VStatus', $i_VStatus, set_value('VStatus'), $dropdown),
             'DateRegistered' => form_input($i_DateRegistered),
             'DateExpire' => form_input($i_DateExpire),
             'VRNote' => form_textarea($i_VRNote),
             'InsuranceCompanyName' => form_input($i_InsuranceCompanyName),
-            'PolicyType' => form_dropdown('PolicyType', $i_PolicyType, (set_value('PolicyType') == NULL) ? $data ['PolicyType'] : set_value('PolicyType'), 'class="form-control"'),
+            'PolicyType' => form_dropdown('PolicyType', $i_PolicyType, (set_value('PolicyType') == NULL) ? $data ['PolicyType'] : set_value('PolicyType'), $dropdown),
             'PolicyStart' => form_input($i_PolicyStart),
             'PolicyEnd' => form_input($i_PolicyEnd),
             'PolicyNumber' => form_input($i_PolicyNumber),
@@ -352,8 +361,7 @@ class m_vehicle extends CI_Model {
         $i_VTID[0] = 'ประเภทรถทั้งหมด';
         foreach ($this->get_vehicle_types() as $value) {
             $i_VTID[$value['VTID']] = $value['VTDescription'];
-        }
-
+        }         
         $i_NumberPlate = array(
             'name' => 'NumberPlate',
             'value' => set_value('NumberPlate'),
@@ -370,7 +378,7 @@ class m_vehicle extends CI_Model {
 
         $form_search = array(
             'form' => form_open('vehicle/', array('class' => 'form-horizontal', 'id' => 'form_search_vehicle')),
-            'RCode' => form_dropdown('RID', $i_RCode, set_value('RID'), $dropdown),
+            'RCode' => form_dropdown('RCode', $i_RCode, set_value('RCode'), $dropdown),
             'VTID' => form_dropdown('VTID', $i_VTID, set_value('VTID'), 'class="selecter_3" '),
             'NumberPlate' => form_input($i_NumberPlate),
             'VCode' => form_input($i_VCode),
@@ -502,11 +510,11 @@ class m_vehicle extends CI_Model {
         );
         $form_data = array(
             'VID' => $vid,
+            'RCode' => $this->input->post('RCode'),
             'data_vehicle' => $data_vehicle,
             'data_registered' => $data_registered,
             'data_act' => $data_act,
         );
-
         return $form_data;
     }
 

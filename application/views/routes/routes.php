@@ -49,7 +49,7 @@
                         <div class="col-md-12 text-center">
                             <button type="submit" class="btn btn-default">&nbsp;&nbsp;ค้นหา&nbsp;&nbsp;</button>
                         </div>
-                        </form>          
+                        <?php echo $form_close(); ?>        
                     </div>
                 </div>
             </div>

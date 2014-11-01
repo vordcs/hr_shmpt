@@ -53,33 +53,36 @@ function DateDiff($strDate1, $strDate2) {
                 </div>
                 <div class="panel-body">
                     <?php echo $form['form']; ?>
-                    <div class="row">
-                        <div class="col-sm-1"></div>
-                        <div class="col-sm-4">
-                            <label class="control-label" for="">ประเภทรถ</label>
+                    <div class="col-md-12"> 
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label class="control-label">เส้นทาง</label>
+                                <?php echo $form['RCode']; ?> 
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="control-label">ประเภทรถ</label>
                             <?php echo $form['VTID']; ?>
                         </div>
-                        <div class="col-sm-6">
-                            <label class="control-label" for="">เส้นทาง</label>
-                            <?php echo $form['RCode']; ?>
+                        <div class="col-md-2">                            
+                            <label class="control-label" >เบอร์รถ</label>
+                            <?php echo $form['VCode']; ?>                            
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-sm-1"></div>
-                        <div class="col-sm-5">
-                            <label class="control-label" for="">เบอร์รถ</label>
-                            <?php echo $form['VCode']; ?>
-                        </div>              
-                        <div class="col-sm-5">
-                            <label class="control-label" for="">ทะเบียนรถ</label>
-                            <?php echo $form['NumberPlate']; ?>
-                        </div>              
-                        <div class="col-sm-1"></div>
-                    </div>
-                    <br>
-                    <div class="row text-center">
-                        <button type="submit" class="btn btn-default">&nbsp;&nbsp;ค้นหา&nbsp;&nbsp;</button>
-                    </div>
+                        <div class="col-md-2">                                
+                            <div class="form-group">
+                                <label class="control-label" for="">ทะเบียนรถ</label>
+                                <?php echo $form['NumberPlate']; ?>
+                            </div>
+                        </div> 
+                        <div class="col-md-3">                                
+                            <label class="control-label" for="">สถานะรถ</label>
+                            <input type="text" class="form-control" placeholder="สถานะรถ">
+                        </div> 
+                        <br>
+                        <div class="col-md-12 text-center">
+                            <button type="submit" class="btn btn-default">&nbsp;&nbsp;ค้นหา&nbsp;&nbsp;</button>
+                        </div>
+                    </div>                  
                     <?php echo form_close(); ?>                    
                 </div>
             </div>
