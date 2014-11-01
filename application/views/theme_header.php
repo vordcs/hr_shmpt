@@ -51,7 +51,7 @@
                     $(".pace-progress").css("margin-top", "58px");
                 } else {
                     $('#top-nav').fadeIn();
-                    $(".pace-progress").css("margin-top", "118px");
+                    $(".pace-progress").css("margin-top", "91px");
                 }
                 if ($(this).scrollTop() > $(window).height() / 2) {
                     $('#scroll-top').removeClass('hidden');
