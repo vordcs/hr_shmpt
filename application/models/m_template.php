@@ -12,7 +12,7 @@ Class m_template extends CI_Model {
     private $debud_data = NULL;
     private $lang_value = array('theme');
     private $version = '1.0';
-
+    
     function set_Debug($data) {
         $this->debud_data = $data;
     }
@@ -28,6 +28,10 @@ Class m_template extends CI_Model {
 
     function set_Permission($mode) {
         $this->permission = $mode;
+    }
+    
+    function check_Alert(){
+        return $this->session->flashdata('alert');
     }
 
     function check_permission() {
@@ -73,6 +77,7 @@ Class m_template extends CI_Model {
 
         $data['title'] = $this->title;
         $data['debug'] = $this->debud_data;
+        $data['alert'] = $this->check_Alert();
 
         $this->load->view('theme_header', $data);
         if ($this->view_name != NULL) {

@@ -59,6 +59,9 @@
                     $('#scroll-top').addClass('hidden');
                 }
             });
+            jQuery(window).load(function(){
+                $('.alert').delay(3000).fadeOut();
+            });  
         </script>
     </head>
     <body>
@@ -105,8 +108,12 @@
         }
 
         if (isset($alert) && $alert != NULL) {
+            if($alert['alert_mode']=='success')
+                echo '<div class="container alert alert-success" style="margin-top: 60px;">';
             echo '<div class="container" style="margin-top: 60px;">';
             echo $alert;
             echo '</div>';
         }
         ?>
+
+        <div class="container alert alert-success" style="margin-top: 60px;"><?=$alert['alert_message']?>sdfdsfdsfdsfdsfdsfdsfsdf</div>
