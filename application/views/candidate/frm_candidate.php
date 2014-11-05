@@ -2,7 +2,7 @@
     jQuery(document).ready(function ($) {
         $("#mainmenu ul li").removeAttr('class');
         $("#btnCandidate").addClass("active");
-        $("#btn_save").click(function(){
+        $("#btn_save").click(function () {
             $("#frm_main").submit();
         });
     });
@@ -94,7 +94,7 @@
                 <div class="panel-body">
 
                     <div class="form-group" draggable="true">
-                        <div class="col-sm-5 has-error">
+                        <div class="col-sm-5">
                             <label for="" class="col-sm-5 control-label">วัน เดือน ปี เกิด</label>
                             <div class="col-sm-7">
                                 <input type="text" class="form-control" id="inputEmail3" placeholder="">
@@ -215,20 +215,11 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-1 control-label">โทรศัพท์</label>
-                        <div class="col-sm-3">
-                            <input type="text" class="form-control" placeholder="">
-                        </div>
                         <div class="has-error">
                             <label class="col-sm-1 control-label">มือถือ</label>
                             <div class="col-sm-3">
                                 <input type="text" class="form-control" placeholder="">
                             </div> 
-                        </div>
-
-                        <label class="col-sm-1 control-label">อีเมล์</label>
-                        <div class="col-sm-3">
-                            <input type="text" class="form-control" placeholder="">
                         </div>
                     </div>
                     <div class="form-group">
