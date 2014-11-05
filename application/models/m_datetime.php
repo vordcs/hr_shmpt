@@ -54,7 +54,20 @@ Class m_datetime extends CI_Model {
             return '-';
         } else {
             $str = explode('-', $strDate);
-            $strYear = $str[0];
+            $strYear = trim($str[0]) + 543;
+            $strMonthThai = $this->month_th[(int) $str[1]];
+            $strDay = $str[2];
+            return "$strDay $strMonthThai $strYear";
+        }
+    }
+
+    public function DateThaiToDay() {
+        $strDate = $this->getDateToday();
+        if ($strDate == NULL) {
+            return '-';
+        } else {
+            $str = explode('-', $strDate);
+            $strYear = trim($str[0]) + 543;
             $strMonthThai = $this->month_th[(int) $str[1]];
             $strDay = $str[2];
             return "$strDay $strMonthThai $strYear";
