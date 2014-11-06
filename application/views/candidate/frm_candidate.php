@@ -41,18 +41,14 @@
             <div class="form-group">
                 <label for="inputEmail3" class="col-sm-2 control-label">ตำแหน่ง</label>
                 <div class="col-sm-5">
-                    <select class="selecter_1">
-                        <option>งานที่ 1</option>
-                        <option>งานที่ 2</option>
-                        <option>งานที่ 3</option>
-                    </select>
+                    <?= $form_input['PID'] ?>
                 </div>
             </div>
             <div class="form-group">
                 <label class="col-sm-2 control-label" contenteditable="true">เงินเดือนที่ต้องการ</label>
                 <div class="col-sm-5">
                     <?= $form_input['ExpectedPermanantSalary'] ?>
-                </div>
+                </div>                
                 <div class="col-sm-3">
                     บาท/เดือน
                 </div>
@@ -97,20 +93,20 @@
                         <div class="col-sm-5">
                             <label for="" class="col-sm-5 control-label">วัน เดือน ปี เกิด</label>
                             <div class="col-sm-7">
-                                <input type="text" class="form-control" id="inputEmail3" placeholder="">
+                                <?= $form_input['BirthDate'] ?>
                             </div>
                         </div> 
                         <div class="col-sm-2">
-                            <label for="" class="col-sm-3 control-label">อายุ</label>
-                            <div class="col-sm-6">
-                                <input type="text" class="form-control" id="inputEmail3" placeholder="">                                                
+                            <label for="" class="col-sm-2 control-label">อายุ</label>
+                            <div class="col-sm-7">
+                                <?= $form_input['Age'] ?>
                             </div>
                             <label class="col-sm-2 control-label">ปี</label>
                         </div>
                         <div class="col-sm-5">
                             <label for="" class="col-sm-3 control-label">ชื่อเล่น</label>
                             <div class="col-sm-4">
-                                <input type="text" class="form-control" id="inputEmail3" placeholder="">                                                
+                                <?= $form_input['NickName'] ?>
                             </div>                                           
                         </div>
                     </div> 
@@ -118,19 +114,19 @@
                         <div class="col-sm-4">
                             <label class="col-sm-4 control-label">เชื้อชาติ</label>
                             <div class="col-sm-8">
-                                <input type="text" class="form-control" placeholder="">
+                                <?= $form_input['Race'] ?>
                             </div>
                         </div>
                         <div class="col-sm-4">
                             <label class="col-sm-4 control-label">สัญชาติ</label>
                             <div class="col-sm-8">
-                                <input type="text" class="form-control" placeholder="">
+                                <?= $form_input['Nationality'] ?>
                             </div>
                         </div>
                         <div class="col-sm-4">
                             <label class="col-sm-4 control-label">ศาสนา</label>
                             <div class="col-sm-8">
-                                <input type="text" class="form-control" placeholder="">
+                                <?= $form_input['Religion'] ?>
                             </div>
                         </div> 
                     </div>
@@ -139,15 +135,18 @@
                         <div class="col-sm-3">
                             <label class="col-sm-4 control-label">เพศ</label>
                             <div class="col-sm-8 radio">
-                                <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3">ชาย
-                                <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3">หญิง                                   
+                                <?php
+                                foreach ($form_input['Sex'] as $row) {
+                                    echo $row;
+                                }
+                                ?>                          
                             </div>
                         </div>
                         <div class="col-sm-4">
                             <label class="col-sm-4 control-label">น้ำหนัก</label>
                             <div class="col-sm-8">
                                 <div class="input-group">                                                        
-                                    <input type="text" class="form-control" placeholder="">
+                                    <?= $form_input['Weight'] ?>
                                     <div class="input-group-addon">กก.</div>
                                 </div>
                             </div>
@@ -156,69 +155,71 @@
                             <label class="col-sm-4 control-label">ส่วนสูง</label>
                             <div class="col-sm-8">
                                 <div class="input-group">                                                        
-                                    <input type="text" class="form-control" placeholder="">
+                                    <?= $form_input['Height'] ?>
                                     <div class="input-group-addon">ซม.</div>
                                 </div>                                                    
                             </div>
                         </div> 
                     </div>
-                    <div class="form-group" draggable="true">
-                        <div class="has-error">
-                            <label for="inputEmail3" class="col-sm-2 control-label">บ้านเลขที่</label>
-                            <div class="col-sm-2">
-                                <input type="text" class="form-control" id="inputEmail3" placeholder="บ้านเลขที่">
+                    <div class="form-group">
+                        <div class="col-sm-4">
+                            <label class="col-sm-4 control-label">บ้านเลขที่</label>
+                            <div class="col-sm-8">
+                                <?= $form_input['CurrentAddress'] ?>
                             </div>  
                         </div>
-                        <div class="">
-                            <label for="inputEmail3" class="col-sm-1 control-label">หมู่ที่</label>
-                            <div class="col-sm-1">
-                                <input type="email" class="form-control" id="inputEmail3" placeholder="หมู่ที่">
+                        <div class="col-sm-2">
+                            <label class="col-sm-6 control-label">หมู่ที่</label>
+                            <div class="col-sm-6">
+                                <?= $form_input['CurrentMu'] ?>
                             </div>  
-                        </div>                                        
-                        <label class="col-sm-2 control-label">ถนน</label>
-                        <div class="col-sm-4">
-                            <input type="text" class="form-control" placeholder="บ้าน">
-                        </div> 
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="col-sm-2 control-label">ถนน</label>
+                            <div class="col-sm-8">
+                                <?= $form_input['CurrentStreet'] ?>
+                            </div>
+                        </div>
                     </div>     
                     <div class="form-group">
-                        <div class="has-error">
-                            <label class="col-sm-2 control-label">หมู่บ้าน</label>
-                            <div class="col-sm-4">
-                                <input type="text" class="form-control" placeholder="บ้าน">
+                        <div class="col-sm-4">
+                            <label class="col-sm-4 control-label">หมู่บ้าน</label>
+                            <div class="col-sm-8">
+                                <?= $form_input['CurrentVillage'] ?>
                             </div>
                         </div>
-                        <div class="has-error">
+                        <div class="col-sm-4">
                             <label class="col-sm-2 control-label">ตำบล</label>
-                            <div class="col-sm-4">
-                                <input type="text" class="form-control" placeholder="">
+                            <div class="col-sm-8">
+                                <?= $form_input['CurrentSubDistrict'] ?>
                             </div>
                         </div>
                     </div>
                     <div class="form-group">
-                        <div class="has-error">
-                            <label class="col-sm-1 control-label">อำเภอ</label>
-                            <div class="col-sm-3">
-                                <input type="text" class="form-control" placeholder="">
+                        <div class="col-sm-4">
+                            <label class="col-sm-4 control-label">อำเภอ</label>
+                            <div class="col-sm-8">
+                                <?= $form_input['CurrentDistrict'] ?>
                             </div>
                         </div>
-                        <div class="has-error">
-                            <label class="col-sm-1 control-label">จังหวัด</label>
-                            <div class="col-sm-2">
-                                <input type="text" class="form-control" placeholder="">
+                        <div class="col-sm-4">
+                            <label class="col-sm-2 control-label">จังหวัด</label>
+                            <div class="col-sm-8">
+                                <?= $form_input['CurrentProvince'] ?>
                             </div> 
                         </div>
-                        <div class="has-error">
-                            <label class="col-sm-2 control-label">รหัสไปรษณีย์</label>
-                            <div class="col-sm-3">
-                                <input type="text" class="form-control" placeholder="">
+                        <div class="col-sm-4">
+                            <label class="col-sm-4 control-label">รหัสไปรษณีย์</label>
+                            <div class="col-sm-6">
+                                <?= $form_input['CurrentZipCode'] ?>
                             </div> 
                         </div>
                     </div>
                     <div class="form-group">
-                        <div class="has-error">
-                            <label class="col-sm-1 control-label">มือถือ</label>
-                            <div class="col-sm-3">
-                                <input type="text" class="form-control" placeholder="">
+                        <div class="col-sm-4">
+                            <label class="col-sm-4 control-label">มือถือ</label>
+                            <div class="col-sm-8">
+                                <?= $form_input['MobilePhone'] ?>
                             </div> 
                         </div>
                     </div>
@@ -226,18 +227,18 @@
                         <label class="col-sm-2 control-label">ที่พักอาศัย</label>
                         <div class="col-md-10">
                             <div class="row radio">
-                                <div class="col-md-3">
-                                    <input type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1"> อาศัยกับครอบครัว
-                                </div>
-                                <div class="col-md-2">
-                                    <input type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2"> บ้านตัวเอง
-                                </div>
-                                <div class="col-md-2">
-                                    <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3"> บ้านเช่า
-                                </div>
-                                <div class="col-md-2">
-                                    <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3"> หอพัก
-                                </div>
+                                <?php
+                                $i = 0;
+                                foreach ($form_input['Residential'] as $row) {
+                                    if ($i == 0)
+                                        echo '<div class="col-sm-3">';
+                                    else
+                                        echo '<div class="col-sm-2">';
+                                    echo $row;
+                                    echo '</div>';
+                                    $i++;
+                                }
+                                ?>
                             </div>
                         </div>
                     </div>
@@ -245,15 +246,18 @@
                         <label class="col-sm-2 control-label">ภาวะทางทหาร</label>
                         <div class="col-sm-10">
                             <div class="row radio">
-                                <div class="col-md-2">                                  
-                                    <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3"> ได้รับการยกเว้น
-                                </div>
-                                <div class="col-md-3">
-                                    <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3"> ปลดเป็นทหารกองหนุ่น
-                                </div>
-                                <div class="col-md-3">
-                                    <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3"> ยังไม่ได้รับการเกณฑ์
-                                </div> 
+                                <?php
+                                $i = 0;
+                                foreach ($form_input['MilitaryServiceStatus'] as $row) {
+                                    if ($i == 0)
+                                        echo '<div class="col-sm-2">';
+                                    else
+                                        echo '<div class="col-sm-3">';
+                                    echo $row;
+                                    echo '</div>';
+                                    $i++;
+                                }
+                                ?>                                
                             </div>
                         </div>
                     </div>
@@ -262,18 +266,13 @@
                         <label class="col-sm-2 control-label">สถานภาพ</label>
                         <div class="col-sm-10">
                             <div class="row radio">
-                                <div class="col-md-2">
-                                    <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3"> โสด
-                                </div> 
-                                <div class="col-md-2">
-                                    <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3"> แต่งงานเเล้ว
-                                </div> 
-                                <div class="col-md-2">
-                                    <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3"> หม้าย
-                                </div> 
-                                <div class="col-md-2">
-                                    <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3"> แยกกันอยู่
-                                </div> 
+                                <?php
+                                foreach ($form_input['MaritalStatus'] as $row) {
+                                    echo '<div class="col-sm-2">';
+                                    echo $row;
+                                    echo '</div>';
+                                }
+                                ?>
                             </div>
                         </div>
                     </div>
@@ -281,48 +280,46 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">ชื่อคู่สมรส</label>
                             <div class="col-sm-2">
-                                <select class="selecter_1">
-                                    <option>นาย</option>
-                                    <option>นาง</option>
-                                    <option>นางสาว</option>
-                                </select>
+                                <?= $form_input['SpouseTitle'] ?>           
                             </div>
                             <div class="col-sm-4">
-                                <input type="email" class="form-control" id="inputEmail3" placeholder="ชื่อ">
+                                <?= $form_input['SpouseFirstName'] ?>
                             </div>
                             <label class="col-sm-1 control-label">นามสกุล</label>
                             <div class="col-sm-3">
-                                <input type="text" class="form-control" placeholder="">
+                                <?= $form_input['SpouseLastName'] ?>
                             </div>
                         </div>
                         <div class="form-group">
-                            <div class="col-sm-1"></div>
-                            <div class="">
-                                <label class="col-sm-1 control-label">อายุ</label>
-                                <div class="col-sm-1">
-                                    <input type="text" class="form-control" placeholder="">
+                            <div class="col-sm-4">
+                                <label class="col-sm-6 control-label">อายุ</label>
+                                <div class="col-sm-3">
+                                    <?= $form_input['SpouseAge'] ?>
                                 </div>
                             </div>
-                            <div class="">
-                                <label class="col-sm-1 control-label">อาชีพ</label>
-                                <div class="col-sm-4">
-                                    <input type="text" class="form-control" placeholder="">
+                            <div class="col-sm-4">
+                                <label class="col-sm-2 control-label">อาชีพ</label>
+                                <div class="col-sm-8">
+                                    <?= $form_input['SpouseOccupation'] ?>
                                 </div>
                             </div>
-                            <div class="radio">
-                                <label class="radio-inline">
-                                    <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3"> ยังมีชีวิต
-                                </label> 
-                                <label class="radio-inline">
-                                    <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3"> ถึงแก่กรรม
-                                </label> 
+                            <div class="col-sm-4">
+                                <div class="radio">
+                                    <?php
+                                    foreach ($form_input['SpouseIsAlive'] as $row) {
+                                        echo '<div class="col-sm-4">';
+                                        echo $row;
+                                        echo '</div>';
+                                    }
+                                    ?>                                    
+                                </div>
                             </div>
                         </div> 
                         <div class="form-group">
                             <label class="col-sm-2 control-label">จำนวนบุตร</label>
-                            <div class="col-sm-2">
-                                <input type="text" class="form-control" placeholder="">
-                            </div
+                            <div class="col-sm-1">
+                                <?= $form_input['NumberSon'] ?>
+                            </div>
                             <div class="col-sm-2">
                                 คน
                             </div>

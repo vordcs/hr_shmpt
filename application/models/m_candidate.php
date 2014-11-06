@@ -10,7 +10,17 @@ class m_candidate extends CI_Model {
         return $query->result_array();
     }
 
+    function check_employee_positions() {
+        $query = $this->db->get('employee_positions');
+        return $query->result_array();
+    }
+
     function set_form() {
+        $temp = $this->m_candidate->check_employee_positions();
+        $i_PID = array();
+        foreach ($temp as $row) {
+            $i_PID[$row['PID']] = trim($row['PositionName']);
+        }
         $temp = $this->m_candidate->check_miscellaneous('title');
         $i_Title = array();
         foreach ($temp as $row) {
@@ -51,6 +61,8 @@ class m_candidate extends CI_Model {
             'class' => 'form-control');
         $i_Age = array(
             'name' => 'Age',
+            'type' => 'number',
+            'min' => 18,
             'value' => set_value('Age'),
             'class' => 'form-control');
         $i_NickName = array(
@@ -83,15 +95,11 @@ class m_candidate extends CI_Model {
         }
         $i_Weight = array(
             'name' => 'Weight',
-            'type' => 'number',
-            'min' => 0,
             'value' => set_value('Weight'),
             'class' => 'form-control');
         $i_Height = array(
             'name' => 'Height',
             'value' => set_value('Height'),
-            'type' => 'number',
-            'min' => 0,
             'class' => 'form-control');
         $i_CurrentAddress = array(
             'name' => 'CurrentAddress',
@@ -165,15 +173,71 @@ class m_candidate extends CI_Model {
                 $temp2['checked'] = TRUE;
             $i_MaritalStatus[trim($row['StringValue'])] = form_checkbox($temp2) . $temp2['value'];
         }
-        $i_pass = array(
-            'name' => 'pass',
-            'value' => set_value('pass'),
-            'placeholder' => 'Password',
+        $temp = $this->m_candidate->check_miscellaneous('title');
+        $i_SpouseTitle = array();
+        foreach ($temp as $row) {
+            $i_SpouseTitle[trim($row['StringValue'])] = trim($row['StringValue']);
+        }
+        $i_SpouseFirstName = array(
+            'name' => 'SpouseFirstName',
+            'value' => set_value('SpouseFirstName'),
             'class' => 'form-control');
-        $i_pass = array(
-            'name' => 'pass',
-            'value' => set_value('pass'),
-            'placeholder' => 'Password',
+        $i_SpouseLastName = array(
+            'name' => 'SpouseLastName',
+            'value' => set_value('SpouseLastName'),
+            'class' => 'form-control');
+        $i_SpouseAge = array(
+            'name' => 'SpouseAge',
+            'type' => 'number',
+            'min' => 18,
+            'value' => set_value('SpouseAge'),
+            'class' => 'form-control');
+        $i_SpouseOccupation = array(
+            'name' => 'SpouseOccupation',
+            'value' => set_value('SpouseOccupation'),
+            'class' => 'form-control');
+        $temp = array(
+            'name' => 'SpouseIsAlive',
+            'type' => 'radio',
+            'value' => 0
+        );
+        if (set_value('SpouseIsAlive') == 0)
+            $temp['checked'] = TRUE;
+        $i_SpouseIsAlive[0] = form_checkbox($temp) . 'ยังมีชีวิต';
+        $temp = array(
+            'name' => 'SpouseIsAlive',
+            'type' => 'radio',
+            'value' => 0
+        );
+        if (set_value('SpouseIsAlive') == 1)
+            $temp['checked'] = TRUE;
+        $temp['value'] = 1;
+        $i_SpouseIsAlive[1] = form_checkbox($temp) . 'ถึงแก่กรรม';
+        $i_NumberSon = array(
+            'name' => 'NumberSon',
+            'type' => 'number',
+            'min' => 0,
+            'value' => set_value('NumberSon'),
+            'class' => 'form-control');
+        $i_SonTitle = array(
+            'name' => 'SonTitle',
+            'value' => set_value('SonTitle'),
+            'class' => 'form-control');
+        $i_SonFirstName = array(
+            'name' => 'SonFirstName',
+            'value' => set_value('SonFirstName'),
+            'class' => 'form-control');
+        $i_SonLastName = array(
+            'name' => 'SonLastName',
+            'value' => set_value('SonLastName'),
+            'class' => 'form-control');
+        $i_SonAge = array(
+            'name' => 'SonAge',
+            'value' => set_value('SonAge'),
+            'class' => 'form-control');
+        $i_SonOccupation = array(
+            'name' => 'SonOccupation',
+            'value' => set_value('SonOccupation'),
             'class' => 'form-control');
 
         // Family information
@@ -324,12 +388,47 @@ class m_candidate extends CI_Model {
             'class' => 'form-control');
 
         $data = array(
+            'PID' => form_dropdown('PID', $i_PID, set_value('PID'), "class=\"selecter_1\""),
             'Title' => form_dropdown('Title', $i_Title, set_value('Title'), "class=\"selecter_1\""),
             'ExpectedPermanantSalary' => form_input($i_ExpectedPermanantSalary),
             'FirstName' => form_input($i_FirstName),
             'LastName' => form_input($i_LastName),
             'PersonalID' => form_input($i_PersonalID),
             'AvaliableStartDate' => form_input($i_AvaliableStartDate),
+            // Person information
+            'BirthDate' => form_input($i_BirthDate),
+            'Age' => form_input($i_Age),
+            'NickName' => form_input($i_NickName),
+            'Race' => form_input($i_Race),
+            'Nationality' => form_input($i_Nationality),
+            'Religion' => form_input($i_Religion),
+            'Sex' => $i_Sex,
+            'Weight' => form_input($i_Weight),
+            'Height' => form_input($i_Height),
+            'CurrentAddress' => form_input($i_CurrentAddress),
+            'CurrentMu' => form_input($i_CurrentMu),
+            'CurrentStreet' => form_input($i_CurrentStreet),
+            'CurrentVillage' => form_input($i_CurrentVillage),
+            'CurrentSubDistrict' => form_input($i_CurrentSubDistrict),
+            'CurrentDistrict' => form_input($i_CurrentDistrict),
+            'CurrentProvince' => form_input($i_CurrentProvince),
+            'CurrentZipCode' => form_input($i_CurrentZipCode),
+            'MobilePhone' => form_input($i_MobilePhone),
+            'Residential' => $i_Residential,
+            'MilitaryServiceStatus' => $i_MilitaryServiceStatus,
+            'MaritalStatus' => $i_MaritalStatus,
+            'SpouseTitle' => form_dropdown('SpouseTitle', $i_SpouseTitle, set_value('SpouseTitle'), "class=\"selecter_1\""),
+            'SpouseFirstName' => form_input($i_SpouseFirstName),
+            'SpouseLastName' => form_input($i_SpouseLastName),
+            'SpouseAge' => form_input($i_SpouseAge),
+            'SpouseOccupation' => form_input($i_SpouseOccupation),
+            'SpouseIsAlive' => $i_SpouseIsAlive,
+            'NumberSon' => form_input($i_NumberSon),
+            'SonTitle' => form_input($i_SonTitle),
+            'SonFirstName' => form_input($i_SonFirstName),
+            'SonLastName' => form_input($i_SonLastName),
+            'SonAge' => form_input($i_SonAge),
+            'SonOccupation' => form_input($i_SonOccupation),
         );
         return $data;
     }
