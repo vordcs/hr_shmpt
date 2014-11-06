@@ -2,18 +2,20 @@
     jQuery(document).ready(function ($) {
         $("#mainmenu ul li").removeAttr('class');
         $("#btnRoute").addClass("active");
+
+        $(".th-footer-bottom").addClass("hidden");
     });
 </script>
 
 <div class="container">
-    <br>
-    <div class="row" style="padding-top: 80px;padding-bottom: 150px;min-height: 750px;">
-        <div class="col-md-12">
-            <h3 style="padding-left: 100px;">
-                <?php echo $page_title; ?>
-                <small></small>
-            </h3>
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <div class="page-header">
+                <h3><?php echo $page_title; ?></h3>
+            </div>
         </div>
+    </div>
+    <div class="row">        
         <div class="col-md-12" >
             <div class="panel panel-default">              
                 <div class="panel-body">                                     
@@ -56,7 +58,7 @@
                     </div>
                     <br>
                     <div class="form-group">                        
-                        <div class="col-sm-offset-3 col-sm-9">
+                        <div class="col-sm-offset-3 col-sm-10">
                             <?php
                             $cancle = array(
                                 'type' => "button",

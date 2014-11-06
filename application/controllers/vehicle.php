@@ -174,7 +174,8 @@ class vehicle extends CI_Controller {
             return TRUE;
         }
     }
-
+    
+//    check dropdown
     public function check_dropdown($str) {
 //        $this->input->post('PolicyType')
         if ($str === '0') {

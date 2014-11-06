@@ -7,6 +7,7 @@ body {
 }
 /* Custom page CSS
 -------------------------------------------------- */
+
 table{
     width: 100%;
 }
@@ -22,5 +23,14 @@ td{
     vertical-align: middle ! important;
 }
 
-
+.centered {
+    position: fixed;
+    min-width: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin: 10px auto 0 auto;
+    padding-top: 15px;
+    background-color: #00ba8b;
+}
 
