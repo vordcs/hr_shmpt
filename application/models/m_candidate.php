@@ -166,6 +166,7 @@ class m_candidate extends CI_Model {
         foreach ($temp as $row) {
             $temp2 = array(
                 'name' => 'MaritalStatus',
+                'id' => 'MaritalStatus',
                 'type' => 'radio',
                 'value' => trim($row['StringValue'])
             );
@@ -240,151 +241,159 @@ class m_candidate extends CI_Model {
             'value' => set_value('SonOccupation'),
             'class' => 'form-control');
 
-        // Family information
-        $i_pass = array(
-            'name' => 'pass',
-            'value' => set_value('pass'),
-            'placeholder' => 'Password',
+        // Parent information
+        $temp = $this->m_candidate->check_miscellaneous('title');
+        $i_FatherTitle = array();
+        foreach ($temp as $row) {
+            $i_FatherTitle[trim($row['StringValue'])] = trim($row['StringValue']);
+        }
+        $i_FatherFirstName = array(
+            'name' => 'FatherFirstName',
+            'value' => set_value('FatherFirstName'),
             'class' => 'form-control');
-        $i_pass = array(
-            'name' => 'pass',
-            'value' => set_value('pass'),
-            'placeholder' => 'Password',
+        $i_FatherLastName = array(
+            'name' => 'FatherLastName',
+            'value' => set_value('FatherLastName'),
             'class' => 'form-control');
-        $i_pass = array(
-            'name' => 'pass',
-            'value' => set_value('pass'),
-            'placeholder' => 'Password',
+        $i_FatherAge = array(
+            'name' => 'FatherAge',
+            'type' => 'number',
+            'min' => 18,
+            'value' => set_value('FatherAge'),
             'class' => 'form-control');
-        $i_pass = array(
-            'name' => 'pass',
-            'value' => set_value('pass'),
-            'placeholder' => 'Password',
+        $i_FatherOccupation = array(
+            'name' => 'FatherOccupation',
+            'value' => set_value('FatherOccupation'),
             'class' => 'form-control');
-        $i_pass = array(
-            'name' => 'pass',
-            'value' => set_value('pass'),
-            'placeholder' => 'Password',
+        $temp = array(
+            'name' => 'FatherIsAlive',
+            'type' => 'radio',
+            'value' => 0
+        );
+        if (set_value('FatherIsAlive') == 0)
+            $temp['checked'] = TRUE;
+        $i_FatherIsAlive[0] = form_checkbox($temp) . 'ยังมีชีวิต';
+        $temp = array(
+            'name' => 'FatherIsAlive',
+            'type' => 'radio',
+            'value' => 0
+        );
+        if (set_value('FatherIsAlive') == 1)
+            $temp['checked'] = TRUE;
+        $temp['value'] = 1;
+        $i_FatherIsAlive[1] = form_checkbox($temp) . 'ถึงแก่กรรม';
+
+        $temp = $this->m_candidate->check_miscellaneous('title');
+        $i_MotherTitle = array();
+        foreach ($temp as $row) {
+            $i_MotherTitle[trim($row['StringValue'])] = trim($row['StringValue']);
+        }
+        $i_MotherFirstName = array(
+            'name' => 'MotherFirstName',
+            'value' => set_value('MotherFirstName'),
             'class' => 'form-control');
-        $i_pass = array(
-            'name' => 'pass',
-            'value' => set_value('pass'),
-            'placeholder' => 'Password',
+        $i_MotherLastName = array(
+            'name' => 'MotherLastName',
+            'value' => set_value('MotherLastName'),
             'class' => 'form-control');
-        $i_pass = array(
-            'name' => 'pass',
-            'value' => set_value('pass'),
-            'placeholder' => 'Password',
+        $i_MotherAge = array(
+            'name' => 'MotherAge',
+            'type' => 'number',
+            'min' => 18,
+            'value' => set_value('MotherAge'),
             'class' => 'form-control');
-        $i_pass = array(
-            'name' => 'pass',
-            'value' => set_value('pass'),
-            'placeholder' => 'Password',
+        $i_MotherOccupation = array(
+            'name' => 'MotherOccupation',
+            'value' => set_value('MotherOccupation'),
             'class' => 'form-control');
-        $i_pass = array(
-            'name' => 'pass',
-            'value' => set_value('pass'),
-            'placeholder' => 'Password',
-            'class' => 'form-control');
-        $i_pass = array(
-            'name' => 'pass',
-            'value' => set_value('pass'),
-            'placeholder' => 'Password',
-            'class' => 'form-control');
-        $i_pass = array(
-            'name' => 'pass',
-            'value' => set_value('pass'),
-            'placeholder' => 'Password',
-            'class' => 'form-control');
-        $i_pass = array(
-            'name' => 'pass',
-            'value' => set_value('pass'),
-            'placeholder' => 'Password',
-            'class' => 'form-control');
+        $temp = array(
+            'name' => 'MotherIsAlive',
+            'type' => 'radio',
+            'value' => 0
+        );
+        if (set_value('MotherIsAlive') == 0)
+            $temp['checked'] = TRUE;
+        $i_MotherIsAlive[0] = form_checkbox($temp) . 'ยังมีชีวิต';
+        $temp = array(
+            'name' => 'MotherIsAlive',
+            'type' => 'radio',
+            'value' => 0
+        );
+        if (set_value('MotherIsAlive') == 1)
+            $temp['checked'] = TRUE;
+        $temp['value'] = 1;
+        $i_MotherIsAlive[1] = form_checkbox($temp) . 'ถึงแก่กรรม';
 
         // Education information
-        $i_pass = array(
-            'name' => 'pass',
-            'value' => set_value('pass'),
-            'placeholder' => 'Password',
+        $i_InstitutionName = array(
+            'name' => 'InstitutionName',
+            'value' => set_value('InstitutionName'),
             'class' => 'form-control');
-        $i_pass = array(
-            'name' => 'pass',
-            'value' => set_value('pass'),
-            'placeholder' => 'Password',
+        $i_EDMajor = array(
+            'name' => 'EDMajor',
+            'value' => set_value('EDMajor'),
             'class' => 'form-control');
-        $i_pass = array(
-            'name' => 'pass',
-            'value' => set_value('pass'),
-            'placeholder' => 'Password',
+        $i_EDDateFrom = array(
+            'name' => 'EDDateFrom',
+            'value' => set_value('EDDateFrom'),
             'class' => 'form-control');
-        $i_pass = array(
-            'name' => 'pass',
-            'value' => set_value('pass'),
-            'placeholder' => 'Password',
+        $i_EDDateTo = array(
+            'name' => 'EDDateTo',
+            'value' => set_value('EDDateTo'),
             'class' => 'form-control');
 
         // Experience information
-        $i_pass = array(
-            'name' => 'DateForm',
-            'value' => set_value('DateForm'),
+        $i_ExCompanyName = array(
+            'name' => 'ExCompanyName',
+            'value' => set_value('ExCompanyName'),
             'class' => 'form-control');
-        $i_pass = array(
-            'name' => 'pass',
-            'value' => set_value('pass'),
-            'placeholder' => 'Password',
+        $i_ExDateForm = array(
+            'name' => 'ExDateForm',
+            'value' => set_value('ExDateForm'),
             'class' => 'form-control');
-        $i_pass = array(
-            'name' => 'pass',
-            'value' => set_value('pass'),
-            'placeholder' => 'Password',
+        $i_ExDateTo = array(
+            'name' => 'ExDateTo',
+            'value' => set_value('ExDateTo'),
             'class' => 'form-control');
-        $i_pass = array(
-            'name' => 'pass',
-            'value' => set_value('pass'),
-            'placeholder' => 'Password',
+        $i_ExPositionName = array(
+            'name' => 'ExPositionName',
+            'value' => set_value('ExPositionName'),
             'class' => 'form-control');
-        $i_pass = array(
-            'name' => 'pass',
-            'value' => set_value('pass'),
-            'placeholder' => 'Password',
+        $i_ExSaraly = array(
+            'name' => 'ExSaraly',
+            'value' => set_value('ExSaraly'),
             'class' => 'form-control');
-        $i_pass = array(
-            'name' => 'pass',
-            'value' => set_value('pass'),
-            'placeholder' => 'Password',
+        $i_ReasonOfResign = array(
+            'name' => 'ReasonOfResign',
+            'value' => set_value('ReasonOfResign'),
             'class' => 'form-control');
 
         // Emergency_contact
-        $i_pass = array(
-            'name' => 'pass',
-            'value' => set_value('pass'),
-            'placeholder' => 'Password',
+        $temp = $this->m_candidate->check_miscellaneous('title');
+        $i_ECTitle = array();
+        foreach ($temp as $row) {
+            $i_ECTitle[trim($row['StringValue'])] = trim($row['StringValue']);
+        }
+        $i_ECFirstName = array(
+            'name' => 'ECFirstName',
+            'value' => set_value('ECFirstName'),
             'class' => 'form-control');
-        $i_pass = array(
-            'name' => 'pass',
-            'value' => set_value('pass'),
-            'placeholder' => 'Password',
+        $i_ECLastName = array(
+            'name' => 'ECLastName',
+            'value' => set_value('ECLastName'),
             'class' => 'form-control');
-        $i_pass = array(
-            'name' => 'pass',
-            'value' => set_value('pass'),
-            'placeholder' => 'Password',
+        $i_ECRelationShip = array(
+            'name' => 'ECRelationShip',
+            'value' => set_value('ECRelationShip'),
             'class' => 'form-control');
-        $i_pass = array(
-            'name' => 'pass',
-            'value' => set_value('pass'),
-            'placeholder' => 'Password',
+        $i_ECAddress = array(
+            'name' => 'ECAddress',
+            'rows' => 3,
+            'value' => set_value('ECAddress'),
             'class' => 'form-control');
-        $i_pass = array(
-            'name' => 'pass',
-            'value' => set_value('pass'),
-            'placeholder' => 'Password',
-            'class' => 'form-control');
-        $i_pass = array(
-            'name' => 'pass',
-            'value' => set_value('pass'),
-            'placeholder' => 'Password',
+        $i_ECMobilePhone = array(
+            'name' => 'ECMobilePhone',
+            'value' => set_value('ECMobilePhone'),
             'class' => 'form-control');
 
         $data = array(
@@ -429,6 +438,38 @@ class m_candidate extends CI_Model {
             'SonLastName' => form_input($i_SonLastName),
             'SonAge' => form_input($i_SonAge),
             'SonOccupation' => form_input($i_SonOccupation),
+            // Parent information
+            'FatherTitle' => form_dropdown('FatherTitle', $i_FatherTitle, set_value('FatherTitle'), "class=\"selecter_1\""),
+            'FatherFirstName' => form_input($i_FatherFirstName),
+            'FatherLastName' => form_input($i_FatherLastName),
+            'FatherAge' => form_input($i_FatherAge),
+            'FatherOccupation' => form_input($i_FatherOccupation),
+            'FatherIsAlive' => $i_FatherIsAlive,
+            'MotherTitle' => form_dropdown('MotherTitle', $i_MotherTitle, set_value('MotherTitle'), "class=\"selecter_1\""),
+            'MotherFirstName' => form_input($i_FatherFirstName),
+            'MotherLastName' => form_input($i_FatherLastName),
+            'MotherAge' => form_input($i_FatherAge),
+            'MotherOccupation' => form_input($i_FatherOccupation),
+            'MotherIsAlive' => $i_FatherIsAlive,
+            // Education information
+            'InstitutionName' => form_input($i_InstitutionName),
+            'EDMajor' => form_input($i_EDMajor),
+            'EDDateFrom' => form_input($i_EDDateFrom),
+            'EDDateTo' => form_input($i_EDDateTo),
+            // Experience information
+            'ExCompanyName' => form_input($i_ExCompanyName),
+            'ExDateForm' => form_input($i_ExDateForm),
+            'ExDateTo' => form_input($i_ExDateTo),
+            'ExPositionName' => form_input($i_ExPositionName),
+            'ExSaraly' => form_input($i_ExSaraly),
+            'ReasonOfResign' => form_input($i_ReasonOfResign),
+            // Emergency_contact
+            'ECTitle' => form_dropdown('ECTitle', $i_ECTitle, set_value('ECTitle'), "class=\"selecter_1\""),
+            'ECFirstName' => form_input($i_ECFirstName),
+            'ECLastName' => form_input($i_ECLastName),
+            'ECRelationShip' => form_input($i_ECRelationShip),
+            'ECAddress' => form_textarea($i_ECAddress),
+            'ECMobilePhone' => form_input($i_ECMobilePhone),
         );
         return $data;
     }

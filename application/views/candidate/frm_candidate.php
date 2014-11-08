@@ -3,7 +3,47 @@
         $("#mainmenu ul li").removeAttr('class');
         $("#btnCandidate").addClass("active");
         $("#btn_save").click(function () {
-            $("#frm_main").submit();
+            if ($('#check_agree').is(':checked'))
+                $("#frm_main").submit();
+            else
+                alert('กรุณากดยอมรับข้อตกลงก่อน');
+        });
+        $("#frm_main").mouseover(function () {
+            var x = $('input[name=MaritalStatus]:checked', '#frm_main').val();
+            if (x == 'แต่งงานเเล้ว' || x == 'หม้าย' || x == 'แยกกันอยู่') {
+                $("#not_single").removeClass();
+            } else {
+                $("#not_single").removeClass().addClass('hidden');
+            }
+            var rowCount = $('#childen tr').length;
+            //$("#childen").append('<tr><td>1</td><td><div class="col-sm-4"><select class="form-control selecter_1"><option>นาย</option><option>นาง</option><option>นางสาว</option><option>เด็กชาย</option><option>เด็กหญิง</option></select></div><div class="col-sm-8"><input type="text" class="form-control" id="" placeholder=""></div></td><td><input type="text" class="form-control" id="" placeholder=""></td><td><input type="text" class="form-control" placeholder=""></td><td><input type="text" class="form-control" placeholder=""></td></tr>');
+
+        });
+
+        $('input[name=NumberSon]', '#frm_main').change(function () {
+            var row = $('#childen tr').length - 1;
+            var num = $('input[name=NumberSon]', '#frm_main').val();
+            if (num > row) {
+                $("#childen").removeClass().addClass('table table-hover');
+                for (var i = num - row; i > 0; i--) {
+                    $("#childen").append('<tr><td>' + num + '</td><td><input type="text" name="SonTitle" value="" class="form-control"  /></td><td><input type="text" name="SonFirstName" value="" class="form-control"  /></td><td><input type="text" name="SonLastName" value="" class="form-control"  /></td><td><input type="text" name="SonAge" value="" class="form-control"  /></td><td><input type="text" name="SonOccupation" value="" class="form-control"  /></td></tr>');
+                }
+            } else if (num < row) {
+                $("#childen").removeClass().addClass('table table-hover');
+                for (var i = row - num; i > 0; i--) {
+                    $('#childen tr:last').remove();
+                }
+            } else {
+                $("#childen").removeClass().addClass('table table-hover hidden');
+            }
+        });
+
+        $('#btn_expreience').click(function () {
+            $("#table_expreience").append('<tr><td><input type="text" name="ExCompanyName" value="" class="form-control"  /></td><td><input type="text" name="ExDateForm" value="" class="form-control"  /></td><td><input type="text" name="ExDateTo" value="" class="form-control"  /></td><td><input type="text" name="ExPositionName" value="" class="form-control"  /></td><td><input type="text" name="ExSaraly" value="" class="form-control"  /></td><td><input type="text" name="ReasonOfResign" value="" class="form-control"  /></td></tr> ');
+        });
+        $('#btnDel_expreience').click(function () {
+            if ($('#table_expreience tr').length > 1)
+                $('#table_expreience tr:last').remove();
         });
     });
 </script>
@@ -276,7 +316,7 @@
                             </div>
                         </div>
                     </div>
-                    <div id="not_single">
+                    <div id="not_single" class="hidden">
                         <div class="form-group">
                             <label class="col-sm-2 control-label">ชื่อคู่สมรส</label>
                             <div class="col-sm-2">
@@ -325,90 +365,28 @@
                             </div>
                         </div>
                         <div class="col-sm-10 col-sm-offset-1 well" >
-                            <table id="childen" class="table table-hover">
+                            <table id="childen" class="table table-hover hidden">
                                 <thead>
                                     <tr>
                                         <th style="width: 2%;"></th>
-                                        <th style="width: 38%;" class="text-center">ชื่อ</th>
+                                        <th style="width: 10%;" class="text-center">คำนำหน้าชื่อ</th>
+                                        <th style="width: 28%;" class="text-center">ชื่อ</th>
                                         <th style="width: 20%;" class="text-center">นามสกุล</th>
                                         <th style="width: 10%;" class="text-center">อายุ</th>
                                         <th style="width: 20%;" class="text-center">อาชีพ</th>
-                                        <th style="width: 15%;" class="text-center"></th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>
-                                            1
-                                        </td>
-                                        <td>
-                                            <div class="col-sm-4">
-                                                <select class="selecter_1">
-                                                    <option>นาย</option>
-                                                    <option>นาง</option>
-                                                    <option>นางสาว</option>
-                                                    <option>เด็กชาย</option>
-                                                    <option>เด็กหญิง</option>
-                                                </select>
-                                            </div>
-                                            <div class="col-sm-8">
-                                                <input type="text" class="form-control" id="" placeholder="">
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <input type="text" class="form-control" id="" placeholder="">
-                                        </td>
-                                        <td>
-                                            <input type="text" class="form-control" placeholder="">
-                                        </td>
-                                        <td>
-                                            <input type="text" class="form-control" placeholder="">
-                                        </td>
-                                        <td class="text-center">
-                                            <a class="btn btn-info btn-xs"><i class="fa fa-pencil"></i></a>   
-                                            <a class="btn btn-danger btn-xs"><i class="fa fa-minus"></i></a>     
-                                        </td>
-                                    </tr> 
-                                    <tr>
-                                        <td>
-                                            2
-                                        </td>
-                                        <td>
-                                            <div class="col-sm-4">
-                                                <select class="selecter_1">
-                                                    <option>นาย</option>
-                                                    <option>นาง</option>
-                                                    <option>นางสาว</option>
-                                                    <option>เด็กชาย</option>
-                                                    <option>เด็กหญิง</option>
-                                                </select>
-                                            </div>
-                                            <div class="col-sm-8">
-                                                <input type="text" class="form-control" id="" placeholder="">
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <input type="text" class="form-control" id="" placeholder="">
-                                        </td>
-                                        <td>
-                                            <input type="text" class="form-control" placeholder="">
-                                        </td>
-                                        <td>
-                                            <input type="text" class="form-control" placeholder="">
-                                        </td>
-                                        <td class="text-center">
-                                            <a class="btn btn-info btn-xs"><i class="fa fa-pencil"></i></a>   
-                                            <a class="btn btn-danger btn-xs"><i class="fa fa-minus"></i></a>     
-                                        </td>
-                                    </tr>  
-
+<!--                                    <tr>
+                                        <td>1</td>
+                                        <td><?= $form_input['SonTitle'] ?></td>
+                                        <td><?= $form_input['SonFirstName'] ?></td>
+                                        <td><?= $form_input['SonLastName'] ?></td>
+                                        <td><?= $form_input['SonAge'] ?></td>
+                                        <td><?= $form_input['SonOccupation'] ?></td>                                        
+                                    </tr>                     -->
                                 </tbody>
-                            </table>
-                            <div class="col-sm-12">
-                                <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#modal_work_expreince">
-                                    เพิ่ม
-                                </button>
-                            </div>
+                            </table>                            
                         </div>
 
                     </div>
@@ -426,22 +404,18 @@
 
                         <div class="form-group">                                   
                             <div class="col-sm-1">
-                                <label for="inputEmail3" class="control-label">ชื่อบิดา</label>
+                                <label class="control-label">ชื่อบิดา</label>
                             </div>
                             <div class="col-sm-2">
-                                <select class="form-control">
-                                    <option>นาย</option>
-                                    <option>นาง</option>
-                                    <option>นางสาว</option>
-                                </select>
+                                <?= $form_input['FatherTitle'] ?>
                             </div>                                       
                             <div class="col-sm-4">
-                                <input type="email" class="form-control" id="inputEmail3" placeholder="ชื่อ">
+                                <?= $form_input['FatherFirstName'] ?>
                             </div>
                             <div class="col-sm-4">
                                 <label class="col-sm-2 control-label">นามสกุล</label>
                                 <div class="col-sm-8">
-                                    <input type="text" class="form-control" placeholder="นามสกุล">
+                                    <?= $form_input['FatherLastName'] ?>
                                 </div>
                             </div>
                         </div>  
@@ -449,61 +423,59 @@
                             <div class="">
                                 <label class="col-sm-1 control-label">อายุ</label>
                                 <div class="col-sm-1">
-                                    <input type="text" class="form-control" placeholder="">
+                                    <?= $form_input['FatherAge'] ?>
                                 </div>
                             </div>
                             <div class="">
                                 <label class="col-sm-1 control-label">อาชีพ</label>
                                 <div class="col-sm-4">
-                                    <input type="text" class="form-control" placeholder="">
+                                    <?= $form_input['FatherOccupation'] ?>
                                 </div>
                             </div>
-                            <div class="radio">
-                                <label class="radio-inline">
-                                    <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3"> ยังมีชีวิต
-                                </label> 
-                                <label class="radio-inline">
-                                    <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3"> ถึงแก่กรรม
-                                </label> 
+                            <div class="col-sm-4 radio">
+                                <?php
+                                foreach ($form_input['FatherIsAlive'] as $row) {
+                                    echo '<div class="col-sm-4">';
+                                    echo $row;
+                                    echo '</div>';
+                                }
+                                ?>  
                             </div>
                         </div>    
                         <div class="form-group">
-                            <label for="inputEmail3" class="col-sm-1 control-label">ชื่อมารดา</label>
+                            <label class="col-sm-1 control-label">ชื่อมารดา</label>
                             <div class="col-sm-2">
-                                <select class="form-control">
-                                    <option>นาย</option>
-                                    <option>นาง</option>
-                                    <option>นางสาว</option>
-                                </select>
+                                <?= $form_input['MotherTitle'] ?>
                             </div>
                             <div class="col-sm-4">
-                                <input type="email" class="form-control" id="inputEmail3" placeholder="ชื่อ">
+                                <?= $form_input['MotherFirstName'] ?>
                             </div>
                             <label class="col-sm-1 control-label">นามสกุล</label>
                             <div class="col-sm-4">
-                                <input type="text" class="form-control" placeholder="">
+                                <?= $form_input['MotherLastName'] ?>
                             </div>
                         </div>
                         <div class="form-group">
                             <div class="">
                                 <label class="col-sm-1 control-label">อายุ</label>
                                 <div class="col-sm-1">
-                                    <input type="text" class="form-control" placeholder="">
+                                    <?= $form_input['MotherAge'] ?>
                                 </div>
                             </div>
                             <div class="">
                                 <label class="col-sm-1 control-label">อาชีพ</label>
                                 <div class="col-sm-4">
-                                    <input type="text" class="form-control" placeholder="">
+                                    <?= $form_input['MotherOccupation'] ?>
                                 </div>
                             </div>
-                            <div class="radio">
-                                <label class="radio-inline">
-                                    <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3"> ยังมีชีวิต
-                                </label> 
-                                <label class="radio-inline">
-                                    <input type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3"> ถึงแก่กรรม
-                                </label> 
+                            <div class="col-sm-4 radio">
+                                <?php
+                                foreach ($form_input['MotherIsAlive'] as $row) {
+                                    echo '<div class="col-sm-4">';
+                                    echo $row;
+                                    echo '</div>';
+                                }
+                                ?> 
                             </div>
                         </div> 
                     </div>
@@ -531,45 +503,45 @@
                             <tbody>
                                 <tr>
                                     <td>ประถมศึกษา</td>
-                                    <td><input type="text" class="form-control" placeholder=""></td>
-                                    <td><input type="text" class="form-control" placeholder=""></td>
-                                    <td><input type="text" class="form-control" placeholder=""></td>
-                                    <td><input type="text" class="form-control" placeholder=""></td>
+                                    <td><?= $form_input['InstitutionName'] ?></td>
+                                    <td><?= $form_input['EDMajor'] ?></td>
+                                    <td><?= $form_input['EDDateFrom'] ?></td>
+                                    <td><?= $form_input['EDDateTo'] ?></td>
                                 </tr>
                                 <tr>
                                     <td>มัธยมศึกษา</td>
-                                    <td><input type="text" class="form-control" placeholder=""></td>
-                                    <td><input type="text" class="form-control" placeholder=""></td>
-                                    <td><input type="text" class="form-control" placeholder=""></td>
-                                    <td><input type="text" class="form-control" placeholder=""></td>
+                                    <td><?= $form_input['InstitutionName'] ?></td>
+                                    <td><?= $form_input['EDMajor'] ?></td>
+                                    <td><?= $form_input['EDDateFrom'] ?></td>
+                                    <td><?= $form_input['EDDateTo'] ?></td>
                                 </tr>
                                 <tr>
                                     <td>ปวช</td>
-                                    <td><input type="text" class="form-control" placeholder=""></td>
-                                    <td><input type="text" class="form-control" placeholder=""></td>
-                                    <td><input type="text" class="form-control" placeholder=""></td>
-                                    <td><input type="text" class="form-control" placeholder=""></td>
+                                    <td><?= $form_input['InstitutionName'] ?></td>
+                                    <td><?= $form_input['EDMajor'] ?></td>
+                                    <td><?= $form_input['EDDateFrom'] ?></td>
+                                    <td><?= $form_input['EDDateTo'] ?></td>
                                 </tr>
                                 <tr>
                                     <td>ปวส</td>
-                                    <td><input type="text" class="form-control" placeholder=""></td>
-                                    <td><input type="text" class="form-control" placeholder=""></td>
-                                    <td><input type="text" class="form-control" placeholder=""></td>
-                                    <td><input type="text" class="form-control" placeholder=""></td>
+                                    <td><?= $form_input['InstitutionName'] ?></td>
+                                    <td><?= $form_input['EDMajor'] ?></td>
+                                    <td><?= $form_input['EDDateFrom'] ?></td>
+                                    <td><?= $form_input['EDDateTo'] ?></td>
                                 </tr>
                                 <tr>
                                     <td>ปริญญาตรี</td>
-                                    <td><input type="text" class="form-control" placeholder=""></td>
-                                    <td><input type="text" class="form-control" placeholder=""></td>
-                                    <td><input type="text" class="form-control" placeholder=""></td>
-                                    <td><input type="text" class="form-control" placeholder=""></td>
+                                    <td><?= $form_input['InstitutionName'] ?></td>
+                                    <td><?= $form_input['EDMajor'] ?></td>
+                                    <td><?= $form_input['EDDateFrom'] ?></td>
+                                    <td><?= $form_input['EDDateTo'] ?></td>
                                 </tr>
                                 <tr>
                                     <td>อื่นๆ</td>
-                                    <td><input type="text" class="form-control" placeholder=""></td>
-                                    <td><input type="text" class="form-control" placeholder=""></td>
-                                    <td><input type="text" class="form-control" placeholder=""></td>
-                                    <td><input type="text" class="form-control" placeholder=""></td>
+                                    <td><?= $form_input['InstitutionName'] ?></td>
+                                    <td><?= $form_input['EDMajor'] ?></td>
+                                    <td><?= $form_input['EDDateFrom'] ?></td>
+                                    <td><?= $form_input['EDDateTo'] ?></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -591,33 +563,24 @@
                                     <th style="width: 10%;" class="text-center">เริ่ม</th>
                                     <th style="width: 10%;" class="text-center">สิ้นสุด</th>
                                     <th style="width: 20%;" class="text-center">ตำแหน่งงาน</th>
-                                    <th style="width: 15%;" class="text-center">ลักษณะงาน</th>
+                                    <th style="width: 15%;" class="text-center">เงินเดือน</th>
                                     <th style="width: 15%;" class="text-center">สาเหตุที่ออก</th>
-                                    <th style="width: 10%;" class="text-center"></th>
-
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td><input type="text" class="form-control" placeholder=""></td>
-                                    <td><input type="text" class="form-control" placeholder=""></td>
-                                    <td><input type="text" class="form-control" placeholder=""></td>
-                                    <td><input type="text" class="form-control" placeholder=""></td>
-                                    <td><input type="text" class="form-control" placeholder=""></td>
-                                    <td><input type="text" class="form-control" placeholder=""></td>
-                                    <td class="text-center">
-                                        <div>
-                                            <a class="btn btn-info btn-xs"><i class="fa fa-pencil"></i></a>   
-                                            <a class="btn btn-danger btn-xs"><i class="fa fa-minus"></i></a>     
-                                        </div>                                                                                                           
-                                    </td>
+                                    <td><?= $form_input['ExCompanyName'] ?></td>
+                                    <td><?= $form_input['ExDateForm'] ?></td>
+                                    <td><?= $form_input['ExDateTo'] ?></td>
+                                    <td><?= $form_input['ExPositionName'] ?></td>
+                                    <td><?= $form_input['ExSaraly'] ?></td>
+                                    <td><?= $form_input['ReasonOfResign'] ?></td>                                  
                                 </tr>                                    
                             </tbody>
                         </table>
                         <div class="col-md-12 text-center">
-                            <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#modal_work_expreince">
-                                เพิ่มประวัติการทำงาน
-                            </button>
+                            <button class="btn btn-default btn-sm" type="button" id="btn_expreience">เพิ่มประวัติการทำงาน</button>
+                            <button class="btn btn-danger btn-sm" type="button" id="btnDel_expreience">ลบประวัติการทำงาน</button>
                         </div>
                     </div>
                 </div>
@@ -635,35 +598,29 @@
                                     <div class="form-group">
                                         <div class="col-sm-2">
                                             <label class="control-label" for="">คำนำหน้าชื่อ</label>
-                                            <select class="form-control">
-                                                <option>นาย</option>
-                                                <option>นาง</option>
-                                                <option>นางสาว</option>
-                                                <option>เด็กชาย</option>
-                                                <option>เด็กหญิง</option>
-                                            </select>
+                                            <?= $form_input['ECTitle'] ?>
                                         </div>
                                         <div class="col-sm-3">
                                             <label class="control-label" for="exampleInputEmail1">ชื่อ</label>
-                                            <input class="form-control" id="" placeholder="" type="text">
+                                            <?= $form_input['ECFirstName'] ?>
                                         </div>
                                         <div class="col-sm-3">
                                             <label class="control-label" for="exampleInputEmail1">นามสกุล</label>
-                                            <input class="form-control" id="" placeholder="" type="text">
+                                            <?= $form_input['ECLastName'] ?>
                                         </div>
                                         <div class="col-sm-2">
                                             <label class="control-label" for="exampleInputEmail1">เกี่ยวข้องเป็น</label>
-                                            <input class="form-control" id="" placeholder="" type="text">
+                                            <?= $form_input['ECRelationShip'] ?>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <div class="col-sm-5">
                                             <label class="control-label" for="exampleInputEmail1">ที่อยู่</label>
-                                            <textarea class="form-control" rows="3"></textarea>
+                                            <?= $form_input['ECAddress'] ?>
                                         </div>
                                         <div class="col-sm-3">
                                             <label class="control-label" for="exampleInputEmail1">โทร</label>
-                                            <input class="form-control" id="" placeholder="" type="tel">
+                                            <?= $form_input['ECMobilePhone'] ?>\
                                         </div>
                                     </div>
                                 </div>
@@ -672,7 +629,7 @@
                             <div class="col-md-offset-2 col-md-8">
                                 <div class="checkbox">
                                     <label>
-                                        <input type="checkbox" value="">                                                
+                                        <input type="checkbox" id="check_agree">                                                
                                         <p> ข้าพเจ้าขอรับรองว่า ข้อความดังกล่าวทั้งหมดในใบสมัครนี้เป็นความจริงทุกประการ หลังจากบริษัท สหมิตรภาพ(1992) จำกัด 
                                             จ้างเข้ามาทำงานแล้วปรากฎว่า ข้อความในใบสมัครงานเอกสารที่นำมาเเสดง หรือรายละเอียดที่ให้ไวไม่เป็นความจริง 
                                             บริษัทฯ มีสิทธิ์ที่จะเลิกจ้างข้าพเจ้าโดยไม่ต้องจ่ายเงินค้าชดเชยหรือค่าเสียหายใดๆ ทั้งสิ้น
@@ -681,8 +638,8 @@
                                 </div>
                             </div>                             
                             <div class="col-md-12 text-center">
-                                <a class="btn btn-primary" data-toggle="modal" data-target="#modal_work_expreince">Save</a>
-                                <button class="btn btn-danger" type="reset">Reset</button>
+                                <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#modal_work_expreince">บันทึก</button>
+                                <button class="btn btn-danger" type="reset">เริ่มใหม่</button>
                             </div>                          
                         </div>
                     </div>
@@ -691,12 +648,7 @@
         </div>
         <!--</form>-->
         <?= $form_close ?>                   
-
-
-
     </div>
-
-
 
     <!-- Modal work expreince -->
     <div class="modal fade" id="modal_work_expreince" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -704,14 +656,15 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                    <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+                    <h4 class="modal-title" id="myModalLabel">ยืนยันการเพิ่มข้อมูล</h4>
                 </div>
                 <div class="modal-body">
-                    ...
+                    <p> กรุณาตรวจสอบข้อมูลให้ถูกต้องก่อนการ ยืนยัน
+                    </p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="btn_save">Save changes</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">ปิด</button>
+                    <button type="button" class="btn btn-primary" id="btn_save">ยืนยัน</button>
                 </div>
             </div>
         </div>
