@@ -28,9 +28,15 @@ class candidate extends CI_Controller {
 
     public function add() {
         $data = array();
+        
+        if ($this->m_candidate->set_validation() && $this->form_validation->run()) {
+            
+        }else{
+            $data['form_input'] = $this->m_candidate->set_form();
+        }
 
         $data['form_open'] = form_open('candidate/add', 'id="frm_main" class="form-horizontal"');
-        $data['form_input'] = $this->m_candidate->set_form();
+        
         $data['form_close'] = form_open('candidate/add');
 
         $this->m_template->set_Debug(NULL);

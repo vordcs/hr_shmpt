@@ -474,4 +474,107 @@ class m_candidate extends CI_Model {
         return $data;
     }
 
+    function set_validation() {
+        $this->form_validation->set_rules('PID', '', 'trim|required|xss_clean');
+        $this->form_validation->set_rules('Title', '', 'trim|required|xss_clean');
+        $this->form_validation->set_rules('ExpectedPermanantSalary', '', 'trim|required|xss_clean');
+        $this->form_validation->set_rules('FirstName', '', 'trim|required|xss_clean');
+        $this->form_validation->set_rules('LastName', '', 'trim|required|xss_clean');
+        $this->form_validation->set_rules('PersonalID', '', 'trim|required|xss_clean');
+        $this->form_validation->set_rules('AvaliableStartDate', '', 'trim|required|xss_clean');
+        // Person information
+        $this->form_validation->set_rules('BirthDate', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('Age', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('NickName', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('Race', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('Nationality', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('Religion', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('Sex', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('Weight', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('Height', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('CurrentAddress', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('CurrentMu', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('CurrentStreet', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('CurrentVillage', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('CurrentSubDistrict', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('CurrentDistrict', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('CurrentProvince', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('CurrentZipCode', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('MobilePhone', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('Residential', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('MilitaryServiceStatus', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('MaritalStatus', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('SpouseTitle', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('SpouseFirstName', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('SpouseLastName', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('SpouseAge', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('SpouseOccupation', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('SpouseIsAlive', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('SonTitle', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('SonFirstName', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('SonLastName', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('SonAge', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('SonOccupation', '', 'trim|xss_clean');
+        // Parent information
+        $this->form_validation->set_rules('FatherTitle', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('FatherFirstName', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('FatherLastName', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('FatherAge', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('FatherOccupation', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('FatherIsAlive', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('MotherTitle', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('MotherFirstName', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('MotherLastName', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('MotherAge', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('MotherOccupation', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('MotherIsAlive', '', 'trim|xss_clean');
+        // Education information
+        $this->form_validation->set_rules('InstitutionName', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('EDMajor', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('EDDateFrom', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('EDDateTo', '', 'trim|xss_clean');
+        // Experience information
+        $this->form_validation->set_rules('ExCompanyName', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('ExDateForm', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('ExDateTo', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('ExPositionName', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('ExSaraly', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('ReasonOfResign', '', 'trim|xss_clean');
+        // Emergency_contact
+        $this->form_validation->set_rules('ECTitle', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('ECFirstName', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('ECLastName', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('ECRelationShip', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('ECAddress', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('ECMobilePhone', '', 'trim|xss_clean');
+        return true;
+    }
+
+    function get_post() {
+        $f_data = array(
+            'act_id' => $this->input->post('act_id'),
+            'act_years' => $this->input->post('act_years'),
+            'act_term' => $this->input->post('act_term'),
+            'act_name' => $this->input->post('act_name'),
+            'group_id' => $this->input->post('group_id'),
+            'act_unit' => $this->input->post('act_unit'),
+            'act_check' => $this->input->post('act_check'),
+            'act_expect' => $this->input->post('act_expect'),
+            'act_budget' => $this->input->post('act_budget'),
+            'act_charge' => $this->input->post('act_charge'),
+            'act_charge_detail' => $this->input->post('act_charge_detail'),
+            'act_register' => $this->input->post('act_register'),
+            'act_register_t' => $this->input->post('act_register_t'),
+            'act_start' => $this->input->post('act_start'),
+            'act_start_t' => $this->input->post('act_start_t'),
+            'act_end' => $this->input->post('act_end'),
+            'act_end_t' => $this->input->post('act_end_t'),
+            'act_location' => $this->input->post('act_location'),
+            'act_responsible' => $this->input->post('act_responsible'),
+            'act_consultant' => $this->input->post('act_consultant'),
+            'act_status' => $this->input->post('act_status')
+        );
+        return $f_data;
+    }
+
 }
