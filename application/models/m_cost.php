@@ -38,14 +38,14 @@ class m_cost extends CI_Model {
 
     function get_vehicle($vcode = NULL, $vtid = NULL) {
         $this->db->join('vehicles_type', 'vehicles.VTID = vehicles_type.VTID');
-        $this->db->join('routes_has_vehicles', 'vehicles.VID = routes_has_vehicles.VID','left');
+        $this->db->join('routes_has_vehicles', 'vehicles.VID = routes_has_vehicles.VID', 'left');
         if ($vcode != NULL) {
             $this->db->where('vehicles.VCode', $vcode);
         }
         if ($vtid != NULL) {
             $this->db->where('vehicles_type.VTID', $vtid);
         }
-        
+
         $query = $this->db->get('vehicles');
         return $query->result_array();
     }
@@ -55,6 +55,25 @@ class m_cost extends CI_Model {
             $this->db->where('VTID', $id);
         $temp = $this->db->get('vehicles_type');
         return $temp->result_array();
+    }
+
+    public function get_route($rcode = NULL, $vtid = NULL) {
+
+        $this->db->join('vehicles_type', 'vehicles_type.VTID = t_routes.VTID');
+
+        if ($rcode != NULL)
+            $this->db->where('RCode', $rcode);
+        if ($vtid != NULL)
+            $this->db->where('t_routes.VTID', $vtid);
+
+//        $this->db->where('StartPoint', 'S');
+        $this->db->group_by(array('RCode', 't_routes.VTID'));
+        $query = $this->db->get('t_routes');
+        return $query->result_array();
+    }
+    
+    public function search_cost($form=NULL,$to=NULL) {
+        
     }
 
     public function insert_cost($data) {
@@ -79,7 +98,7 @@ class m_cost extends CI_Model {
         return $rs;
     }
 
-    public function set_form_add($ctid) {
+    public function set_form_add($ctid = NULL, $vtid = NULL) {
         $i_CostDetailID[0] = 'เลือกรายการ';
         foreach ($this->get_cost_detail($ctid) as $value) {
             $i_CostDetailID[$value['CostDetailID']] = $value['CostDetail'];
@@ -116,12 +135,56 @@ class m_cost extends CI_Model {
             'form' => form_open('cost/add/' . $ctid, array('class' => 'form-horizontal', 'id' => 'form_cost')),
             'CostDate' => form_input($i_CostDate),
             'CostDetailID' => form_dropdown('CostDetailID', $i_CostDetailID, set_value('CostDetailID'), $dropdown),
-            'VTID' => form_dropdown('VTID', $i_VTID, set_value('VTID'), $dropdown),
+            'VTID' => form_dropdown('VTID', $i_VTID, (set_value('VTID') == NULL) ? $vtid : set_value('VTID'), $dropdown),
             'VCode' => form_input($i_VCode),
             'CostValue' => form_input($i_CostValue),
             'CostNote' => form_textarea($i_CostNote),
         );
         return $form_add;
+    }
+
+    public function set_form_search() {
+        //ข้อมูลเส้นทาง
+        $i_RCode[0] = 'เส้นทางทั้งหมด';
+        foreach ($this->get_route() as $value) {
+            $i_RCode[$value['RCode']] = $value['RCode'] . ' ' . $value['RSource'] . ' - ' . $value['RDestination'];
+        }
+
+        $i_VTID[0] = 'ประเภทรถทั้งหมด';
+        foreach ($this->get_vehicle_types() as $value) {
+            $i_VTID[$value['VTID']] = $value['VTDescription'];
+        }
+
+        $i_VCode = array(
+            'name' => 'VCode',
+            'value' => set_value('VCode'),
+            'placeholder' => 'เบอร์รถ',
+            'class' => 'form-control');
+
+        $i_DateForm = array(
+            'name' => 'DateForm',
+            'value' => set_value('DateForm'),
+            'placeholder' => 'วันที่',
+            'class' => 'form-control datepicker');
+
+        $i_DateTo = array(
+            'name' => 'DateTo',
+            'value' => set_value('DateTo'),
+            'placeholder' => 'ถึงวันที่',
+            'class' => 'form-control datepicker');
+
+        $dropdown = 'class="selecter_3" data-selecter-options = \'{"cover":"true"}\' ';
+
+        $form_search = array(
+            'form' => form_open('cost/', array('role=' => 'form', 'id' => 'form_search_cost')),
+            'RCode' => form_dropdown('RCode', $i_RCode, set_value('RCode'), $dropdown),
+            'VTID' => form_dropdown('VTID', $i_VTID, set_value('VTID'), 'class="selecter_3" '),
+            'VCode' => form_input($i_VCode),
+            'DateForm' => form_input($i_DateForm),
+            'DateTo' => form_input($i_DateTo),
+        );
+
+        return $form_search;
     }
 
     public function validation_form_add() {

@@ -21,20 +21,55 @@ class cost extends CI_Controller {
     }
 
     public function index() {
+
         $data = array(
-            'cost' => $this->m_cost->get_cost(),
-            'cost_detail' => $this->m_cost->get_cost_detail(),
-            'cost_types' => $this->m_cost->get_cost_type(),
-            'vehicle_types' => $this->m_vehicle->get_vehicle_types(),
-            'routes' => $this->m_route->get_route(),
-            'vehicles' => $this->m_vehicle->get_vehicle(),
+            'form' => $this->m_cost->set_form_search(),
         );
 
+        $data['strtitle'] = '';
+
+        $vtid = $this->input->post('VTID');
+        $rcode = $this->input->post('RCode');
+        $vcode = $this->input->post('VCode');
+        $form = $this->input->post('DateForm');
+        $to = $this->input->post('DateTo');
+        if ($vtid != '0' | $rcode != 0 | $vcode != NULL | $form != NULL | $to != NULL) {
+            $data['strtitle'] .= 'ผลการค้นหา : ';
+        }
+
+        if ($vtid != '0') {
+            $data['vehicle_types'] = $this->m_vehicle->get_vehicle_types($vtid);
+            $data['strtitle'] .= $data['vehicle_types'][0]['VTDescription'] . '  ';
+        } else {
+            $data['vehicle_types'] = $this->m_vehicle->get_vehicle_types();
+        }
+
+        if ($rcode != '0') {
+            $data['routes'] = $this->m_route->get_route($rcode, NULL);
+            $data['strtitle'] .= 'เส้นทาง ' . $data['routes'][0]['RCode'] . ' ' . $data['routes'][0]['RSource'] . ' - ' . $data['routes'][0]['RDestination'] . '  ';
+        } else {
+            $data['routes'] = $this->m_route->get_route();
+        }
+
+
+        if ($vcode != NULL) {
+            $data['vehicles'] = $this->m_cost->get_vehicle($vcode);
+            $data['strtitle'] .= 'เบอร์ ' . $vcode . '  ';
+        } else {
+            $data['vehicles'] = $this->m_cost->get_vehicle();
+        }
+
+        $data['cost'] = $this->m_cost->get_cost();
+        $data['cost_detail'] = $this->m_cost->get_cost_detail();
+        $data['cost_types'] = $this->m_cost->get_cost_type();
+
         $data_debug = array(
-            'cost' => $data['cost'],
+//            'cost' => $data['cost'],
 //            'cost_detail' => $data['cost_detail'], 
 //            'cost_types' => $data['cost_types'],
+            'routes' => $data['routes'],
 //            'vehicles' => $data['vehicles'],
+//            'form' => $data['form'],
         );
 
 //        $this->m_template->set_Debug($data_debug);
@@ -42,8 +77,9 @@ class cost extends CI_Controller {
         $this->m_template->showTemplate();
     }
 
-    public function add($ctid) {
-        $page_title = 'เพิ่ม ' . $this->m_cost->get_cost_type($ctid)[0]['CostTypeName'];
+    public function add($ctid, $vtid = NULL) {
+        $page_title = 'เพิ่ม ' . $this->m_cost->get_cost_type($ctid)[0]['CostTypeName'] . ' ';
+        $page_title .= $this->m_vehicle->get_vehicle_types($vtid)[0]['VTDescription'];
 
         if ($this->m_cost->validation_form_add() && $this->form_validation->run() == TRUE) {
             $form_data = $this->m_cost->get_post_form_add($ctid);
@@ -55,7 +91,7 @@ class cost extends CI_Controller {
         }
         $data = array(
             'page_title' => $page_title,
-            'form' => $this->m_cost->set_form_add($ctid),
+            'form' => $this->m_cost->set_form_add($ctid, $vtid),
         );
         $data_debug = array(
             'form' => $data['form'],

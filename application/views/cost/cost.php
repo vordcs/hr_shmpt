@@ -30,6 +30,16 @@ function count_cost_detail($data, $ctid) {
     }
     return $n;
 }
+
+function count_itemp($data_array, $str, $con) {
+    $n = 0;
+    foreach ($data_array as $value) {
+        if ($con == $value[$str]) {
+            $n++;
+        }
+    }
+    return $n;
+}
 ?>
 <div class="container-fluid">
     <div class="row">      
@@ -51,19 +61,76 @@ function count_cost_detail($data, $ctid) {
                 <div class="panel-heading">
                     <h3 class="panel-title"><i class="fa fa-search "></i>&nbsp;ค้นหา</h3>
                 </div>
-                <div class="panel-body" style="min-height: 100px;">
-                    Panel content
+                <div class="panel-body" style="min-height: 100px;">                
+                    <div class="row">
+                        <?php echo $form['form']; ?>
+                        <div class="col-md-10 col-md-offset-1">
+                            <div class="col-md-3">                            
+                                <div class="form-group">
+                                    <label for="">ประเภทรถ</label>
+                                    <?php echo $form['VTID']; ?>                                       
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="">เส้นทาง</label>
+                                    <?php echo $form['RCode']; ?> 
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label for="">เบอร์รถ</label>
+                                    <?php echo $form['VCode']; ?>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-md-6 col-md-offset-3">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="" class="col-sm-3 control-label">วันที่</label>
+                                    <div class="col-sm-9">
+                                        <?php echo $form['DateForm']; ?>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="" class="col-sm-2 control-label">ถึง</label>
+                                    <div class="col-sm-10">
+                                        <?php echo $form['DateTo']; ?>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12 text-center">   
+                            <br>
+                            <button type="submit" class="btn btn-default">ค้นหา</button>   
+                        </div>
+                        </form>
+                    </div>
+                    <br>
                     <?php
                     $rs = $this->session->flashdata('tab_active');
                     echo $rs;
                     ?>
-
                 </div>
             </div>
         </div>
     </div>
+
+    <?php if ($strtitle != '') { ?>
+        <div class="row">
+            <div class="col-md-12">
+                <p class="lead">
+                    <?php echo $strtitle; ?>
+                </p>
+            </div>
+        </div>
+    <?php } ?>  
+
 </div>
-<div class="container-fluid">  
+<div class="container-fluid" style="min-height: 500px;">  
     <div class="row">
         <div class="col-md-12 text-center hidden">
             <?php
@@ -88,7 +155,7 @@ function count_cost_detail($data, $ctid) {
             echo anchor('#', '<span class="fa fa-minus-square">&nbsp;&nbsp;รายจ่าย</span>', $outcome);
             ?>                   
         </div>
-        <div class="col-md-12 text-center">   
+        <div class="col-md-12 text-center hidden">   
             <?php
             $income = array(
                 'type' => "button",
@@ -124,153 +191,185 @@ function count_cost_detail($data, $ctid) {
         $vt_name = $vt['VTDescription'];
         ?>
         <div class="col-md-12" id="vt_<?= $vt_id ?>">                         
-            <p class="lead"><strong><?php echo $vt_name; ?></strong></p>
+            <p class="lead"><strong><?php echo $vt_name; ?></strong>   
+                <span class="pull-right">      
+                    <?php
+                    $income = array(
+                        'type' => "button",
+                        'class' => "btn btn-info",
+                        'data-toggle' => "tooltip",
+                        'data-placement' => "top",
+                        'title' => "เพิ่มรายจ่าย " . $vt_name,
+                    );
+                    $outcome = array(
+                        'type' => "button",
+                        'class' => "btn btn-warning",
+                        'data-toggle' => "tooltip",
+                        'data-placement' => "top",
+                        'title' => "เพิ่มรายจ่าย " . $vt_name,
+                    );
+
+                    echo anchor('cost/add/1/' . $vt_id, '<span class="fa fa-plus">&nbsp;&nbsp;รายรับ ' . $vt_name . '</span>', $income) . '  ';
+                    echo anchor('cost/add/2/' . $vt_id, '<span class="fa fa-minus">&nbsp;&nbsp;รายจ่าย ' . $vt_name . '</span>', $outcome);
+                    ?>
+                </span>  
+            </p> 
             <hr>
         </div>        
-        <div class="col-md-12">         
-            <div class="panel">
-                <ul id="RouteTab" class="nav nav-tabs nav-justified" >
-                    <?php
-                    foreach ($routes as $r) {
-                        $rcode = $r['RCode'];
-                        $vtid = $r['VTID'];
-                        $route_name = $rcode . ' ' . $r['RSource'] . ' - ' . $r['RDestination'];
-                        $idtab = $vtid . '_' . $rcode;
-                        if ($vt_id == $vtid) {
-                            ?>                    
-                            <li class="<?= $active_id != NULL && $active_id == $idtab ? 'active' : '' ?> "><a href="#<?= $idtab ?>" data-toggle="tab"><?= $route_name ?></a></li>
-                            <?php
-                        }
-                    }
-                    ?>                        
-                </ul>
-                <div id="RouteTabContent" class="tab-content">
-                    <?php
-                    foreach ($routes as $r) {
-                        $rcode = $r['RCode'];
-                        $vtid = $r['VTID'];
-                        $route_name = $rcode . ' ' . $r['RSource'] . ' - ' . $r['RDestination'];
-                        if ($vt_id == $vtid) {
+        <div class="col-md-12">  
+            <?php
+            $n = count_itemp($routes, 'VTID', $vt_id);
+            if ($n == 0) {
+                ?>
+                <div class="well" style="padding-bottom: 100px;padding-top: 100px;">
+                    <p class="lead text-center">ไม่พบข้อมูล</p>
+                </div>
+            <?php } else { ?>
+                <div class="panel">
+
+                    <ul id="RouteTab" class="nav nav-tabs nav-justified" >
+                        <?php
+                        foreach ($routes as $r) {
+                            $rcode = $r['RCode'];
+                            $vtid = $r['VTID'];
+                            $route_name = $rcode . ' ' . $r['RSource'] . ' - ' . $r['RDestination'];
                             $idtab = $vtid . '_' . $rcode;
-                            ?>  
-                            <div class="tab-pane fade in <?= $active_id != NULL && $active_id == $idtab ? 'active' : '' ?> " id="<?= $idtab ?>">                                    
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <p><?= $route_name ?></p>
-                                        <table class="table table-hover table-bordered">
-                                            <thead>
-                                                <tr>
-                                                    <th rowspan="2">เบอร์รถ</th>
-                                                    <th colspan="4" class="info">เวลา</th>
-                                                    <?php
-                                                    foreach ($cost_types as $ct) {
-                                                        $num_detail = count_cost_detail($cost_detail, $ct['CostTypeID']);
-                                                        $type_name = $ct['CostTypeName'];
-                                                        ?>
-                                                        <th colspan="<?= $num_detail ?>" class="<?= $ct['CostTypeID'] == 1 ? 'success' : 'warning' ?>"><?= $type_name ?></th>                                                       
-                                                    <?php } ?>
-                                                    <th rowspan="2">คงเหลือ</th>
-                                                </tr>
-                                                <tr>
-                                                    <!--เวลา-->
-                                                    <th class="info">จุดลงจอดที่ 1</th>
-                                                    <th class="info">จุดลงจอดที่ 2</th>
-                                                    <th class="info">จุดลงจอดที่ 3</th>
-                                                    <th class="info">จุดลงจอดที่ 3</th>
-                                                    <!--รายจ่าย--><!--รายรับ-->
-                                                    <?php
-                                                    foreach ($cost_types as $ct) {
-                                                        $ctid = $ct['CostTypeID'];
-                                                        foreach ($cost_detail as $cd) {
-                                                            $detail = $cd['CostDetail'];
-                                                            if ($ctid == $cd['CostTypeID']) {
-                                                                ?>
-                                                                <th class="<?= $ctid == '1' ? 'success' : 'warning' ?>"><?= $detail ?></th>                                                       
-                                                                <?php
+                            if ($vt_id == $vtid) {
+                                ?>                    
+                                <li class="<?= $active_id != NULL && $active_id == $idtab ? 'active' : '' ?> "><a href="#<?= $idtab ?>" data-toggle="tab"><?= $route_name ?></a></li>
+                                <?php
+                            }
+                        }
+                        ?>                        
+                    </ul>
+                    <div id="RouteTabContent" class="tab-content">
+                        <?php
+                        foreach ($routes as $r) {
+                            $rcode = $r['RCode'];
+                            $vtid = $r['VTID'];
+                            $route_name = $rcode . ' ' . $r['RSource'] . ' - ' . $r['RDestination'];
+                            if ($vt_id == $vtid) {
+                                $idtab = $vtid . '_' . $rcode;
+                                ?>  
+                                <div class="tab-pane fade in <?= $active_id != NULL && $active_id == $idtab ? 'active' : '' ?> " id="<?= $idtab ?>">                                    
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <p><?php echo $route_name ?></p>
+                                            <table class="table table-hover table-bordered">
+                                                <thead>
+                                                    <tr>
+                                                        <th rowspan="2">เบอร์รถ</th>
+                                                        <th colspan="4" class="info">เวลา</th>
+                                                        <?php
+                                                        foreach ($cost_types as $ct) {
+                                                            $num_detail = count_cost_detail($cost_detail, $ct['CostTypeID']);
+                                                            $type_name = $ct['CostTypeName'];
+                                                            ?>
+                                                            <th colspan="<?= $num_detail ?>" class="<?= $ct['CostTypeID'] == 1 ? 'success' : 'warning' ?>"><?= $type_name ?></th>                                                       
+                                                        <?php } ?>
+                                                        <th rowspan="2">คงเหลือ</th>
+                                                    </tr>
+                                                    <tr>
+                                                        <!--เวลา-->
+                                                        <th class="info">จุดลงจอดที่ 1</th>
+                                                        <th class="info">จุดลงจอดที่ 2</th>
+                                                        <th class="info">จุดลงจอดที่ 3</th>
+                                                        <th class="info">จุดลงจอดที่ 3</th>
+                                                        <!--รายจ่าย--><!--รายรับ-->
+                                                        <?php
+                                                        foreach ($cost_types as $ct) {
+                                                            $ctid = $ct['CostTypeID'];
+                                                            foreach ($cost_detail as $cd) {
+                                                                $detail = $cd['CostDetail'];
+                                                                if ($ctid == $cd['CostTypeID']) {
+                                                                    ?>
+                                                                    <th class="<?= $ctid == '1' ? 'success' : 'warning' ?>"><?= $detail ?></th>                                                       
+                                                                    <?php
+                                                                }
                                                             }
                                                         }
-                                                    }
-                                                    ?>                                                  
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <?php
-                                                foreach ($vehicles as $v) {
-                                                    $income = 0;
-                                                    $outcome = 0;
-                                                    if ($v['RCode'] == $rcode && $v['VTID'] == $vtid) {
-                                                        $vid = $v['VID'];
-                                                        ?>
-                                                        <tr>
-                                                            <!--เบอร์รถ-->
-                                                            <td class="text-center"><?= $v['VCode'] ?></td>
-                                                            <!--เวลา-->
-                                                            <td></td>
-                                                            <td></td>
-                                                            <td></td>                                                                
-                                                            <td></td>
-                                                            <!--รายรับ-->
-                                                            <?php
-                                                            $ctid = '1';
-                                                            foreach ($cost_detail as $cd) {
-                                                                $cdid = $cd['CostDetailID'];
-                                                                if ($ctid == $cd['CostTypeID']) {
-                                                                    $value = 0;
-                                                                    foreach ($cost as $c) {
-                                                                        if ($ctid == $c['CostTypeID'] && $cdid == $c['CostDetailID'] && $vid == $c['VID']) {
-                                                                            $temp = $c['CostValue'];
-                                                                            $value += $temp;
-                                                                            $income += $temp;
+                                                        ?>                                                  
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <?php
+                                                    foreach ($vehicles as $v) {
+                                                        $income = 0;
+                                                        $outcome = 0;
+                                                        if ($v['RCode'] == $rcode && $v['VTID'] == $vtid) {
+                                                            $vid = $v['VID'];
+                                                            ?>
+                                                            <tr>
+                                                                <!--เบอร์รถ-->
+                                                                <td class="text-center"><?= $v['VCode'] ?></td>
+                                                                <!--เวลา-->
+                                                                <td></td>
+                                                                <td></td>
+                                                                <td></td>                                                                
+                                                                <td></td>
+                                                                <!--รายรับ-->
+                                                                <?php
+                                                                $ctid = '1';
+                                                                foreach ($cost_detail as $cd) {
+                                                                    $cdid = $cd['CostDetailID'];
+                                                                    if ($ctid == $cd['CostTypeID']) {
+                                                                        $value = 0;
+                                                                        foreach ($cost as $c) {
+                                                                            if ($ctid == $c['CostTypeID'] && $cdid == $c['CostDetailID'] && $vid == $c['VID']) {
+                                                                                $temp = $c['CostValue'];
+                                                                                $value += $temp;
+                                                                                $income += $temp;
+                                                                            }
                                                                         }
+                                                                        ?>
+                                                                        <td class="text-center <?= $ctid == '1' ? 'success' : 'warning' ?>"><?= $value != 0 ? $value : '' ?></td>                                                       
+                                                                        <?php
                                                                     }
-                                                                    ?>
-                                                                    <td class="text-center <?= $ctid == '1' ? 'success' : 'warning' ?>"><?= $value != 0 ? $value : '' ?></td>                                                       
-                                                                    <?php
                                                                 }
-                                                            }
-                                                            ?> 
-                                                            <!--รายจ่าย-->
-                                                            <?php
-                                                            $ctid = '2';
-                                                            foreach ($cost_detail as $cd) {
-                                                                $cdid = $cd['CostDetailID'];
-                                                                if ($ctid == $cd['CostTypeID']) {
-                                                                    $value = 0;
-                                                                    foreach ($cost as $c) {
-                                                                        if ($ctid == $c['CostTypeID'] && $cdid == $c['CostDetailID'] && $vid == $c['VID']) {
-                                                                            $temp = $c['CostValue'];
-                                                                            $value += $temp;
-                                                                            $outcome+=$temp;
+                                                                ?> 
+                                                                <!--รายจ่าย-->
+                                                                <?php
+                                                                $ctid = '2';
+                                                                foreach ($cost_detail as $cd) {
+                                                                    $cdid = $cd['CostDetailID'];
+                                                                    if ($ctid == $cd['CostTypeID']) {
+                                                                        $value = 0;
+                                                                        foreach ($cost as $c) {
+                                                                            if ($ctid == $c['CostTypeID'] && $cdid == $c['CostDetailID'] && $vid == $c['VID']) {
+                                                                                $temp = $c['CostValue'];
+                                                                                $value += $temp;
+                                                                                $outcome+=$temp;
+                                                                            }
                                                                         }
+                                                                        ?>
+                                                                        <td class="text-center <?= $ctid == '1' ? 'success' : 'warning' ?>"><?= $value != 0 ? $value : '' ?></td>                                                       
+                                                                        <?php
                                                                     }
-                                                                    ?>
-                                                                    <td class="text-center <?= $ctid == '1' ? 'success' : 'warning' ?>"><?= $value != 0 ? $value : '' ?></td>                                                       
-                                                                    <?php
                                                                 }
-                                                            }
-                                                            ?> 
-                                                            <!--คงเหลือ-->
-                                                            <td class="text-center"> <?php echo number_format(($income - $outcome), 2, '.', ''); ?></td>
+                                                                ?> 
+                                                                <!--คงเหลือ-->
+                                                                <td class="text-center"> <?php echo number_format(($income - $outcome), 2, '.', ''); ?></td>
 
-                                                        </tr>
-                                                        <?php
+                                                            </tr>
+                                                            <?php
+                                                        }
                                                     }
-                                                }
-                                                ?>
-                                            </tbody>
-                                        </table>   
+                                                    ?>
+                                                </tbody>
+                                            </table>   
+                                        </div>
                                     </div>
-                                </div>
-                            </div> 
+                                </div> 
 
-                            <?php
+                                <?php
+                            }
                         }
-                    }
-                    ?>  
+                        ?>  
+
+                    </div>
 
                 </div>
-            </div>
-            <?php ?>
+            <?php } ?>
         </div>  
     <?php } ?>
 </div>

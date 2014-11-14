@@ -40,8 +40,7 @@
                     <?php echo form_error('CostDetailID', '<font color="error">', '</font>'); ?>
                 </div>
             </div>
-            <div class="form-group <?= (form_error('VTID')) ? 'has-error' : '' ?>">
-
+            <div class="form-group hidden <?= (form_error('VTID')) ? 'has-error' : '' ?>">
                 <label for="" class="col-sm-2 control-label">ประเภทรถ</label>
                 <div class="col-sm-5">
                     <?php echo $form['VTID']; ?>
