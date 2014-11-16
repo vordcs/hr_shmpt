@@ -31,9 +31,9 @@ class cost extends CI_Controller {
         $vtid = $this->input->post('VTID');
         $rcode = $this->input->post('RCode');
         $vcode = $this->input->post('VCode');
-        $form = $this->input->post('DateForm');
+        $from = $this->input->post('DateForm');
         $to = $this->input->post('DateTo');
-        if ($vtid != '0' | $rcode != 0 | $vcode != NULL | $form != NULL | $to != NULL) {
+        if ($vtid != '0' | $rcode != 0 | $vcode != NULL | $from != NULL | $to != NULL) {
             $data['strtitle'] .= 'ผลการค้นหา : ';
         }
 
@@ -59,7 +59,21 @@ class cost extends CI_Controller {
             $data['vehicles'] = $this->m_cost->get_vehicle();
         }
 
-        $data['cost'] = $this->m_cost->get_cost();
+        if ($from != NULL || $to != NULL) {
+
+            if ($from != NULL && $to == NULL){
+                $data['strtitle'] .='วันที่ '.$this->m_datetime->getDateThaiString($from);
+            }
+            
+            if ($from != NULL && $to != NULL){
+                $data['strtitle'] .='วันที่ '.$this->m_datetime->getDateThaiString($from);
+                $data['strtitle'] .='ถึง '.$this->m_datetime->getDateThaiString($to);
+            }
+            
+            $data['cost'] = $this->m_cost->search_cost($from, $to);
+        } else {
+            $data['cost'] = $this->m_cost->get_cost();
+        }
         $data['cost_detail'] = $this->m_cost->get_cost_detail();
         $data['cost_types'] = $this->m_cost->get_cost_type();
 

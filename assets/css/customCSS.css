@@ -23,6 +23,10 @@ td{
     vertical-align: middle ! important;
 }
 
+.container-fluid .row .page-header{
+    padding-left: 30px;
+}
+
 .centered {
     position: fixed;
     min-width: 50%;

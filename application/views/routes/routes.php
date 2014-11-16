@@ -204,6 +204,13 @@
                                                     'data-placement' => "top",
                                                     'title' => "ตารางเวลา " . $type_name . " " . $route_name,
                                                 );
+                                                $point_price = array(
+                                                    'type' => "button",
+                                                    'class' => "btn btn-primary",
+                                                    'data-toggle' => "tooltip",
+                                                    'data-placement' => "top",
+                                                    'title' => "จุดจอดและอัตราค่าโดยสาร " . $type_name . " " . $route_name,
+                                                );
                                                 $edit = array(
                                                     'type' => "button",
                                                     'class' => "btn btn-warning",
@@ -219,12 +226,14 @@
                                                     'data-placement' => "top",
                                                     'title' => "ลบ เส้นทาง " . $type_name . " " . $route_name,
                                                 );
-                                                echo anchor('route/detail/' . $rcode . '/' . $vtid, '<i class="fa fa-list-ol" ></i>  ตารางเวลาเดินรถ', $view_detail);
-                                                echo '             ';
+                                                echo anchor('route/detail/' . $rcode . '/' . $vtid, '<i class="fa fa-clock-o" ></i>  ตารางเวลาเดินรถ', $view_detail);
+                                                echo '  ';
+                                                echo anchor('route/station/' . $rcode . '/' . $vtid, '<i class="fa fa-bus" ></i>  จุดจอดและอัตราค่าโดยสาร', $point_price);
+                                                echo '  ';
                                                 echo anchor('route/edit/' . $rcode . '/' . $vtid, '<i class="fa fa-pencil"></i>', $edit);
                                                 echo ' ';
                                                 echo anchor('route/delete/' . $rcode . '/' . $vtid, '<i class="fa fa-trash-o" ></i>', $delete);
-                                                ?>   
+                                                ?>                                                
                                             </div>
                                         </div>
                                     </div>

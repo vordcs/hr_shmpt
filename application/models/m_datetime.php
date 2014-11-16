@@ -25,6 +25,19 @@ Class m_datetime extends CI_Model {
         return $date;
     }
 
+    public function getDateThaiString($strDate) {
+//        string input 2557-11-15
+        if ($strDate == NULL) {
+            return '-';
+        } else {
+            $str = explode('-', $strDate);
+            $strYear = trim($str[0]);
+            $strMonthThai = $this->month_th[(int) $str[1]];
+            $strDay = $str[2];
+            return "$strDay $strMonthThai $strYear";
+        }
+    }
+
     function setDateFomat($input_date) {
         $d = new DateTime($input_date);
         $date = $d->format('Y-m-d');

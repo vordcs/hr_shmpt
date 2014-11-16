@@ -6,15 +6,18 @@ if (!defined('BASEPATH'))
 class m_cost extends CI_Model {
 
     public function get_cost($cid = null, $ctid = NULL) {
+
+
+        $this->db->join('cost_type', 'cost_type.CostTypeID = cost.CostTypeID');
+        $this->db->join('cost_detail', 'cost_detail.CostDetailID = cost.CostDetailID');
+        $this->db->join('vehicles_has_cost', 'vehicles_has_cost.CostID = cost.CostID');
         if ($cid != NULL) {
             $this->db->where('cost.CostID', $cid);
         }
         if ($ctid != NULL) {
             $this->db->where('cost.CostTypeID', $ctid);
         }
-        $this->db->join('cost_type', 'cost_type.CostTypeID = cost.CostTypeID');
-        $this->db->join('cost_detail', 'cost_detail.CostDetailID = cost.CostDetailID');
-        $this->db->join('vehicles_has_cost', 'vehicles_has_cost.CostID = cost.CostID');
+        $this->db->where('cost.CostDate', $this->m_datetime->getDateTodayTH());
         $query = $this->db->get('cost');
         return $query->result_array();
     }
@@ -71,9 +74,22 @@ class m_cost extends CI_Model {
         $query = $this->db->get('t_routes');
         return $query->result_array();
     }
-    
-    public function search_cost($form=NULL,$to=NULL) {
-        
+
+    public function search_cost($form = NULL, $to = NULL) {
+
+        $this->db->join('cost_type', 'cost_type.CostTypeID = cost.CostTypeID');
+        $this->db->join('cost_detail', 'cost_detail.CostDetailID = cost.CostDetailID');
+        $this->db->join('vehicles_has_cost', 'vehicles_has_cost.CostID = cost.CostID');
+
+        if ($form != NULL && $to == NULL) {
+            $this->db->where('cost.CostDate', $this->m_datetime->setDateFomat($form));
+        }
+        if ($form != NULL && $to != NULL) {
+            $this->db->where('cost.CostDate =>', $this->m_datetime->setDateFomat($form));
+            $this->db->where('cost.CostDate =<', $this->m_datetime->setDateFomat($to));
+        }
+        $query = $this->db->get('cost');
+        return $query->result_array();
     }
 
     public function insert_cost($data) {
@@ -203,7 +219,7 @@ class m_cost extends CI_Model {
         $data_cost = array(
             'CostTypeID' => $ctid,
             'CostDetailID' => $this->input->post('CostDetailID'),
-            'CostDate' => $this->input->post('CostDate'),
+            'CostDate' => $this->m_datetime->setDateFomat($this->input->post('CostDate')),
             'CostValue' => $this->input->post('CostValue'),
             'CostNote' => $this->input->post('CostNote'),
         );

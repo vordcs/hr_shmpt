@@ -79,7 +79,6 @@
             theTable = document.getElementById("tableStation");
             theTableBody = theTable.tBodies[0];
             theTableBody.deleteRow(intLine);
-
         }
     }
 </script>
@@ -134,7 +133,7 @@
                         <h3 class="panel-title">ไป ขอนแก่น</h3>
                     </div>
                     <div class="panel-body">
-                                            
+
                     </div>
                 </div>
             </div>
