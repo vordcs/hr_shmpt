@@ -183,12 +183,19 @@
                                                 จุดขายตั๋ว
                                             </div>
                                             <div class="col-md-10 text-left">
-
-                                                <?php for ($n = 0; $n < 6; $n++) { ?>
-                                                    <div class="col-xs-6 col-md-4">
-                                                        จุดดขายตัวที่ <?= $n ?>
-                                                    </div>
-                                                <?php } ?>
+                                                <?php
+                                                foreach ($stations as $s) {
+                                                    $station_name = $s['StationName'];
+                                                    if ($rcode==$s['RCode']&&$vtid==$s['VTID']&&$s['IsSaleTicket']==1) {
+                                                        ?>
+                                                        <div class="col-xs-6 col-md-4">
+                                                            <span class="text">
+                                                                <?= $station_name ?>  
+                                                            </span>                                                           
+                                                        </div>
+                                                    <?php }
+                                                }
+                                                ?>
 
                                             </div>
                                         </div>

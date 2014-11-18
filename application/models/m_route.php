@@ -154,7 +154,7 @@ class m_route extends CI_Model {
     function set_form_add_route($type_id) {
         $i_RCode = array(
             'name' => 'RCode',
-            'value' => set_value('RID'),
+            'value' => set_value('RCode'),
             'placeholder' => 'รหัสเส้นทาง',
             'class' => 'form-control');
 
@@ -174,6 +174,12 @@ class m_route extends CI_Model {
             'placeholder' => 'ปลายทาง',
             'class' => 'form-control');
 
+        $i_Time = array(
+            'name' => 'Time',
+            'value' => set_value('Time'),
+            'placeholder' => 'เวลาที่ใช้',
+            'class' => 'form-control');
+
         $dropdown = 'class="selecter_3" disabled="disabled" data-selecter-options = \'{"cover":"true"}\' ';
 
         $form_add_route = array(
@@ -182,6 +188,7 @@ class m_route extends CI_Model {
             'VTID' => form_dropdown('VTID', $i_VTID, (set_value('VTID') == NULL) ? $type_id : set_value('VTID'), $dropdown),
             'RSource' => form_input($i_RSource),
             'RDestination' => form_input($i_RDestination),
+            'Time' => form_input($i_Time),
         );
         return $form_add_route;
     }
@@ -209,6 +216,12 @@ class m_route extends CI_Model {
             'placeholder' => 'ปลายทาง',
             'class' => 'form-control');
 
+        $i_Time = array(
+            'name' => 'Time',
+            'value' => (set_value('Time') == NULL) ? $data ['Time'] : set_value('Time'),
+            'placeholder' => 'เวลาที่ใช้',
+            'class' => 'form-control');
+
         $dropdown = 'class="selecter_3" data-selecter-options = \'{"cover":"true"}\' ';
 
         $form_edit_route = array(
@@ -217,6 +230,7 @@ class m_route extends CI_Model {
             'VTID' => form_dropdown('VTID', $i_VTID, (set_value('VTID') == NULL) ? $data['VTID'] : set_value('VTID'), $dropdown),
             'RSource' => form_input($i_RSource),
             'RDestination' => form_input($i_RDestination),
+            'Time' => form_input($i_Time),
         );
         return $form_edit_route;
     }
@@ -226,6 +240,7 @@ class m_route extends CI_Model {
         $this->form_validation->set_rules('VTID', 'ประเภทรถ', 'trim|xss_clean|callback_check_dropdown');
         $this->form_validation->set_rules('RSource', 'ต้นทาง', 'trim|required|xss_clean');
         $this->form_validation->set_rules('RDestination', 'ปลายทาง', 'trim|required|xss_clean');
+         $this->form_validation->set_rules('Time', 'เวลา', 'trim|required|xss_clean');
         return TRUE;
     }
 
@@ -234,6 +249,7 @@ class m_route extends CI_Model {
         $this->form_validation->set_rules('VTID', 'ประเภทรถ', 'trim|xss_clean|callback_check_dropdown|callback_check_route');
         $this->form_validation->set_rules('RSource', 'ต้นทาง', 'trim|required|xss_clean');
         $this->form_validation->set_rules('RDestination', 'ปลายทาง', 'trim|required|xss_clean');
+        $this->form_validation->set_rules('Time', 'เวลา', 'trim|required|xss_clean');
         return TRUE;
     }
 
@@ -243,6 +259,7 @@ class m_route extends CI_Model {
             'VTID' => $type_id,
             'RSource' => $this->input->post('RSource'),
             'RDestination' => $this->input->post('RDestination'),
+            'Time' => $this->input->post('Time'),
         );
         return $form_data;
     }
@@ -253,6 +270,7 @@ class m_route extends CI_Model {
             'VTID' => $this->input->post('VTID'),
             'RSource' => $this->input->post('RSource'),
             'RDestination' => $this->input->post('RDestination'),
+            'Time' => $this->input->post('Time'),
         );
         return $form_data;
     }

@@ -56,6 +56,18 @@
                             <?php echo form_error('RDestination', '<font color="error">', '</font>'); ?>
                         </div>
                     </div>
+                    <div class="form-group <?= (form_error('Time')) ? 'has-error' : '' ?>">
+                        <label class="col-sm-3 control-label">เวลาที่ใช้</label>
+                        <div class="col-sm-2">
+                            <?php echo $form_route['Time']; ?>                            
+                        </div>
+                        <div class="col-sm-1">
+                            นาที
+                        </div>
+                        <div class="col-sm-3">
+                            <?php echo form_error('Time', '<font color="error">', '</font>'); ?>
+                        </div>
+                    </div>
                     <br>
                     <div class="form-group">                        
                         <div class="col-sm-offset-3 col-sm-10">
