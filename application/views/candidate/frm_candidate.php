@@ -2,6 +2,16 @@
     jQuery(document).ready(function ($) {
         $("#mainmenu ul li").removeAttr('class');
         $("#btnCandidate").addClass("active");
+        $('.datepicker').datepicker({
+            language: 'th-th',
+            format: 'yyyy-m-d'
+        });
+        $("#btn_prepare_save").click(function () {
+            if ($('#check_agree').is(':checked'))
+                $('#modal_work_expreince').modal();
+            else
+                alert('กรุณากดยอมรับข้อตกลงก่อน');
+        });
         $("#btn_save").click(function () {
             if ($('#check_agree').is(':checked'))
                 $("#frm_main").submit();
@@ -39,7 +49,11 @@
         });
 
         $('#btn_expreience').click(function () {
-            $("#table_expreience").append('<tr><td><input type="text" name="ExCompanyName" value="" class="form-control"  /></td><td><input type="text" name="ExDateForm" value="" class="form-control"  /></td><td><input type="text" name="ExDateTo" value="" class="form-control"  /></td><td><input type="text" name="ExPositionName" value="" class="form-control"  /></td><td><input type="text" name="ExSaraly" value="" class="form-control"  /></td><td><input type="text" name="ReasonOfResign" value="" class="form-control"  /></td></tr> ');
+            $("#table_expreience").append('<tr><td><input type="text" name="ExCompanyName[]" value="" class="form-control"  /></td><td><input type="text" name="ExDateForm[]" value="" class="form-control datepicker"  /></td><td><input type="text" name="ExDateTo[]" value="" class="form-control datepicker"  /></td><td><input type="text" name="ExPositionName[]" value="" class="form-control"  /></td><td><input type="text" name="ExSaraly[]" value="" class="form-control"  /></td><td><input type="text" name="ReasonOfResign[]" value="" class="form-control"  /></td></tr> ');
+            $('.datepicker').datepicker({
+                language: 'th-th',
+                format: 'yyyy-m-d'
+            });
         });
         $('#btnDel_expreience').click(function () {
             if ($('#table_expreience tr').length > 1)
@@ -638,7 +652,7 @@
                                 </div>
                             </div>                             
                             <div class="col-md-12 text-center">
-                                <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#modal_work_expreince">บันทึก</button>
+                                <button id="btn_prepare_save" class="btn btn-primary" type="button">บันทึก</button>
                                 <button class="btn btn-danger" type="reset">เริ่มใหม่</button>
                             </div>                          
                         </div>

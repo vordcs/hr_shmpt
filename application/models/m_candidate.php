@@ -52,13 +52,13 @@ class m_candidate extends CI_Model {
         $i_AvaliableStartDate = array(
             'name' => 'AvaliableStartDate',
             'value' => set_value('AvaliableStartDate'),
-            'class' => 'form-control');
+            'class' => 'form-control datepicker');
 
         // Person information
         $i_BirthDate = array(
             'name' => 'BirthDate',
             'value' => set_value('BirthDate'),
-            'class' => 'form-control');
+            'class' => 'form-control datepicker');
         $i_Age = array(
             'name' => 'Age',
             'type' => 'number',
@@ -326,45 +326,45 @@ class m_candidate extends CI_Model {
 
         // Education information
         $i_InstitutionName = array(
-            'name' => 'InstitutionName',
+            'name' => 'InstitutionName[]',
             'value' => set_value('InstitutionName'),
             'class' => 'form-control');
         $i_EDMajor = array(
-            'name' => 'EDMajor',
+            'name' => 'EDMajor[]',
             'value' => set_value('EDMajor'),
             'class' => 'form-control');
         $i_EDDateFrom = array(
-            'name' => 'EDDateFrom',
+            'name' => 'EDDateFrom[]',
             'value' => set_value('EDDateFrom'),
-            'class' => 'form-control');
+            'class' => 'form-control datepicker');
         $i_EDDateTo = array(
-            'name' => 'EDDateTo',
+            'name' => 'EDDateTo[]',
             'value' => set_value('EDDateTo'),
-            'class' => 'form-control');
+            'class' => 'form-control datepicker');
 
         // Experience information
         $i_ExCompanyName = array(
-            'name' => 'ExCompanyName',
+            'name' => 'ExCompanyName[]',
             'value' => set_value('ExCompanyName'),
             'class' => 'form-control');
         $i_ExDateForm = array(
-            'name' => 'ExDateForm',
+            'name' => 'ExDateForm[]',
             'value' => set_value('ExDateForm'),
-            'class' => 'form-control');
+            'class' => 'form-control datepicker');
         $i_ExDateTo = array(
-            'name' => 'ExDateTo',
+            'name' => 'ExDateTo[]',
             'value' => set_value('ExDateTo'),
-            'class' => 'form-control');
+            'class' => 'form-control datepicker');
         $i_ExPositionName = array(
-            'name' => 'ExPositionName',
+            'name' => 'ExPositionName[]',
             'value' => set_value('ExPositionName'),
             'class' => 'form-control');
         $i_ExSaraly = array(
-            'name' => 'ExSaraly',
+            'name' => 'ExSaraly[]',
             'value' => set_value('ExSaraly'),
             'class' => 'form-control');
         $i_ReasonOfResign = array(
-            'name' => 'ReasonOfResign',
+            'name' => 'ReasonOfResign[]',
             'value' => set_value('ReasonOfResign'),
             'class' => 'form-control');
 
@@ -529,17 +529,17 @@ class m_candidate extends CI_Model {
         $this->form_validation->set_rules('MotherOccupation', '', 'trim|xss_clean');
         $this->form_validation->set_rules('MotherIsAlive', '', 'trim|xss_clean');
         // Education information
-        $this->form_validation->set_rules('InstitutionName', '', 'trim|xss_clean');
-        $this->form_validation->set_rules('EDMajor', '', 'trim|xss_clean');
-        $this->form_validation->set_rules('EDDateFrom', '', 'trim|xss_clean');
-        $this->form_validation->set_rules('EDDateTo', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('InstitutionName[]', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('EDMajor[]', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('EDDateFrom[]', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('EDDateTo[]', '', 'trim|xss_clean');
         // Experience information
-        $this->form_validation->set_rules('ExCompanyName', '', 'trim|xss_clean');
-        $this->form_validation->set_rules('ExDateForm', '', 'trim|xss_clean');
-        $this->form_validation->set_rules('ExDateTo', '', 'trim|xss_clean');
-        $this->form_validation->set_rules('ExPositionName', '', 'trim|xss_clean');
-        $this->form_validation->set_rules('ExSaraly', '', 'trim|xss_clean');
-        $this->form_validation->set_rules('ReasonOfResign', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('ExCompanyName[]', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('ExDateForm[]', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('ExDateTo[]', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('ExPositionName[]', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('ExSaraly[]', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('ReasonOfResign[]', '', 'trim|xss_clean');
         // Emergency_contact
         $this->form_validation->set_rules('ECTitle', '', 'trim|xss_clean');
         $this->form_validation->set_rules('ECFirstName', '', 'trim|xss_clean');
