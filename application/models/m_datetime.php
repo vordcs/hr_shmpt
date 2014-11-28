@@ -39,8 +39,15 @@ Class m_datetime extends CI_Model {
     }
 
     function setDateFomat($input_date) {
+        $date = NULL;
         $d = new DateTime($input_date);
-        $date = $d->format('Y-m-d');
+        if ($d->format('Y') > date('Y')) {
+            $date .= ($d->format('Y') - 543) . '-';
+            $date .= ($d->format('m')) . '-';
+            $date .= $d->format('d');
+        } else {
+            $date = $d->format('Y-m-d');
+        }
         return $date;
     }
 
