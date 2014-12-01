@@ -9,6 +9,7 @@ class candidate extends CI_Controller {
         parent::__construct();
         $this->load->model('m_template');
         $this->load->model('m_candidate');
+        $this->load->model('m_datetime');
         $this->load->library('form_validation');
 
         //Initial language
@@ -30,7 +31,10 @@ class candidate extends CI_Controller {
         $data = array();
 
         if ($this->m_candidate->set_validation() && $this->form_validation->run()) {
-//            $input_data = $this->m_candidate->get_post();
+            $input_data = $this->m_candidate->get_post();
+            $input_data['debug'] = $this->m_candidate->insert_all_data($input_data);
+            $data['form_input'] = $this->m_candidate->set_form();
+            $this->m_template->set_Debug($input_data);
         } else {
             $data['form_input'] = $this->m_candidate->set_form();
         }
@@ -39,7 +43,10 @@ class candidate extends CI_Controller {
 
         $data['form_close'] = form_open('candidate/add');
 
-        $this->m_template->set_Debug($this->input->post('ExCompanyName'));
+        $test['in'] = '2557-11-4';
+        $test['out'] = $this->m_datetime->setDateFomat($test['in']);
+
+        $this->m_template->set_Debug($this->m_candidate->get_post());
         $this->m_template->set_Content('candidate/frm_candidate', $data);
         $this->m_template->showTemplate();
     }

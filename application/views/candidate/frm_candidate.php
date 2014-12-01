@@ -66,12 +66,9 @@
         <div class="col-md-12">
             <ul class="breadcrumb">
                 <li>
-                    <a href="#">Home</a>
+                    <?= anchor('candidate', 'ผู้สมัครงาน') ?>
                 </li>
-                <li>
-                    <a href="#">Library</a>
-                </li>
-                <li class="active">Data</li>
+                <li class="active">เพิ่มผู้สมัครงาน</li>
             </ul>
             <div class="page-header">
                 <h1>สมัครงาน
@@ -98,7 +95,7 @@
                     <?= $form_input['PID'] ?>
                 </div>
             </div>
-            <div class="form-group">
+            <div class="form-group <?php if (form_error('ExpectedPermanantSalary')) echo 'has-error'; ?>">
                 <label class="col-sm-2 control-label" contenteditable="true">เงินเดือนที่ต้องการ</label>
                 <div class="col-sm-5">
                     <?= $form_input['ExpectedPermanantSalary'] ?>
@@ -112,23 +109,23 @@
                 <div class="col-sm-2">
                     <?= $form_input['Title'] ?>
                 </div>
-                <div class="col-sm-4">
+                <div class="col-sm-4 <?php if (form_error('FirstName')) echo 'has-error'; ?>">
                     <?= $form_input['FirstName'] ?>
                 </div>
                 <label class="col-sm-1 control-label">นามสกุล</label>
-                <div class="col-sm-4">
+                <div class="col-sm-4 <?php if (form_error('LastName')) echo 'has-error'; ?>">
                     <?= $form_input['LastName'] ?>
                 </div>
             </div>                 
             <div class="form-group">
                 <label class="col-sm-3 control-label">เลขประจำตัวประชาชน</label>
-                <div class="col-sm-7">
+                <div class="col-sm-7 <?php if (form_error('PersonalID')) echo 'has-error'; ?>">
                     <?= $form_input['PersonalID'] ?>
                 </div>
             </div>
             <div class="form-group">
                 <label class="col-sm-3 control-label">เริ่มงานได้วันที่</label>
-                <div class="col-sm-3">
+                <div class="col-sm-3 <?php if (form_error('AvaliableStartDate')) echo 'has-error'; ?>">
                     <?= $form_input['AvaliableStartDate'] ?>
                 </div>
             </div>
@@ -219,7 +216,7 @@
                         <div class="col-sm-4">
                             <label class="col-sm-4 control-label">บ้านเลขที่</label>
                             <div class="col-sm-8">
-                                <?= $form_input['CurrentAddress'] ?>
+                                <?= $form_input['CurrentHouseNumber'] ?>
                             </div>  
                         </div>
                         <div class="col-sm-2">
@@ -614,27 +611,27 @@
                                             <label class="control-label" for="">คำนำหน้าชื่อ</label>
                                             <?= $form_input['ECTitle'] ?>
                                         </div>
-                                        <div class="col-sm-3">
-                                            <label class="control-label" for="exampleInputEmail1">ชื่อ</label>
+                                        <div class="col-sm-3 <?php if (form_error('ECFirstName')) echo 'has-error'; ?>">
+                                            <label class="control-label">ชื่อ</label>
                                             <?= $form_input['ECFirstName'] ?>
                                         </div>
-                                        <div class="col-sm-3">
-                                            <label class="control-label" for="exampleInputEmail1">นามสกุล</label>
+                                        <div class="col-sm-3 <?php if (form_error('ECLastName')) echo 'has-error'; ?>">
+                                            <label class="control-label">นามสกุล</label>
                                             <?= $form_input['ECLastName'] ?>
                                         </div>
-                                        <div class="col-sm-2">
-                                            <label class="control-label" for="exampleInputEmail1">เกี่ยวข้องเป็น</label>
+                                        <div class="col-sm-2 <?php if (form_error('ECRelationShip')) echo 'has-error'; ?>">
+                                            <label class="control-label">เกี่ยวข้องเป็น</label>
                                             <?= $form_input['ECRelationShip'] ?>
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <div class="col-sm-5">
-                                            <label class="control-label" for="exampleInputEmail1">ที่อยู่</label>
+                                        <div class="col-sm-5 <?php if (form_error('ECAddress')) echo 'has-error'; ?>">
+                                            <label class="control-label">ที่อยู่</label>
                                             <?= $form_input['ECAddress'] ?>
                                         </div>
-                                        <div class="col-sm-3">
-                                            <label class="control-label" for="exampleInputEmail1">โทร</label>
-                                            <?= $form_input['ECMobilePhone'] ?>\
+                                        <div class="col-sm-3 <?php if (form_error('ECMobilePhone')) echo 'has-error'; ?>">
+                                            <label class="control-label">โทร</label>
+                                            <?= $form_input['ECMobilePhone'] ?>
                                         </div>
                                     </div>
                                 </div>
@@ -684,4 +681,5 @@
         </div>
     </div>
 
+</div>
 

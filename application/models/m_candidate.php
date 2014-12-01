@@ -10,9 +10,70 @@ class m_candidate extends CI_Model {
         return $query->result_array();
     }
 
+    function set_create_date($data) {
+        $name = $this->session->userdata('name');
+        $data['CreateDate'] = date('Y-m-d H:i:s');
+        $data['CreateBy'] = $name;
+        return $data;
+    }
+
+    function set_update_date($data) {
+        $name = $this->session->userdata('name');
+        $data['UpdateDate'] = date('Y-m-d H:i:s');
+        $data['UpdateBy'] = $name;
+        return $data;
+    }
+
     function check_employee_positions() {
         $query = $this->db->get('employee_positions');
         return $query->result_array();
+    }
+
+    function insert_all_data($data) {
+        $ECID = $this->insert_emergency($data['emergency']);
+        $data['ECID'] = $ECID;
+        $CID = $this->insert_person_information($data);
+        return $CID;
+    }
+
+    function insert_person_information($data) {
+        unset($data['emergency']);
+        unset($data['experience']);
+        unset($data['family']);
+        unset($data['education']);
+        $data['CID'] = $this->gen_cid();
+        $data = $this->set_create_date($data);
+        $this->db->insert('candidate', $data);
+        return $this->db->insert_id();
+    }
+
+    function gen_cid() {
+        $this->db->order_by("CID", "desc");
+        $this->db->limit(2);
+        $query = $this->db->get('candidate');
+        $temp = $query->result_array();
+        $last_cid = 'SHMPT00000';
+        foreach ($temp as $row) {
+            $last_cid = $row['CID'];
+            break;
+        }
+        $num = substr($last_cid, 5);
+        $num+=1;
+        $num = str_pad($num, 5, '0', STR_PAD_LEFT);
+        $last_cid = 'SHMPT' . $num;
+        return $last_cid;
+    }
+
+    function insert_experience($data) {
+        $data = $this->set_create_date($data);
+        $this->db->insert('candidate_emergency_contact', $data);
+        return $this->db->insert_id();
+    }
+
+    function insert_emergency($data) {
+        $data = $this->set_create_date($data);
+        $this->db->insert('candidate_emergency_contact', $data);
+        return $this->db->insert_id();
     }
 
     function set_form() {
@@ -101,9 +162,9 @@ class m_candidate extends CI_Model {
             'name' => 'Height',
             'value' => set_value('Height'),
             'class' => 'form-control');
-        $i_CurrentAddress = array(
-            'name' => 'CurrentAddress',
-            'value' => set_value('CurrentAddress'),
+        $i_CurrentHouseNumber = array(
+            'name' => 'CurrentHouseNumber',
+            'value' => set_value('CurrentHouseNumber'),
             'class' => 'form-control');
         $i_CurrentMu = array(
             'name' => 'CurrentMu',
@@ -414,7 +475,7 @@ class m_candidate extends CI_Model {
             'Sex' => $i_Sex,
             'Weight' => form_input($i_Weight),
             'Height' => form_input($i_Height),
-            'CurrentAddress' => form_input($i_CurrentAddress),
+            'CurrentHouseNumber' => form_input($i_CurrentHouseNumber),
             'CurrentMu' => form_input($i_CurrentMu),
             'CurrentStreet' => form_input($i_CurrentStreet),
             'CurrentVillage' => form_input($i_CurrentVillage),
@@ -492,7 +553,7 @@ class m_candidate extends CI_Model {
         $this->form_validation->set_rules('Sex', '', 'trim|xss_clean');
         $this->form_validation->set_rules('Weight', '', 'trim|xss_clean');
         $this->form_validation->set_rules('Height', '', 'trim|xss_clean');
-        $this->form_validation->set_rules('CurrentAddress', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('CurrentHouseNumber', '', 'trim|xss_clean');
         $this->form_validation->set_rules('CurrentMu', '', 'trim|xss_clean');
         $this->form_validation->set_rules('CurrentStreet', '', 'trim|xss_clean');
         $this->form_validation->set_rules('CurrentVillage', '', 'trim|xss_clean');
@@ -541,38 +602,82 @@ class m_candidate extends CI_Model {
         $this->form_validation->set_rules('ExSaraly[]', '', 'trim|xss_clean');
         $this->form_validation->set_rules('ReasonOfResign[]', '', 'trim|xss_clean');
         // Emergency_contact
-        $this->form_validation->set_rules('ECTitle', '', 'trim|xss_clean');
-        $this->form_validation->set_rules('ECFirstName', '', 'trim|xss_clean');
-        $this->form_validation->set_rules('ECLastName', '', 'trim|xss_clean');
-        $this->form_validation->set_rules('ECRelationShip', '', 'trim|xss_clean');
-        $this->form_validation->set_rules('ECAddress', '', 'trim|xss_clean');
-        $this->form_validation->set_rules('ECMobilePhone', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('ECTitle', '', 'trim|required|xss_clean');
+        $this->form_validation->set_rules('ECFirstName', '', 'trim|required|xss_clean');
+        $this->form_validation->set_rules('ECLastName', '', 'trim|required|xss_clean');
+        $this->form_validation->set_rules('ECRelationShip', '', 'trim|required|xss_clean');
+        $this->form_validation->set_rules('ECAddress', '', 'trim|required|xss_clean');
+        $this->form_validation->set_rules('ECMobilePhone', '', 'trim|required|xss_clean');
         return true;
     }
 
     function get_post() {
         $f_data = array(
-            'act_id' => $this->input->post('act_id'),
-            'act_years' => $this->input->post('act_years'),
-            'act_term' => $this->input->post('act_term'),
-            'act_name' => $this->input->post('act_name'),
-            'group_id' => $this->input->post('group_id'),
-            'act_unit' => $this->input->post('act_unit'),
-            'act_check' => $this->input->post('act_check'),
-            'act_expect' => $this->input->post('act_expect'),
-            'act_budget' => $this->input->post('act_budget'),
-            'act_charge' => $this->input->post('act_charge'),
-            'act_charge_detail' => $this->input->post('act_charge_detail'),
-            'act_register' => $this->input->post('act_register'),
-            'act_register_t' => $this->input->post('act_register_t'),
-            'act_start' => $this->input->post('act_start'),
-            'act_start_t' => $this->input->post('act_start_t'),
-            'act_end' => $this->input->post('act_end'),
-            'act_end_t' => $this->input->post('act_end_t'),
-            'act_location' => $this->input->post('act_location'),
-            'act_responsible' => $this->input->post('act_responsible'),
-            'act_consultant' => $this->input->post('act_consultant'),
-            'act_status' => $this->input->post('act_status')
+            'PID' => $this->input->post('PID'),
+            'Title' => $this->input->post('Title'),
+            'ExpectedPermanantSalary' => $this->input->post('ExpectedPermanantSalary'),
+            'FirstName' => $this->input->post('FirstName'),
+            'LastName' => $this->input->post('LastName'),
+            'PersonalID' => $this->input->post('PersonalID'),
+            'AvaliableStartDate' => $this->input->post('AvaliableStartDate'),
+            // Person information
+            'BirthDate' => $this->input->post('BirthDate'),
+            'Age' => $this->input->post('Age'),
+            'NickName' => $this->input->post('NickName'),
+            'Race' => $this->input->post('Race'),
+            'Nationality' => $this->input->post('Nationality'),
+            'Religion' => $this->input->post('Religion'),
+            'Sex' => $this->input->post('Sex'),
+            'Weight' => $this->input->post('Weight'),
+            'Height' => $this->input->post('Height'),
+            'CurrentHouseNumber' => $this->input->post('CurrentHouseNumber'),
+            'CurrentMu' => $this->input->post('CurrentMu'),
+            'CurrentStreet' => $this->input->post('CurrentStreet'),
+            'CurrentVillage' => $this->input->post('CurrentVillage'),
+            'CurrentSubDistrict' => $this->input->post('CurrentSubDistrict'),
+            'CurrentDistrict' => $this->input->post('CurrentDistrict'),
+            'CurrentProvince' => $this->input->post('CurrentProvince'),
+            'CurrentZipCode' => $this->input->post('CurrentZipCode'),
+            'MobilePhone' => $this->input->post('MobilePhone'),
+            'Residential' => $this->input->post('Residential'),
+            'MilitaryServiceStatus' => $this->input->post('MilitaryServiceStatus'),
+            'MaritalStatus' => $this->input->post('MaritalStatus'),
+            // Family
+            'family' => array(
+                'SpouseTitle' => $this->input->post('SpouseTitle'),
+                'SpouseFirstName' => $this->input->post('SpouseFirstName'),
+                'SpouseLastName' => $this->input->post('SpouseLastName'),
+                'SpouseAge' => $this->input->post('SpouseAge'),
+                'SpouseOccupation' => $this->input->post('SpouseOccupation'),
+                'SpouseIsAlive' => $this->input->post('SpouseIsAlive'),
+                'NumberSon' => $this->input->post('NumberSon'),
+                'SonTitle' => $this->input->post('SonTitle'),
+                'SonFirstName' => $this->input->post('SonFirstName'),
+                'SonLastName' => $this->input->post('SonLastName'),
+                'SonAge' => $this->input->post('SonAge'),
+                'SonOccupation' => $this->input->post('SonOccupation')),
+            // Education information
+            'education' => array(
+                'InstitutionName' => $this->input->post('InstitutionName'),
+                'EDMajor' => $this->input->post('EDMajor'),
+                'EDDateFrom' => $this->input->post('EDDateFrom'),
+                'EDDateTo' => $this->input->post('EDDateTo')),
+            // Experience information
+            'experience' => array(
+                'ExCompanyName' => $this->input->post('ExCompanyName'),
+                'ExDateForm' => $this->input->post('ExDateForm'),
+                'ExDateTo' => $this->input->post('ExDateTo'),
+                'ExPositionName' => $this->input->post('ExPositionName'),
+                'ExSaraly' => $this->input->post('ExSaraly'),
+                'ReasonOfResign' => $this->input->post('ReasonOfResign')),
+            // Emergency_contact
+            'emergency' => array(
+                'ECTitle' => $this->input->post('ECTitle'),
+                'ECFirstName' => $this->input->post('ECFirstName'),
+                'ECLastName' => $this->input->post('ECLastName'),
+                'ECRelationShip' => $this->input->post('ECRelationShip'),
+                'ECAddress' => $this->input->post('ECAddress'),
+                'ECMobilePhone' => $this->input->post('ECMobilePhone'))
         );
         return $f_data;
     }
