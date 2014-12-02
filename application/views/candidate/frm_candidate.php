@@ -36,15 +36,13 @@
             if (num > row) {
                 $("#childen").removeClass().addClass('table table-hover');
                 for (var i = num - row; i > 0; i--) {
-                    $("#childen").append('<tr><td>' + num + '</td><td><input type="text" name="SonTitle" value="" class="form-control"  /></td><td><input type="text" name="SonFirstName" value="" class="form-control"  /></td><td><input type="text" name="SonLastName" value="" class="form-control"  /></td><td><input type="text" name="SonAge" value="" class="form-control"  /></td><td><input type="text" name="SonOccupation" value="" class="form-control"  /></td></tr>');
+                    $("#childen").append('<tr><td>' + num + '</td><td><input type="text" name="SonTitle[]" value="" class="form-control"  /></td><td><input type="text" name="SonFirstName[]" value="" class="form-control"  /></td><td><input type="text" name="SonLastName[]" value="" class="form-control"  /></td><td><input type="text" name="SonAge[]" value="" class="form-control"  /></td><td><input type="text" name="SonOccupation[]" value="" class="form-control"  /></td></tr>');
                 }
             } else if (num < row) {
                 $("#childen").removeClass().addClass('table table-hover');
                 for (var i = row - num; i > 0; i--) {
                     $('#childen tr:last').remove();
                 }
-            } else {
-                $("#childen").removeClass().addClass('table table-hover hidden');
             }
         });
 
@@ -376,7 +374,7 @@
                             </div>
                         </div>
                         <div class="col-sm-10 col-sm-offset-1 well" >
-                            <table id="childen" class="table table-hover hidden">
+                            <table id="childen" class="table table-hover">
                                 <thead>
                                     <tr>
                                         <th style="width: 2%;"></th>
@@ -388,14 +386,26 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    <?php
+                                    $num = count($form_input['SonTitle']);
+                                    for ($i = 0; $i < $num; $i++) {
+                                        ?>
+                                    <td><?= ($i + 1) ?></td>
+                                    <td><?= $form_input['SonTitle'][$i] ?></td>
+                                    <td><?= $form_input['SonFirstName'][$i] ?></td>
+                                    <td><?= $form_input['SonLastName'][$i] ?></td>
+                                    <td><?= $form_input['SonAge'][$i] ?></td>
+                                    <td><?= $form_input['SonOccupation'][$i] ?></td>                                        
+                                    </tr>   
+                                <?php } ?>
 <!--                                    <tr>
-                                        <td>1</td>
-                                        <td><?= $form_input['SonTitle'] ?></td>
-                                        <td><?= $form_input['SonFirstName'] ?></td>
-                                        <td><?= $form_input['SonLastName'] ?></td>
-                                        <td><?= $form_input['SonAge'] ?></td>
-                                        <td><?= $form_input['SonOccupation'] ?></td>                                        
-                                    </tr>                     -->
+<td>1</td>
+<td><?= $form_input['SonTitle'] ?></td>
+<td><?= $form_input['SonFirstName'] ?></td>
+<td><?= $form_input['SonLastName'] ?></td>
+<td><?= $form_input['SonAge'] ?></td>
+<td><?= $form_input['SonOccupation'] ?></td>                                        
+</tr>                     -->
                                 </tbody>
                             </table>                            
                         </div>
@@ -514,45 +524,45 @@
                             <tbody>
                                 <tr>
                                     <td>ประถมศึกษา</td>
-                                    <td><?= $form_input['InstitutionName'] ?></td>
-                                    <td><?= $form_input['EDMajor'] ?></td>
-                                    <td><?= $form_input['EDDateFrom'] ?></td>
-                                    <td><?= $form_input['EDDateTo'] ?></td>
+                                    <td><?= $form_input['InstitutionName'][0] ?></td>
+                                    <td><?= $form_input['EDMajor'][0] ?></td>
+                                    <td><?= $form_input['EDDateFrom'][0] ?></td>
+                                    <td><?= $form_input['EDDateTo'][0] ?></td>
                                 </tr>
                                 <tr>
                                     <td>มัธยมศึกษา</td>
-                                    <td><?= $form_input['InstitutionName'] ?></td>
-                                    <td><?= $form_input['EDMajor'] ?></td>
-                                    <td><?= $form_input['EDDateFrom'] ?></td>
-                                    <td><?= $form_input['EDDateTo'] ?></td>
+                                    <td><?= $form_input['InstitutionName'][1] ?></td>
+                                    <td><?= $form_input['EDMajor'][1] ?></td>
+                                    <td><?= $form_input['EDDateFrom'][1] ?></td>
+                                    <td><?= $form_input['EDDateTo'][1] ?></td>
                                 </tr>
                                 <tr>
                                     <td>ปวช</td>
-                                    <td><?= $form_input['InstitutionName'] ?></td>
-                                    <td><?= $form_input['EDMajor'] ?></td>
-                                    <td><?= $form_input['EDDateFrom'] ?></td>
-                                    <td><?= $form_input['EDDateTo'] ?></td>
+                                    <td><?= $form_input['InstitutionName'][2] ?></td>
+                                    <td><?= $form_input['EDMajor'][2] ?></td>
+                                    <td><?= $form_input['EDDateFrom'][2] ?></td>
+                                    <td><?= $form_input['EDDateTo'][2] ?></td>
                                 </tr>
                                 <tr>
                                     <td>ปวส</td>
-                                    <td><?= $form_input['InstitutionName'] ?></td>
-                                    <td><?= $form_input['EDMajor'] ?></td>
-                                    <td><?= $form_input['EDDateFrom'] ?></td>
-                                    <td><?= $form_input['EDDateTo'] ?></td>
+                                    <td><?= $form_input['InstitutionName'][3] ?></td>
+                                    <td><?= $form_input['EDMajor'][3] ?></td>
+                                    <td><?= $form_input['EDDateFrom'][3] ?></td>
+                                    <td><?= $form_input['EDDateTo'][3] ?></td>
                                 </tr>
                                 <tr>
                                     <td>ปริญญาตรี</td>
-                                    <td><?= $form_input['InstitutionName'] ?></td>
-                                    <td><?= $form_input['EDMajor'] ?></td>
-                                    <td><?= $form_input['EDDateFrom'] ?></td>
-                                    <td><?= $form_input['EDDateTo'] ?></td>
+                                    <td><?= $form_input['InstitutionName'][4] ?></td>
+                                    <td><?= $form_input['EDMajor'][4] ?></td>
+                                    <td><?= $form_input['EDDateFrom'][4] ?></td>
+                                    <td><?= $form_input['EDDateTo'][4] ?></td>
                                 </tr>
                                 <tr>
                                     <td>อื่นๆ</td>
-                                    <td><?= $form_input['InstitutionName'] ?></td>
-                                    <td><?= $form_input['EDMajor'] ?></td>
-                                    <td><?= $form_input['EDDateFrom'] ?></td>
-                                    <td><?= $form_input['EDDateTo'] ?></td>
+                                    <td><?= $form_input['InstitutionName'][5] ?></td>
+                                    <td><?= $form_input['EDMajor'][5] ?></td>
+                                    <td><?= $form_input['EDDateFrom'][5] ?></td>
+                                    <td><?= $form_input['EDDateTo'][5] ?></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -579,14 +589,19 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td><?= $form_input['ExCompanyName'] ?></td>
-                                    <td><?= $form_input['ExDateForm'] ?></td>
-                                    <td><?= $form_input['ExDateTo'] ?></td>
-                                    <td><?= $form_input['ExPositionName'] ?></td>
-                                    <td><?= $form_input['ExSaraly'] ?></td>
-                                    <td><?= $form_input['ReasonOfResign'] ?></td>                                  
-                                </tr>                                    
+                                <?php
+                                $num = count($form_input['ExCompanyName']);
+                                for ($i = 0; $i < $num; $i++) {
+                                    ?>
+                                    <tr>
+                                        <td><?= $form_input['ExCompanyName'][$i] ?></td>
+                                        <td><?= $form_input['ExDateForm'][$i] ?></td>
+                                        <td><?= $form_input['ExDateTo'][$i] ?></td>
+                                        <td><?= $form_input['ExPositionName'][$i] ?></td>
+                                        <td><?= $form_input['ExSaraly'][$i] ?></td>
+                                        <td><?= $form_input['ReasonOfResign'][$i] ?></td>                                  
+                                    </tr>   
+                                <?php } ?>
                             </tbody>
                         </table>
                         <div class="col-md-12 text-center">

@@ -281,26 +281,43 @@ class m_candidate extends CI_Model {
             'min' => 0,
             'value' => set_value('NumberSon'),
             'class' => 'form-control');
-        $i_SonTitle = array(
-            'name' => 'SonTitle',
-            'value' => set_value('SonTitle'),
-            'class' => 'form-control');
-        $i_SonFirstName = array(
-            'name' => 'SonFirstName',
-            'value' => set_value('SonFirstName'),
-            'class' => 'form-control');
-        $i_SonLastName = array(
-            'name' => 'SonLastName',
-            'value' => set_value('SonLastName'),
-            'class' => 'form-control');
-        $i_SonAge = array(
-            'name' => 'SonAge',
-            'value' => set_value('SonAge'),
-            'class' => 'form-control');
-        $i_SonOccupation = array(
-            'name' => 'SonOccupation',
-            'value' => set_value('SonOccupation'),
-            'class' => 'form-control');
+
+        $son_num = $this->input->post('NumberSon');
+        if ($son_num == NULL || $son_num == "")
+            $son_num = 0;
+        $f_SonTitle = array();
+        $f_SonFirstName = array();
+        $f_SonLastName = array();
+        $f_SonAge = array();
+        $f_SonOccupation = array();
+        for ($i = 0; $i < $son_num; $i++) {
+            $i_SonTitle = array(
+                'name' => 'SonTitle[]',
+                'value' => set_value('SonTitle[]'),
+                'class' => 'form-control');
+            $i_SonFirstName = array(
+                'name' => 'SonFirstName[]',
+                'value' => set_value('SonFirstName[]'),
+                'class' => 'form-control');
+            $i_SonLastName = array(
+                'name' => 'SonLastName[]',
+                'value' => set_value('SonLastName[]'),
+                'class' => 'form-control');
+            $i_SonAge = array(
+                'name' => 'SonAge[]',
+                'value' => set_value('SonAge[]'),
+                'class' => 'form-control');
+            $i_SonOccupation = array(
+                'name' => 'SonOccupation[]',
+                'value' => set_value('SonOccupation[]'),
+                'class' => 'form-control');
+            array_push($f_SonTitle, form_input($i_SonTitle));
+            array_push($f_SonFirstName, form_input($i_SonFirstName));
+            array_push($f_SonLastName, form_input($i_SonLastName));
+            array_push($f_SonAge, form_input($i_SonAge));
+            array_push($f_SonOccupation, form_input($i_SonOccupation));
+        }
+
 
         // Parent information
         $temp = $this->m_candidate->check_miscellaneous('title');
@@ -386,48 +403,73 @@ class m_candidate extends CI_Model {
         $i_MotherIsAlive[1] = form_checkbox($temp) . 'ถึงแก่กรรม';
 
         // Education information
-        $i_InstitutionName = array(
-            'name' => 'InstitutionName[]',
-            'value' => set_value('InstitutionName'),
-            'class' => 'form-control');
-        $i_EDMajor = array(
-            'name' => 'EDMajor[]',
-            'value' => set_value('EDMajor'),
-            'class' => 'form-control');
-        $i_EDDateFrom = array(
-            'name' => 'EDDateFrom[]',
-            'value' => set_value('EDDateFrom'),
-            'class' => 'form-control datepicker');
-        $i_EDDateTo = array(
-            'name' => 'EDDateTo[]',
-            'value' => set_value('EDDateTo'),
-            'class' => 'form-control datepicker');
+        $f_InstitutionName = array();
+        $f_EDMajor = array();
+        $f_EDDateFrom = array();
+        $f_EDDateTo = array();
+        for ($i = 0; $i < 6; $i++) {
+            $i_InstitutionName = array(
+                'name' => 'InstitutionName[]',
+                'value' => set_value('InstitutionName[]'),
+                'class' => 'form-control');
+            $i_EDMajor = array(
+                'name' => 'EDMajor[]',
+                'value' => set_value('EDMajor[]'),
+                'class' => 'form-control');
+            $i_EDDateFrom = array(
+                'name' => 'EDDateFrom[]',
+                'value' => set_value('EDDateFrom[]'),
+                'class' => 'form-control datepicker');
+            $i_EDDateTo = array(
+                'name' => 'EDDateTo[]',
+                'value' => set_value('EDDateTo[]'),
+                'class' => 'form-control datepicker');
+            array_push($f_InstitutionName, form_input($i_InstitutionName));
+            array_push($f_EDMajor, form_input($i_EDMajor));
+            array_push($f_EDDateFrom, form_input($i_EDDateFrom));
+            array_push($f_EDDateTo, form_input($i_EDDateTo));
+        }
 
         // Experience information
-        $i_ExCompanyName = array(
-            'name' => 'ExCompanyName[]',
-            'value' => set_value('ExCompanyName'),
-            'class' => 'form-control');
-        $i_ExDateForm = array(
-            'name' => 'ExDateForm[]',
-            'value' => set_value('ExDateForm'),
-            'class' => 'form-control datepicker');
-        $i_ExDateTo = array(
-            'name' => 'ExDateTo[]',
-            'value' => set_value('ExDateTo'),
-            'class' => 'form-control datepicker');
-        $i_ExPositionName = array(
-            'name' => 'ExPositionName[]',
-            'value' => set_value('ExPositionName'),
-            'class' => 'form-control');
-        $i_ExSaraly = array(
-            'name' => 'ExSaraly[]',
-            'value' => set_value('ExSaraly'),
-            'class' => 'form-control');
-        $i_ReasonOfResign = array(
-            'name' => 'ReasonOfResign[]',
-            'value' => set_value('ReasonOfResign'),
-            'class' => 'form-control');
+        $exp_num = count($this->input->post('ExCompanyName'));
+        $f_ExCompanyName = array();
+        $f_ExDateForm = array();
+        $f_ExDateTo = array();
+        $f_ExPositionName = array();
+        $f_ExSaraly = array();
+        $f_ReasonOfResign = array();
+        for ($i = 0; $i < $exp_num; $i++) {
+            $i_ExCompanyName = array(
+                'name' => 'ExCompanyName[]',
+                'value' => set_value('ExCompanyName[]'),
+                'class' => 'form-control');
+            $i_ExDateForm = array(
+                'name' => 'ExDateForm[]',
+                'value' => set_value('ExDateForm[]'),
+                'class' => 'form-control datepicker');
+            $i_ExDateTo = array(
+                'name' => 'ExDateTo[]',
+                'value' => set_value('ExDateTo[]'),
+                'class' => 'form-control datepicker');
+            $i_ExPositionName = array(
+                'name' => 'ExPositionName[]',
+                'value' => set_value('ExPositionName[]'),
+                'class' => 'form-control');
+            $i_ExSaraly = array(
+                'name' => 'ExSaraly[]',
+                'value' => set_value('ExSaraly[]'),
+                'class' => 'form-control');
+            $i_ReasonOfResign = array(
+                'name' => 'ReasonOfResign[]',
+                'value' => set_value('ReasonOfResign[]'),
+                'class' => 'form-control');
+            array_push($f_ExCompanyName, form_input($i_ExCompanyName));
+            array_push($f_ExDateForm, form_input($i_ExDateForm));
+            array_push($f_ExDateTo, form_input($i_ExDateTo));
+            array_push($f_ExPositionName, form_input($i_ExPositionName));
+            array_push($f_ExSaraly, form_input($i_ExSaraly));
+            array_push($f_ReasonOfResign, form_input($i_ReasonOfResign));
+        }
 
         // Emergency_contact
         $temp = $this->m_candidate->check_miscellaneous('title');
@@ -494,11 +536,11 @@ class m_candidate extends CI_Model {
             'SpouseOccupation' => form_input($i_SpouseOccupation),
             'SpouseIsAlive' => $i_SpouseIsAlive,
             'NumberSon' => form_input($i_NumberSon),
-            'SonTitle' => form_input($i_SonTitle),
-            'SonFirstName' => form_input($i_SonFirstName),
-            'SonLastName' => form_input($i_SonLastName),
-            'SonAge' => form_input($i_SonAge),
-            'SonOccupation' => form_input($i_SonOccupation),
+            'SonTitle' => $f_SonTitle,
+            'SonFirstName' => $f_SonFirstName,
+            'SonLastName' => $f_SonLastName,
+            'SonAge' => $f_SonAge,
+            'SonOccupation' => $f_SonOccupation,
             // Parent information
             'FatherTitle' => form_dropdown('FatherTitle', $i_FatherTitle, set_value('FatherTitle'), "class=\"selecter_1\""),
             'FatherFirstName' => form_input($i_FatherFirstName),
@@ -513,17 +555,17 @@ class m_candidate extends CI_Model {
             'MotherOccupation' => form_input($i_FatherOccupation),
             'MotherIsAlive' => $i_FatherIsAlive,
             // Education information
-            'InstitutionName' => form_input($i_InstitutionName),
-            'EDMajor' => form_input($i_EDMajor),
-            'EDDateFrom' => form_input($i_EDDateFrom),
-            'EDDateTo' => form_input($i_EDDateTo),
+            'InstitutionName' => $f_InstitutionName,
+            'EDMajor' => $f_EDMajor,
+            'EDDateFrom' => $f_EDDateFrom,
+            'EDDateTo' => $f_EDDateTo,
             // Experience information
-            'ExCompanyName' => form_input($i_ExCompanyName),
-            'ExDateForm' => form_input($i_ExDateForm),
-            'ExDateTo' => form_input($i_ExDateTo),
-            'ExPositionName' => form_input($i_ExPositionName),
-            'ExSaraly' => form_input($i_ExSaraly),
-            'ReasonOfResign' => form_input($i_ReasonOfResign),
+            'ExCompanyName' => $f_ExCompanyName,
+            'ExDateForm' => $f_ExDateForm,
+            'ExDateTo' => $f_ExDateTo,
+            'ExPositionName' => $f_ExPositionName,
+            'ExSaraly' => $f_ExSaraly,
+            'ReasonOfResign' => $f_ReasonOfResign,
             // Emergency_contact
             'ECTitle' => form_dropdown('ECTitle', $i_ECTitle, set_value('ECTitle'), "class=\"selecter_1\""),
             'ECFirstName' => form_input($i_ECFirstName),
@@ -571,11 +613,12 @@ class m_candidate extends CI_Model {
         $this->form_validation->set_rules('SpouseAge', '', 'trim|xss_clean');
         $this->form_validation->set_rules('SpouseOccupation', '', 'trim|xss_clean');
         $this->form_validation->set_rules('SpouseIsAlive', '', 'trim|xss_clean');
-        $this->form_validation->set_rules('SonTitle', '', 'trim|xss_clean');
-        $this->form_validation->set_rules('SonFirstName', '', 'trim|xss_clean');
-        $this->form_validation->set_rules('SonLastName', '', 'trim|xss_clean');
-        $this->form_validation->set_rules('SonAge', '', 'trim|xss_clean');
-        $this->form_validation->set_rules('SonOccupation', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('NumberSon', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('SonTitle[]', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('SonFirstName[]', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('SonLastName[]', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('SonAge[]', '', 'trim|xss_clean');
+        $this->form_validation->set_rules('SonOccupation[]', '', 'trim|xss_clean');
         // Parent information
         $this->form_validation->set_rules('FatherTitle', '', 'trim|xss_clean');
         $this->form_validation->set_rules('FatherFirstName', '', 'trim|xss_clean');
