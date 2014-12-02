@@ -5,6 +5,22 @@
 
     });
 </script>
+<?php
+
+function last_around($start_time, $interval_time, $number) {
+    $time = '';
+
+    if ($start_time == '' || $interval_time == '' || $number == 0 || $number == '') {
+        return $time;
+    }
+    $interval = 0;
+    for ($i = 0; $i < $number; $i++) {
+        $interval = $interval_time * 60 * $i;
+        $time = strtotime($start_time) + $interval;
+    }
+    return date('H:i:s', $time);
+}
+?>
 
 <div class="container">
     <br>
@@ -18,7 +34,7 @@
     <div class="row">        
         <div class="col-md-12">
             <br>
-            <div class="panel panel-primary">
+            <div class="panel panel-info">
                 <div class="panel-heading">
                     <h3 class="panel-title"><i class="fa fa-search"></i>&nbsp;&nbsp;ค้นหา</h3>
                 </div>
@@ -67,15 +83,13 @@
             </div>
         </div>
     <?php } ?>     
+
     <div class="row">
         <?php
-        $time = date('H:i');
-
-//        for ($i = 5; $i >= 1; $i--) {
         foreach ($vehicles_type as $v_type) {
             $add = array(
                 'type' => "button",
-                'class' => "btn btn-info btn-lg pull-right",
+                'class' => "btn btn-primary btn-lg pull-right",
             );
             $n = 0;
             foreach ($route as $r) {
@@ -95,158 +109,201 @@
             <?php
             if ($n <= 0) {
                 ?>
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="well" style="padding-bottom: 100px;padding-top: 100px;">
-                            <p class="lead text-center">ไม่พบข้อมูล</p>
-                        </div>
-                    </div>        
-                </div>
+
+                <div class="col-md-12">
+                    <div class="well" style="padding-bottom: 100px;padding-top: 100px;">
+                        <p class="lead text-center">ไม่พบข้อมูล</p>
+                    </div>
+                </div>        
+
                 <?php
             } else {
                 foreach ($route as $r) {
                     if ($r['VTID'] == $v_type['VTID']) {
-                        $route_name = ' สาย ' . $r['RCode'] . ' ' . ' ' . $r['RSource'] . ' - ' . $r['RDestination'];
                         $vtid = $r['VTID'];
                         $type_name = $v_type['VTDescription'];
                         $rcode = $r['RCode'];
-                        $s = $r['RSource'];
-                        $d = $r['RDestination'];
+                        $source = $r['RSource'];
+                        $destination = $r['RDestination'];
+                        $route_name = '  เส้นทางสาย ' . $rcode . ' ' . ' ' . $source . ' - ' . $destination;
                         ?>
                         <div class="col-md-offset-1 col-sm-10">
-                            <div class="panel panel-primary">
+                            <div class="panel panel-info">
                                 <div class="panel-heading">
                                     <h3 class="panel-title"> 
-                                        สาย <?= $r['RCode'] . ' : ' . ' ' . $r['RSource'] . ' - ' . $r['RDestination'] . ' (' . $v_type['VTDescription'] . ')' ?>                                         
+                                        <?= $route_name . ' (' . $type_name . ')' ?>                                         
                                     </h3> 
                                 </div>
                                 <div class="panel-body">
-                                    <div class="row">
-                                        <div class="col-md-offset-1 col-md-10">
-                                            <table class="table">
-                                                <thead>
-                                                    <tr>
-                                                        <th style="width: 20%"></th>
-                                                        <th>เที่ยวแรก</th>
-                                                        <th>เที่ยวสุดท้าย</th>
-                                                        <th>ออกทุกๆ</th>
-                                                        <th>จำนวนเที่ยว</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr>
-                                                        <?php
-                                                        $first_time = '';
-                                                        $last_time = '';
-                                                        $IntervalEachAround = '';
-                                                        $AroundNumber = '';
-//                                                    ไป ปลายทาง -> ขาไป
-                                                        foreach ($route_detail as $rd) {
-                                                            if ($r['RCode'] == $rd['RCode'] && $r['RSource'] == $rd['RDestination']) {
-                                                                $first_time = $rd['StartTime'];
-                                                                $last_time = '';
-                                                                $IntervalEachAround = $rd['StartTime'];
-                                                                $AroundNumber = $rd['AroundNumber'];
-                                                            }
-                                                        }
-                                                        ?>
-                                                        <td><strong>ไป <?= $r['RDestination'] ?></strong></td>
-                                                        <td><?= $first_time ?></td>
-                                                        <td><?= $last_time ?></td>
-                                                        <td><?= $IntervalEachAround ?></td>
-                                                        <td><?= $AroundNumber ?></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <?php
-//                                                    ไป ปลายทาง -> ขากลับ
-                                                        foreach ($route_detail as $rd) {
-                                                            if ($r['RCode'] == $rd['RCode'] && $r['RSource'] == $rd['RSource']) {
-                                                                $first_time = $rd['StartTime'];
-                                                                $last_time = '';
-                                                                $IntervalEachAround = $rd['StartTime'];
-                                                                $AroundNumber = $rd['AroundNumber'];
-                                                            }
-                                                        }
-                                                        ?>
-                                                        <td><strong>ไป <?= $r['RSource'] ?></strong></td>
-                                                        <td><?= $first_time ?></td>
-                                                        <td><?= $last_time ?></td>
-                                                        <td><?= $IntervalEachAround ?></td>
-                                                        <td><?= $AroundNumber ?></td>
-                                                    </tr>
 
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                        <div class="col-md-offset-1 col-md-10">
-                                            <div class="col-md-2">
-                                                จุดขายตั๋ว
-                                            </div>
-                                            <div class="col-md-10 text-left">
+                                    <div class="col-md-offset-1 col-md-10">
+                                        <table class="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th style="width: 20%"><?= $source ?></th>
+                                                    <th style="width: 20%">เที่ยวแรก</th>
+                                                    <th style="width: 20%">เที่ยวสุดท้าย</th>
+                                                    <th style="width: 15%">ออกทุกๆ (นาที)</th>
+                                                    <th style="width: 15%">จำนวนเที่ยว</th>
+                                                    <th style="width: 20%">ใช้เวลา</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
                                                 <?php
-                                                foreach ($stations as $s) {
-                                                    $station_name = $s['StationName'];
-                                                    if ($rcode==$s['RCode']&&$vtid==$s['VTID']&&$s['IsSaleTicket']==1) {
-                                                        ?>
-                                                        <div class="col-xs-6 col-md-4">
-                                                            <span class="text">
-                                                                <?= $station_name ?>  
-                                                            </span>                                                           
-                                                        </div>
-                                                    <?php }
-                                                }
+                                                $first_time = '';
+                                                $last_time = '';
+                                                $IntervalEachAround = '';
+                                                $AroundNumber = '';
+                                                $time = ''
                                                 ?>
 
-                                            </div>
-                                        </div>
+                                                <tr>   
+                                                    <?php
+//                                                    StartPoint->S 
+                                                    foreach ($route_detail as $rd) {
+                                                        if ($rcode == $rd['RCode'] && $vtid == $rd['VTID'] && 'S' == $rd['StartPoint']) {
+                                                            $first_time = $rd['StartTime'];
+                                                            $last_time = last_around($rd['StartTime'], $rd['IntervalEachAround'], $rd['AroundNumber']);
+                                                            $IntervalEachAround = $rd['IntervalEachAround'];
+                                                            $AroundNumber = $rd['AroundNumber'];
+                                                            $time = gmdate('H:i', $rd['Time'] * 60);
+                                                        }
+                                                    }
+                                                    ?>
+                                                    <td><strong>ไป <?= $destination ?></strong></td>
+                                                    <td class="text-center"><?= $first_time ?></td>
+                                                    <td class="text-center"><?= $last_time ?></td>
+                                                    <td class="text-center"><?= $IntervalEachAround ?></td>
+                                                    <td class="text-center"><?= $AroundNumber ?></td>
+                                                    <td class="text-center"><?= $time ?></td>
+                                                </tr> 
 
-                                        <div class="col-md-12">
-                                            <br>
-                                            <div class="text-right">
-                                                <?php
-                                                $view_detail = array(
-                                                    'type' => "button",
-                                                    'class' => "btn btn-primary",
-                                                    'data-toggle' => "tooltip",
-                                                    'data-placement' => "top",
-                                                    'title' => "ตารางเวลา " . $type_name . " " . $route_name,
-                                                );
-                                                $point_price = array(
-                                                    'type' => "button",
-                                                    'class' => "btn btn-primary",
-                                                    'data-toggle' => "tooltip",
-                                                    'data-placement' => "top",
-                                                    'title' => "จุดจอดและอัตราค่าโดยสาร " . $type_name . " " . $route_name,
-                                                );
-                                                $edit = array(
-                                                    'type' => "button",
-                                                    'class' => "btn btn-warning",
-                                                    'data-toggle' => "tooltip",
-                                                    'data-placement' => "top",
-                                                    'title' => "แก้ไขข้อมูล " . $type_name . " " . $route_name,
-                                                );
+                                                <tr>
+                                                    <?php
+//                                                    StartPoint -> D
+                                                    foreach ($route_detail as $rd) {
+                                                        if ($rcode == $rd['RCode'] && $vtid == $rd['VTID'] && 'D' == $rd['StartPoint']) {
+                                                            $first_time = $rd['StartTime'];
+                                                            $last_time = last_around($rd['StartTime'], $rd['IntervalEachAround'], $rd['AroundNumber']);
+                                                            $IntervalEachAround = $rd['IntervalEachAround'];
+                                                            $AroundNumber = $rd['AroundNumber'];
+                                                            $time = gmdate('H:i', $rd['Time'] * 60);
+                                                        }
+                                                    }
+                                                    ?>
+                                                    <td><strong>ไป <?= $source ?></strong></td>
+                                                    <td class="text-center"><?= $first_time ?></td>
+                                                    <td class="text-center"><?= $last_time ?></td>
+                                                    <td class="text-center"><?= $IntervalEachAround ?></td>
+                                                    <td class="text-center"><?= $AroundNumber ?></td>
+                                                    <td class="text-center"><?= $time ?></td>
+                                                </tr>
 
-                                                $delete = array(
-                                                    'type' => "button",
-                                                    'class' => "btn btn-danger",
-                                                    'data-toggle' => "tooltip",
-                                                    'data-placement' => "top",
-                                                    'title' => "ลบ เส้นทาง " . $type_name . " " . $route_name,
-                                                );
-                                                echo anchor('route/detail/' . $rcode . '/' . $vtid, '<i class="fa fa-clock-o" ></i>  ตารางเวลาเดินรถ', $view_detail);
-                                                echo '  ';
-                                                echo anchor('route/station/' . $rcode . '/' . $vtid, '<i class="fa fa-bus" ></i>  จุดจอดและอัตราค่าโดยสาร', $point_price);
-                                                echo '  ';
-                                                echo anchor('route/edit/' . $rcode . '/' . $vtid, '<i class="fa fa-pencil"></i>', $edit);
-                                                echo ' ';
-                                                echo anchor('route/delete/' . $rcode . '/' . $vtid, '<i class="fa fa-trash-o" ></i>', $delete);
-                                                ?>                                                
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <div class="col-md-offset-1 col-md-10 hidden">
+                                        <div class="panel-group" id="accordion<?= $rcode . $vtid ?>" role="tablist" aria-multiselectable="true">
+                                            <div class="panel">
+                                                <div class="panel-heading" role="tab" id="heading<?= $rcode . $vtid ?>">
+                                                    <h4 class="panel-title">
+                                                        <a data-toggle="collapse" data-parent="#accordion<?= $rcode . $vtid ?>" href="#collapse<?= $rcode . $vtid ?>" aria-expanded="true" aria-controls="collapseOne">
+                                                            &nbsp;&nbsp;จุดขายตั๋ว
+                                                        </a>
+                                                    </h4>
+                                                </div>
+                                                <div id="collapse<?= $rcode . $vtid ?>" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading<?= $rcode . $vtid ?>">
+                                                    <div class="panel-body">
+                                                        <?php
+                                                        foreach ($stations as $s) {
+                                                            $station_name = $s['StationName'];
+                                                            if ($rcode == $s['RCode'] && $vtid == $s['VTID'] && $s['IsSaleTicket'] == 1) {
+                                                                ?>                                                                
+                                                                <span class="label label-default">
+                                                                    <?= $station_name ?>  
+                                                                </span>                                                         
+
+                                                                <?php
+                                                            }
+                                                        }
+                                                        ?>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>       
-                            </div>
-                        </div>
+
+                                    <div class="col-md-offset-1 col-md-10">
+                                        <div class="col-md-2">
+                                            <span class="text">
+                                                จุดขายตั๋ว  
+                                            </span>                                            
+                                        </div>
+                                        <div class="col-md-10 text-left">
+                                            <blockquote>   
+                                                <?php
+                                                foreach ($stations as $s) {
+                                                    $station_name = $s['StationName'];
+                                                    if ($rcode == $s['RCode'] && $vtid == $s['VTID'] && $s['IsSaleTicket'] == 1) {
+                                                        ?>
+                                                        &nbsp;&nbsp;
+                                                        <span class="label label-default">
+                                                            <span class="fa fa-dot-circle-o">
+                                                                &nbsp
+                                                                <span class="">
+                                                                    <?= $station_name ?> 
+                                                                </span>
+                                                            </span> 
+                                                        </span>  
+                                                        &nbsp;&nbsp;
+                                                        <?php
+                                                    }
+                                                }
+                                                ?>
+                                            </blockquote>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12 text-right">
+                                        <br>
+                                        <?php
+                                        $view = array(
+                                            'type' => "button",
+                                            'class' => "btn btn-primary",
+                                            'data-toggle' => "tooltip",
+                                            'data-placement' => "top",
+                                            'title' => "ข้อมูล" . $route_name . " (" . $type_name . ") ",
+                                        );
+
+                                        $edit = array(
+                                            'type' => "button",
+                                            'class' => "btn btn-warning",
+                                            'data-toggle' => "tooltip",
+                                            'data-placement' => "top",
+                                            'title' => "แก้ไขข้อมูล " . $type_name . " " . $route_name,
+                                        );
+
+                                        $delete = array(
+                                            'type' => "button",
+                                            'class' => "btn btn-danger",
+                                            'data-toggle' => "tooltip",
+                                            'data-placement' => "top",
+                                            'title' => "ลบเส้นทาง " . $type_name . " " . $route_name,
+                                        );
+
+                                        echo anchor('route/view/' . $rcode . '/' . $vtid, '<i class="fa fa-eye" ></i>', $view);
+                                        echo '  ';
+                                        echo anchor('route/edit/' . $rcode . '/' . $vtid, '<i class="fa fa-pencil"></i>', $edit);
+                                        echo ' ';
+                                        echo anchor('route/delete/' . $rcode . '/' . $vtid, '<i class="fa fa-trash-o" ></i>', $delete);
+                                        echo '  ';
+                                        ?>                                                
+                                    </div>
+
+                                </div>
+                            </div>       
+                        </div>                  
                         <?php
                     }
                 }
@@ -255,4 +312,22 @@
         ?>
     </div>
 </div>
+
+<?php
+//                                                    echo anchor('route/station/' . $rcode . '/' . $vtid, '<i class="fa fa-bus" ></i>  จุดจอดและอัตราค่าโดยสาร', $point_price);
+//                                                    $view_detail = array(
+//                                                        'type' => "button",
+//                                                        'class' => "btn btn-primary  hidden",
+//                                                        'data-toggle' => "tooltip",
+//                                                        'data-placement' => "top",
+//                                                        'title' => "ตารางเวลา " . $type_name . " " . $route_name,
+//                                                    );
+//                                                    $point_price = array(
+//                                                        'type' => "button",
+//                                                        'class' => "btn btn-primary  hidden",
+//                                                        'data-toggle' => "tooltip",
+//                                                        'data-placement' => "top",
+//                                                        'title' => "จุดจอดและอัตราค่าโดยสาร " . $type_name . " " . $route_name,
+//                                                    );
+?>
 

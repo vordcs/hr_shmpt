@@ -15,7 +15,23 @@ Class m_datetime extends CI_Model {
         return date('Y-m-d');
     }
 
+    function getDatetimeNowTH() {
+       
+        $hour = date("H");
+        $minute = date("i");
+        $seconds = date("s");
+
+        $day = date('d');
+        $month = date('m');
+        $year = date('Y') + 543;
+        $today = $year . '-' . $month . '-' . $day . ' ' . $hour.':'.$minute.':'.$seconds;
+        $dt = new DateTime($today);
+        $datetime = $dt->format('Y-m-d H:i:s');
+        return $datetime;
+    }
+
     function getDateTodayTH() {
+
         $day = date('d');
         $month = date('m');
         $year = date('Y') + 543;
@@ -59,7 +75,7 @@ Class m_datetime extends CI_Model {
 
     public function monthTHtoDB($str_date_th) {
         for ($i = 0; $i < count($this->month_th); $i++) {
-            if ($month_th[$i] == $str_date_th) {
+            if ($this->month_th[$i] == $str_date_th) {
                 return $i;
             }
         }

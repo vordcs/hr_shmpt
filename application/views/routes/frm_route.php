@@ -9,15 +9,18 @@
 
 <div class="container">
     <div class="row">
-        <div class="col-md-8 col-md-offset-2">
+        <div class="col-md-12">
             <div class="page-header">
                 <h3><?php echo $page_title; ?></h3>
             </div>
         </div>
     </div>
-    <div class="row">        
-        <div class="col-md-12" >
-            <div class="panel panel-default">              
+    <div class="row animated bounceInUp"> 
+        <div class="col-md-8 col-md-offset-2">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h3 class="panel-title">ข้อมูลเส้นทาง</h3>
+                </div>                
                 <div class="panel-body">                                     
                     <?php echo $form_route['form'] ?>                                     
                     <div class="form-group <?= (form_error('RCode')) ? 'has-error' : '' ?>">
@@ -68,23 +71,33 @@
                             <?php echo form_error('Time', '<font color="error">', '</font>'); ?>
                         </div>
                     </div>
-                    <br>
-                    <div class="form-group">                        
-                        <div class="col-sm-offset-3 col-sm-10">
-                            <?php
-                            $cancle = array(
-                                'type' => "button",
-                                'class' => "btn btn-danger btn-lg",
-                            );
-                            ?>
-                            <?php echo anchor('route/', '<i class="fa fa-times" ></i>&nbsp;ยกเลิก', $cancle); ?>
-                            <button type="submit" class="btn btn-success  btn-lg" id="btn_save" ><i class="fa fa-save"></i>&nbsp;บันทึก</button>
-                        </div>
+                    <hr>             
+                    <div class="col-md-12 text-center">                     
+                        <?php
+                        $cancle = array(
+                            'type' => "button",
+                            'class' => "btn btn-danger btn-lg",
+                        );
+                        $save = array(
+                            'type' => "submit",
+                            'class' => "btn btn-success btn-lg",
+                            'content' => '<spand class="fa fa-save" >&nbsp;บันทึก</spand>'
+                        );
+                        
+                        $time = array(
+                            'type' => "button",
+                            'class' => "btn btn-link btn-sm",
+                        );
+                        
+                        echo anchor('route/', '<i class="fa fa-times" ></i>&nbsp;ยกเลิก', $cancle) . ' ';
+                        echo form_button($save);
+                        ?>                     
                     </div>
+                  
                     <?php echo form_close(); ?>
                 </div>
             </div>
-        </div>
+        </div>        
     </div>
 </div>
 
