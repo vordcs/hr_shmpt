@@ -108,14 +108,18 @@
         }
 
         if (isset($alert) && $alert != NULL) {
-            if ($alert['alert_mode'] == 'success')
-                echo '<div class="container alert alert-success" style="margin-top: 60px;"><strong>สำเร็จ</strong> ';
-            elseif ($alert['alert_mode'] == 'warning')
-                echo '<div class="container alert alert-warning" style="margin-top: 60px;"><strong>คำเตือน</strong> ';
-            elseif ($alert['alert_mode'] == 'danger')
-                echo '<div class="container alert alert-danger" style="margin-top: 60px;"><strong>ผิดพลาด</strong> ';
-            else
-                echo '<div class="container alert alert-info" style="margin-top: 60px;"><strong>เพิ่มเติม</strong> ';
+            if ($alert['alert_mode'] == 'success'){
+                echo '<div class="container alert alert-success animated pulse" style="margin-top: 60px;"><strong>สำเร็จ</strong> ';
+            }
+            elseif ($alert['alert_mode'] == 'warning'){
+                echo '<div class="container alert alert-warning animated pulse" style="margin-top: 60px;"><strong>คำเตือน</strong> ';
+            }
+            elseif ($alert['alert_mode'] == 'danger'){
+                echo '<div class="container alert alert-danger animated pulse" style="margin-top: 60px;"><strong>ผิดพลาด</strong> ';
+            }
+            else{
+                echo '<div class="container alert alert-info animated pulse" style="margin-top: 60px;"><strong>เพิ่มเติม</strong> ';
+            }
             echo $alert['alert_message'];
             echo '</div>';
         }

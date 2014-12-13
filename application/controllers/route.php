@@ -34,6 +34,7 @@ class route extends CI_Controller {
             'form_search' => $this->m_route->set_form_search_route(),
             'route_detail' => $this->m_route->get_route_detail(),
             'stations' => $this->m_station->get_stations(),
+            'schedule_manual' =>$this->m_route->get_schedule_manual() ,
         );
 
         $data['strtitle'] = '';
@@ -66,9 +67,10 @@ class route extends CI_Controller {
         $data_debug = array(
 //            'vehicles_type' => $data['vehicles_type'],
 //            'route' => $data['route'],
-//            'route_detail' => $data['route_detail'],
+            'route_detail' => $data['route_detail'],
 //            'form_route' => $data['form_route'],
 //            'stations' => $data['stations']
+            'schedule_manual' => $data["schedule_manual"],
         );
 
         $this->m_template->set_Title('การจัดการเส้นทาง');
@@ -96,10 +98,12 @@ class route extends CI_Controller {
         $data = array(
             'page_title' => 'เพิ่มเส้นทาง ' . $this->m_route->get_vehicle_type_name($type_id),
             'form_route' => $this->m_route->set_form_add_route($type_id),
+            'previous_page' => '',
+            'next_page' => '',
         );
 
         $this->m_template->set_Title('เพิ่มเส้นทาง');
-//        $this->m_template->set_Debug($rs);
+//        $this->m_template->set_Debug($data);
         $this->m_template->set_Content('routes/frm_route', $data);
         $this->m_template->showTemplate();
     }
@@ -124,6 +128,8 @@ class route extends CI_Controller {
             $data = array(
                 'page_title' => 'แก้ไขข้อมูล ' . $detail[0]['VTDescription'] . ' ' . $route_name,
                 'form_route' => $this->m_route->set_form_edit_route($detail[0]),
+                'previous_page' => '',
+                'next_page' => 'route/time/' . $rcode . '/' . $vtid,
             );
         } else {
             redirect('route/');
@@ -139,8 +145,9 @@ class route extends CI_Controller {
 
         $route_detail = $this->m_route->get_route_detail($rcode, $vtid);
 
-        if (count($route_detail) <= 0)
+        if (count($route_detail) <= 0) {
             echo "<script>window.location.href='javascript:history.back(-1);'</script>";
+        }
         $vt_name = $route_detail[0]['VTDescription'];
         $route_name = 'เส้นทาง สาย ' . $route_detail[0]['RCode'] . ' ' . ' ' . $route_detail[0]['RSource'] . ' - ' . $route_detail[0]['RDestination'];
 
@@ -148,17 +155,19 @@ class route extends CI_Controller {
         $data = array(
             'page_title' => 'ข้อมูล' . $route_name . ' <i>' . $vt_name . '</i>',
             'page_title_small' => '',
-            'rcode'=>$rcode,
-            'vtid'=>$vtid,
+            'rcode' => $rcode,
+            'vtid' => $vtid,
             'route_detail' => $route_detail,
             'stations' => $this->m_station->get_stations($rcode, $vtid),
-            'fares'=>  $this->m_fares->get_fares($rcode,$vtid),
+            'fares' => $this->m_fares->get_fares($rcode, $vtid),
+            'schedule_manual' => $this->m_route->get_schedule_manual(),
         );
 
         $data_debug = array(
 //            'route_detail' => $data['route_detail'],
 //            'stations'=>$data['stations']
-            'fares'=>$data['fares'],
+//            'fares' => $data['fares'],
+//            'schedule_manual'=>$data['schedule_manual'],
 //                ''=>$data['']
         );
 
@@ -168,19 +177,17 @@ class route extends CI_Controller {
         $this->m_template->showTemplate();
     }
 
+//  กำหนดตารางเวลาเดินรถ หลังจากที่เพิ่มข้อมูลเส้นทางสำเร็จ
     public function time($rcode, $vtid) {
         $route_detail = $this->m_route->get_route_detail($rcode, $vtid);
-        if (count($route_detail) <= 0)
+        if (count($route_detail) <= 0) {
             echo "<script>window.location.href='javascript:history.back(-1);'</script>";
+        }
 
         if ($this->m_route->validation_form_route_time() && $this->form_validation->run() == TRUE) {
             $form_data = $this->m_route->get_post_form_route_time($route_detail);
             $rs = $this->m_route->update_route_time($form_data);
-            $data_debug = array(
-//                'form_data' => $form_data,
-                'result' => $rs,
-            );
-//            $this->m_template->set_Debug($data_debug);
+
             $alert['alert_message'] = "บันทึกข้อมูลเวลาเดินรถ";
             $alert['alert_mode'] = "success";
             $this->session->set_flashdata('alert', $alert);
@@ -198,55 +205,26 @@ class route extends CI_Controller {
             'page_title_small' => '',
             'form' => $this->m_route->set_form_route_time($route_detail),
             'route_detail' => $route_detail,
+            'previous_page' => 'route/edit/' . $rcode . '/' . $vtid,
+            'next_page' => 'station/add/' . $rcode . '/' . $vtid,
         );
 
 //        $data_debug = array(
 ////            'route_detail' => $data['route_detail'],
 ////            'form' => $data['form'],
+////            'timeS' => $this->m_route->get_schedule_manual($route_detail[0]['RID']),
+////            'timeD' => $this->m_route->get_schedule_manual($route_detail[1]['RID']),
 ////                            ''=>$data['']
+////            'schedule_type'=> $this->input->post('ScheduleType'),
 //        );
 
         $this->m_template->set_Title('ตารางเวลาเดินรถ');
-//        $this->m_template->set_Debug($data_debug); 
+//        $this->m_template->set_Debug($data_debug);
         $this->m_template->set_Content('routes/frm_route_time', $data);
         $this->m_template->showTemplate();
     }
 
-//    จุดจอด
-    public function station($rcode = NULL, $vtid = NULL) {
-
-        $route_detail = $this->m_route->get_route($rcode, $vtid);
-
-        if (count($route_detail) <= 0)
-            echo "<script>window.location.href='javascript:history.back(-1);'</script>";
-        $vt_name = $route_detail[0]['VTDescription'];
-        $route_name = 'เส้นทาง สาย ' . $route_detail[0]['RCode'] . ' ' . ' ' . $route_detail[0]['RSource'] . ' - ' . $route_detail[0]['RDestination'];
-
-        $data = array(
-            'page_title' => 'จุดจอดและอัตตราค่าโดยสาร ' . $vt_name,
-            'page_title_small' => $route_name,
-            'rcode' => $rcode,
-            'vtid' => $vtid,
-            'stations' => $this->m_station->get_stations($rcode, $vtid),
-            'route_detail' => $route_detail,
-        );
-
-        $data_debug = array(
-//            'page_title' => 'จุดจอดและอัตตราค่าโดยสาร ' . $vt_name,
-//            'page_title_small' => $route_name,
-            'vtid' => $vtid,
-            'rcode' => $rcode,
-            'stations' => $data['stations'],
-//            'route_detail' => $route_detail,
-        );
-
-
-        $this->m_template->set_Title('จุดจอดและอัตตราค่าโดยสาร');
-//        $this->m_template->set_Debug($data_debug);
-        $this->m_template->set_Content('stations/stations', $data);
-        $this->m_template->showTemplate();
-    }
-
+//    ตรวจสอบว่ามีข้อมูลเส้นทางหรือไม่
     public function check_route_duplication($str) {
         $con = array(
             'RCode' => $str,
@@ -265,6 +243,7 @@ class route extends CI_Controller {
         }
     }
 
+//    ตรวจสอบค่าใน dropdown
     public function check_dropdown($str) {
         if ($str === '0') {
             $this->form_validation->set_message('check_dropdown', 'เลือก %s');
@@ -299,5 +278,3 @@ class route extends CI_Controller {
     }
 
 }
-
-//if ($this->m_products->validation_set_form_add() && $this->form_validation->run() == TRUE) {

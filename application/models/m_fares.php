@@ -5,8 +5,7 @@ if (!defined('BASEPATH'))
 
 class m_fares extends CI_Model {
 
-    private $price_type = array();
-    private $rate_type = array();
+   
     private $price = array('เต็ม', 'ลด');
 
     function set_rate_type($vtid) {
@@ -14,14 +13,6 @@ class m_fares extends CI_Model {
             $this->rate_type = array('รถตู้');
         } else {
             $this->rate_type = array('รถบัส');
-        }
-    }
-
-    function set_price_type($vtid) {
-        if ($vtid == 1) {
-            $this->price_type = array('รถตู้');
-        } else {
-            $this->price_type = array('รถแอร์', 'รถพัดลม');
         }
     }
 
@@ -44,21 +35,7 @@ class m_fares extends CI_Model {
         return $rs;
     }
 
-    public function get_price($rcode, $vtid, $source_id, $destination_id) {
-
-        $this->db->join('f_fares_has_rate', 'f_fares_has_rate.FID=f_fares.FID');
-        $this->db->join('f_rate', 'f_rate.RateID=f_fares_has_rate.RateID');
-
-        $this->db->where('RCode', $rcode);
-        $this->db->where('VTID', $vtid);
-        $this->db->where('SourceID', $source_id);
-        $this->db->where('DestinationID', $destination_id);
-
-        $query = $this->db->get('f_fares');
-
-        return $query->result_array();
-    }
-
+// get  ข้อมูลค่าโดยสาร
     public function get_fares($rcode, $vtid, $source_id = NULL, $destination_id = NULL) {
 
         $this->db->join('f_fares_has_rate', 'f_fares_has_rate.FID=f_fares.FID');
@@ -202,7 +179,7 @@ class m_fares extends CI_Model {
     }
 
     public function set_form_add($rcode, $vtid) {
-        $this->set_price_type($vtid);
+        $this->set_rate_type($vtid);
 
         $stations = $this->get_stations($rcode, $vtid);
 
@@ -232,7 +209,7 @@ class m_fares extends CI_Model {
                         'name' => "Price[$i][$j][$k]",
                         'type' => "text",
                         'class' => "form-control text-center",
-                        'value' => 1 + $k//set_value("Price[$i][$j][$k]"),
+                        'value' => set_value("Price[$i][$j][$k]"),
                     );
                     $i_price[$i][$j][$k] = form_input($t_price);
                 }
@@ -278,7 +255,7 @@ class m_fares extends CI_Model {
 
                 $i_destination[$i][$j] = $destination;
 
-                $rate = $this->get_price($rcode, $vtid, $source_id, $destination_id);
+                $rate = $this->get_fares($rcode, $vtid, $source_id, $destination_id);
                 if (count($rate) <= 0) {
                     $price_ = "";
                     $price_dis = "";
@@ -289,22 +266,22 @@ class m_fares extends CI_Model {
 
 
                 //ราคาเต็ม
-                $t_price = array(
+                $t_price_full = array(
                     'name' => "Price[$i][$j][0]",
                     'type' => "text",
                     'class' => "form-control text-center",
                     'value' => (set_value("Price[$i][$j][0]") == NULL) ? $price_ : set_value("Price[$i][$j][0]"),
                 );
-                $i_price[$i][$j][0] = form_input($t_price);
+                $i_price[$i][$j][0] = form_input($t_price_full);
 
                 //ราคาลด
-                $t_price = array(
+                $t_price_dis = array(
                     'name' => "Price[$i][$j][1]",
                     'type' => "text",
                     'class' => "form-control text-center",
                     'value' => (set_value("Price[$i][$j][1]") == NULL) ? $price_dis : set_value("Price[$i][$j][1]"),
                 );
-                $i_price[$i][$j][1] = form_input($t_price);
+                $i_price[$i][$j][1] = form_input($t_price_dis);
 
                 $j++;
             }
@@ -348,7 +325,7 @@ class m_fares extends CI_Model {
                     'DestinationID' => $destination_id,
                     'DestinationName' => $destination,
                     'FNote' => "S ออกจาก $source -> $destination",
-                    'CreateDate' => $this->m_datetime->getDatetimeNowTH(),
+                    'CreateDate' => $this->m_datetime->getDatetimeNow(),
                 );
 
                 array_push($fares_s, $i_farse_s);
@@ -363,7 +340,7 @@ class m_fares extends CI_Model {
                     'DestinationID' => $source_id,
                     'DestinationName' => $source,
                     'FNote' => "D ออกจาก $destination -> $source",
-                    'CreateDate' => $this->m_datetime->getDatetimeNowTH(),
+                    'CreateDate' => $this->m_datetime->getDatetimeNow(),
                 );
                 array_push($fares_d, $i_farse_d);
 
@@ -418,7 +395,7 @@ class m_fares extends CI_Model {
                     'DestinationID' => $destination_id,
                     'DestinationName' => $destination,
                     'FNote' => "S ออกจาก $source -> $destination",
-                    'UpdateDate' => $this->m_datetime->getDatetimeNowTH(),
+                    'UpdateDate' => $this->m_datetime->getDatetimeNow(),
                 );
 
                 array_push($fares_s, $i_farse_s);
@@ -433,7 +410,7 @@ class m_fares extends CI_Model {
                     'DestinationID' => $source_id,
                     'DestinationName' => $source,
                     'FNote' => "D ออกจาก $destination -> $source",
-                    'UpdateDate' => $this->m_datetime->getDatetimeNowTH(),
+                    'UpdateDate' => $this->m_datetime->getDatetimeNow(),
                 );
                 array_push($fares_d, $i_farse_d);
 

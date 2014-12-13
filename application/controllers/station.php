@@ -21,26 +21,30 @@ class station extends CI_Controller {
     }
 
     public function add($rcode = NULL, $vtid = NULL) {
-        if ($rcode == NULL || $vtid == NULL)
+        if ($rcode == NULL || $vtid == NULL) {
             echo "<script>window.location.href='javascript:history.back(-1);'</script>";
+        }
 
         $route_detail = $this->m_route->get_route($rcode, $vtid);
         $vt_name = $route_detail[0]['VTDescription'];
         $source = $route_detail[0]['RSource'];
         $desination = $route_detail[0]['RDestination'];
 
-        $route_name = 'เส้นทาง สาย ' . $route_detail[0]['RCode'] . ' ' . ' ' . $source . ' - ' . $desination;
+        if (count($route_detail) <= 0) {
+            echo "<script>window.location.href='javascript:history.back(-1);'</script>";
+        }
 
-        $data['route_detail'] = $route_detail[0];
+        $route_name = 'เส้นทาง สาย ' . $route_detail[0]['RCode'] . ' ' . ' ' . $source . ' - ' . $desination;
 
         $data = array(
             'page_title' => 'เพิ่มจุดจอด <i>' . $vt_name . '</i> ' . $route_name,
             'page_title_small' => '',
             'form' => $this->m_station->set_form_add($rcode, $vtid),
+            'previous_page' => 'route/time/' . $rcode . '/' . $vtid,
+            'next_page' => '',
         );
 
-        if (count($route_detail) <= 0)
-            echo "<script>window.location.href='javascript:history.back(-1);'</script>";
+        $data['route_detail'] = $route_detail[0];
 
         $stations = $this->m_station->get_stations($rcode, $vtid);
         if (count($stations) > 0) {
@@ -55,10 +59,10 @@ class station extends CI_Controller {
                 'result' => $rs,
             );
             $this->m_template->set_Debug($data_debug);
-            $alert['alert_message'] = "เพิ่มข้อมูล จุดจอด ".$route_name;
+            $alert['alert_message'] = "เพิ่มข้อมูล จุดจอด " . $route_name;
             $alert['alert_mode'] = "success";
             $this->session->set_flashdata('alert', $alert);
-            
+
             redirect('fares/add/' . $rcode . '/' . $vtid);
         }
 //        $data_debug = array(
@@ -78,12 +82,14 @@ class station extends CI_Controller {
     }
 
     public function edit($rcode = NULL, $vtid = NULL) {
-        if ($rcode == NULL || $vtid == NULL)
+        if ($rcode == NULL || $vtid == NULL) {
             echo "<script>window.location.href='javascript:history.back(-1);'</script>";
+        }
 
         $route_detail = $this->m_route->get_route($rcode, $vtid);
-        if (count($route_detail) <= 0)
+        if (count($route_detail) <= 0) {
             echo "<script>window.location.href='javascript:history.back(-1);'</script>";
+        }
 
         $stations = $this->m_station->get_stations($rcode, $vtid);
         if (count($stations) <= 0) {
@@ -103,10 +109,10 @@ class station extends CI_Controller {
                 'result' => $rs,
             );
             $this->m_template->set_Debug($data_debug_post);
-                $alert['alert_message'] = "บันทึกข้อมูล จุดจอด ".$route_name;
+            $alert['alert_message'] = "บันทึกข้อมูล จุดจอด " . $route_name;
             $alert['alert_mode'] = "success";
             $this->session->set_flashdata('alert', $alert);
-            
+
             redirect('fares/edit/' . $rcode . '/' . $vtid);
         }
 
@@ -115,6 +121,8 @@ class station extends CI_Controller {
             'page_title_small' => '',
             'form' => $this->m_station->set_form_edit($rcode, $vtid),
             'route_detail' => $route_detail[0],
+            'previous_page' => 'route/time/' . $rcode . '/' . $vtid,
+            'next_page' => 'fares/add/' . $rcode . '/' . $vtid,
         );
 
         $data_debug = array(

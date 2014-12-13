@@ -7,6 +7,7 @@ class m_route extends CI_Model {
 
     public function insert_route($data) {
 
+
 //        go to destination ,กำหนด StartPoint เป็น S 
         $dataD = array(
             'RCode' => $data['RCode'],
@@ -14,7 +15,8 @@ class m_route extends CI_Model {
             'VTID' => $data['VTID'],
             'RSource' => $data['RSource'],
             'RDestination' => $data['RDestination'],
-            'Time'=>$data['Time'],
+            'Time' => $data['Time'],
+            'ScheduleType' => $schedule_type,
             'CreateDate' => $this->m_datetime->getDatetimeNowTH(),
         );
         $this->db->insert('t_routes', $dataD);
@@ -26,7 +28,7 @@ class m_route extends CI_Model {
             'VTID' => $data['VTID'],
             'RSource' => $data['RDestination'],
             'RDestination' => $data['RSource'],
-            'Time'=>$data['Time'],
+            'Time' => $data['Time'],
             'CreateDate' => $this->m_datetime->getDatetimeNowTH(),
         );
         $this->db->insert('t_routes', $dataS);
@@ -45,7 +47,7 @@ class m_route extends CI_Model {
             'VTID' => $data['VTID'],
             'RSource' => $data['RSource'],
             'RDestination' => $data['RDestination'],
-            'Time'=>$data['Time'],
+            'Time' => $data['Time'],
             'UpdateDate' => $this->m_datetime->getDatetimeNowTH(),
         );
         $this->db->where('RID', $rid[0]['RID']);
@@ -58,7 +60,7 @@ class m_route extends CI_Model {
             'VTID' => $data['VTID'],
             'RSource' => $data['RDestination'],
             'RDestination' => $data['RSource'],
-            'Time'=>$data['Time'],
+            'Time' => $data['Time'],
             'UpdateDate' => $this->m_datetime->getDatetimeNowTH(),
         );
         $this->db->where('RID', $rid[1]['RID']);
@@ -68,11 +70,94 @@ class m_route extends CI_Model {
     }
 
     public function update_route_time($data) {
-        for ($i = 0; $i < count($data['rid']); $i++) {
-            $this->db->where('RID', $data['rid'][$i]['RID']);
-            $this->db->update('t_routes', $data['route_time'][$i]);
+        $schedule_type = "0";
+        if (!empty($this->input->post('ScheduleType'))) {
+            $schedule_type = $this->input->post('ScheduleType');
         }
-        return $data['route_time'];
+        $rid_s = $data['rid'][0]['RID'];
+        $rid_d = $data['rid'][1]['RID'];
+        //update schedule type StartPoint S
+        $this->db->where('RID', $rid_s);
+        $this->db->update("t_routes", array('ScheduleType' => $schedule_type));
+        //update schedule type StartPoint D
+        $this->db->where('RID', $rid_d);
+        $this->db->update("t_routes", array('ScheduleType' => $schedule_type));
+        $rs = array();
+        if ($schedule_type == "1") {
+//            Start Point S
+            if (count($data['timeS']) != count($this->is_exits_schedule_manual($rid_s))) {
+                $k = 0;
+                foreach ($this->is_exits_schedule_manual($rid_s) as $value) {
+                    $this->db->where("SMID", $value["SMID"]);
+                    $this->db->delete("t_schedules_manual");
+                    $rs['Del_S'][$k] = "DELETE ->  " . $value["SMID"];
+                    $k++;
+                }
+                $this->db->where('RID', $rid_s);
+                $this->db->delete("t_routes_has_schedules_manual");
+            }
+            $j = 0;
+            foreach ($data['timeS'] as $ts) {
+                $schedule = $this->is_exits_schedule_manual($rid_s, $ts['SeqNo']);
+                if (count($schedule) <= 0) {
+                    $this->db->insert('t_schedules_manual', $ts);
+                    $smid_s = $this->db->insert_id();
+
+                    $route_has_schdule = array(
+                        'RID' => $rid_s,
+                        'SMID' => $smid_s
+                    );
+                    $this->db->insert('t_routes_has_schedules_manual', $route_has_schdule);
+                    $rs['timeS'][$j] = "INSERT -> $smid_s ";
+                } else {
+                    $this->db->where('SMID', $schedule[0]['SMID']);
+                    $this->db->update('t_schedules_manual', $ts);
+
+                    $rs['timeS'][$j] = $ts;
+                }
+                $j++;
+            }
+//            Start Point D
+            if (count($data['timeD']) != count($this->is_exits_schedule_manual($rid_d))) {
+                $k = 0;
+                foreach ($this->is_exits_schedule_manual($rid_d) as $value) {
+                    $this->db->where("SMID", $value["SMID"]);
+                    $this->db->delete("t_schedules_manual");
+                    $rs['Del_D'][$k] = "DELETE ->  " . $value["SMID"];
+                    $k++;
+                }
+                $this->db->where('RID', $rid_d);
+                $this->db->delete("t_routes_has_schedules_manual");
+            }
+            $j = 0;
+            foreach ($data['timeD'] as $td) {
+                $schedule = $this->is_exits_schedule_manual($rid_d, $td['SeqNo']);
+                if (count($schedule) <= 0) {
+                    $this->db->insert('t_schedules_manual', $td);
+                    $smid_d = $this->db->insert_id();
+
+                    $route_has_schdule_d = array(
+                        'RID' => $rid_d,
+                        'SMID' => $smid_d
+                    );
+                    $this->db->insert('t_routes_has_schedules_manual', $route_has_schdule_d);
+                    $rs['timeD'][$j] = "INSERT D -> $smid_d";
+                } else {
+                    $this->db->where('SMID', $schedule[0]['SMID']);
+                    $this->db->update('t_schedules_manual', $td);
+
+                    $rs['timeD'][$j] = $td;
+                }
+                $j++;
+            }
+            return $rs;
+        } else {
+            for ($i = 0; $i < count($data['rid']); $i++) {
+                $this->db->where('RID', $data['rid'][$i]['RID']);
+                $this->db->update('t_routes', $data['route_time'][$i]);
+            }
+            return $data['route_time'];
+        }
     }
 
     public function get_route($rcode = NULL, $vtid = NULL) {
@@ -87,7 +172,7 @@ class m_route extends CI_Model {
             $this->db->where('t_routes.VTID', $vtid);
         }
         $this->db->group_by(array('RCode', 't_routes.VTID'));
-        $this->db->where('StartPoint', 'S');     
+        $this->db->where('StartPoint', 'S');
 //        $this->db->order_by('StartPoint');
         $query = $this->db->get('t_routes');
         return $query->result_array();
@@ -116,14 +201,15 @@ class m_route extends CI_Model {
             $this->db->where('t_routes.VTID', $vtid);
         }
 
-        $this->db->order_by('StartPoint','DESC');
+        $this->db->order_by('StartPoint', 'DESC');
         $query = $this->db->get('t_routes');
         return $query->result_array();
     }
 
-    function get_vehicle_types($id = NULL) {
-        if ($id != NULL)
+    public function get_vehicle_types($id = NULL) {
+        if ($id != NULL){
             $this->db->where('VTID', $id);
+        }
         $temp = $this->db->get('vehicles_type');
         return $temp->result_array();
     }
@@ -136,6 +222,17 @@ class m_route extends CI_Model {
             $name = $row->VTDescription;
         }
         return $name;
+    }
+
+    public function get_schedule_manual($rid = NULL, $smid = NULL) {
+        $this->db->join('t_routes_has_schedules_manual', 't_routes_has_schedules_manual.SMID = t_schedules_manual.SMID', 'left');
+        if ($rid != NULL) {
+            $this->db->where('RID', $rid);
+        }
+        $this->db->order_by('SeqNo');
+        $query = $this->db->get('t_schedules_manual');
+
+        return $query->result_array();
     }
 
     function set_form_search_route() {
@@ -260,10 +357,24 @@ class m_route extends CI_Model {
     public function set_form_route_time($data) {
         $rcode = $data[0]['RCode'];
         $vtid = $data[0]['VTID'];
+        $schedule_type = $data[0]['ScheduleType'];
         $arr_start_time = array();
         $arr_interval = array();
         $arr_around = array();
+        $rid_s = $data[0]['RID'];
+        $rid_d = $data[1]['RID'];
 
+        $check = FALSE;
+        if ($schedule_type == "1" || $this->input->post('ScheduleType') == '1') {
+            $check = TRUE;
+        }
+        $i_ScheduleType = array(
+            'name' => 'ScheduleType',
+            'id' => 'ScheduleType',
+            'value' => '1',
+            'checked' => $check,
+        );
+        //schedule auto -> ScheduleType = 0
         for ($i = 0; $i < count($data); $i++) {
             $start_point = $data[$i]['StartPoint'];
             $i_StartTime = array(
@@ -297,12 +408,67 @@ class m_route extends CI_Model {
             $arr_around[$i] = $i_AroundNumber;
         }
 
+        //schedule manual -> ScheduleType = 1
+        $i_time_s = array();
+        $time_s = array();
+        if (!empty($this->input->post('timeS'))) {
+            $time_s = $this->input->post('timeS');
+        } else {
+            $time_s = $this->get_schedule_manual($rid_s);
+        }
+
+        if (count($time_s) > 0) {
+            for ($i = 0; $i < count($time_s); $i++) {
+                if (!empty($this->input->post('timeS'))) {
+                    $t = strtotime($time_s[$i]);
+                } else {
+                    $t = strtotime($time_s[$i]['Time']);
+                }
+                $i_time = array(
+                    'id' => 'time',
+                    'name' => "timeS[]",
+                    'class' => 'form-control text-center',
+                    'readonly' => TRUE,
+                    'value' => (set_value("timeS[$i]") == NULL) ? date('H:i', $t) : set_value("timeS[$i]"),
+                );
+                array_push($i_time_s, form_input($i_time));
+            }
+        }
+        $i_time_d = array();
+        $time_d = array();
+
+        if (!empty($this->input->post('timeD'))) {
+            $time_d = $this->input->post('timeD');
+        } else {
+            $time_d = $this->get_schedule_manual($rid_d);
+        }
+        if (count($time_s) > 0) {
+            for ($i = 0; $i < count($time_d); $i++) {
+                if (!empty($this->input->post('timeD'))) {
+                    $t = strtotime($time_d[$i]);
+                } else {
+                    $t = strtotime($time_d[$i]['Time']);
+                }
+                $i_time = array(
+                    'id' => 'time',
+                    'name' => "timeD[]",
+                    'class' => 'form-control text-center',
+                    'readonly' => TRUE,
+                    'value' => (set_value("timeD[$i]") == NULL) ? date('H:i', $t) : set_value("timeD[$i]"),
+                );
+                array_push($i_time_d, form_input($i_time));
+            }
+        }
+
         $form_route_time = array(
             'form' => form_open('route/time/' . $rcode . '/' . $vtid, array('class' => 'form-horizontal', 'id' => 'form_route_time')),
             'rcode' => $rcode,
+            'ScheduleType' => form_checkbox($i_ScheduleType),
             'StartTime' => $arr_start_time,
             'IntervalEachAround' => $arr_interval,
             'AroundNumber' => $arr_around,
+            'timeS' => $i_time_s,
+            'timeD' => $i_time_d,
         );
 
         return $form_route_time;
@@ -330,22 +496,28 @@ class m_route extends CI_Model {
         $start_time = $this->input->post('StartTime');
         $interval = $this->input->post('IntervalEachAround');
         $around = $this->input->post('AroundNumber');
-        if (!empty($start_time)) {
-            for ($i = 0; $i < count($start_time); $i++) {
-                $this->form_validation->set_rules("StartTime[$i]", "เวลาเที่ยวเเรก", 'trim|required|xss_clean');
-            }
-        }
-        if (!empty($interval)) {
-            for ($i = 0; $i < count($interval); $i++) {
-                $this->form_validation->set_rules("IntervalEachAround[$i]", "เวลาห่างแต่ละเที่ยว", 'trim|required|numeric|xss_clean');
-            }
-        }
-        if (!empty($around)) {
-            for ($i = 0; $i < count($around); $i++) {
-                $this->form_validation->set_rules("AroundNumber[$i]", "จำนวนเที่ยวต่อวัน", 'trim|required|numeric|xss_clean');
-            }
-        }
+        $schedule_type = $this->input->post('ScheduleType');
 
+        if ($schedule_type == '1') {
+            $this->form_validation->set_rules("timeS[]", "เวลา S", 'trim|required|xss_clean');
+            $this->form_validation->set_rules("timeD[]", "เวลา D", 'trim|required|xss_clean');
+        } else {
+            if (!empty($start_time)) {
+                for ($i = 0; $i < count($start_time); $i++) {
+                    $this->form_validation->set_rules("StartTime[$i]", "เวลาเที่ยวเเรก", 'trim|required|xss_clean');
+                }
+            }
+            if (!empty($interval)) {
+                for ($i = 0; $i < count($interval); $i++) {
+                    $this->form_validation->set_rules("IntervalEachAround[$i]", "เวลาห่างแต่ละเที่ยว", 'trim|required|numeric|xss_clean');
+                }
+            }
+            if (!empty($around)) {
+                for ($i = 0; $i < count($around); $i++) {
+                    $this->form_validation->set_rules("AroundNumber[$i]", "จำนวนเที่ยวต่อวัน", 'trim|required|numeric|xss_clean');
+                }
+            }
+        }
         return TRUE;
     }
 
@@ -357,6 +529,7 @@ class m_route extends CI_Model {
             'RDestination' => $this->input->post('RDestination'),
             'Time' => $this->input->post('Time'),
         );
+
         return $form_data;
     }
 
@@ -368,6 +541,7 @@ class m_route extends CI_Model {
             'RDestination' => $this->input->post('RDestination'),
             'Time' => $this->input->post('Time'),
         );
+
         return $form_data;
     }
 
@@ -375,36 +549,65 @@ class m_route extends CI_Model {
         $start_time = $this->input->post('StartTime');
         $interval = $this->input->post('IntervalEachAround');
         $around = $this->input->post('AroundNumber');
+        $schedule_type = $this->input->post('ScheduleType');
         $rs = array();
+        if ($schedule_type != 0) {
+            for ($i = 0; $i < count($data); $i++) {
+                $rs['rid'][$i] = array(
+                    'RID' => $data[$i]['RID']
+                );
+                $source = $data[$i]['RSource'];
+                $desination = $data[$i]['RDestination'];
+                $vt_name = $data[$i]['VTDescription'];
+                $route_name = $vt_name . ' สาย ' . $data[$i]['RCode'] . ' ' . ' ' . $source . ' - ' . $desination;
 
-        for ($i = 0; $i < count($data); $i++) {
-            $rs['rid'][$i] = array(
-                'RID' => $data[$i]['RID']);
+                $time_s = $this->input->post('timeS');
+                for ($j = 0; $j < count($time_s); $j++) {
+                    $n = $j + 1;
+                    $rs['timeS'][$j] = array(
+                        'SeqNo' => $n,
+                        'Time' => $time_s[$j],
+                        'SMNote' => "$route_name เที่ยวที่ $n",
+                    );
+                }
+                $time_d = $this->input->post('timeD');
+                for ($j = 0; $j < count($time_d); $j++) {
+                    $n = $j + 1;
+                    $rs['timeD'][$j] = array(
+                        'SeqNo' => $n,
+                        'Time' => $time_d[$j],
+                        'SMNote' => "$route_name เที่ยวที่ $n",
+                    );
+                }
+            }
+        } else {
+            for ($i = 0; $i < count($data); $i++) {
+                $rs['rid'][$i] = array(
+                    'RID' => $data[$i]['RID']);
 
-            $rs['route_time'][$i] = array(
-                'StartTime' => $start_time[$i],
-                'IntervalEachAround' => $interval[$i],
-                'AroundNumber' => $around[$i],
-                'UpdateDate' => $this->m_datetime->getDatetimeNowTH(),
-            );
+                $rs['route_time'][$i] = array(
+                    'StartTime' => $start_time[$i],
+                    'IntervalEachAround' => $interval[$i],
+                    'AroundNumber' => $around[$i],
+                    'UpdateDate' => $this->m_datetime->getDatetimeNow(),
+                );
+            }
         }
         return $rs;
     }
 
-}
+    public function is_exits_schedule_manual($rid, $seqno = NULL, $time = NULL, $smid = NULL) {
+        $this->db->join('t_routes_has_schedules_manual', 't_routes_has_schedules_manual.SMID = t_schedules_manual.SMID');
+        $this->db->where('RID', $rid);
+        if ($seqno != NULL) {
+            $this->db->where('SeqNo', $seqno);
+        }
+        if ($time != NULL) {
+            $this->db->where('Time', $time);
+        }
+        $query = $this->db->get('t_schedules_manual');
 
-//$this->form_validation->set_rules('product_name[thai]', 'ชื่อสินค้า', 'trim|required|xss_clean');
-       
-//'product_name' => $this->input->post('product_name'),
-//    $i_ = array(
-//            'name' => '',
-//            'value' => set_value(''),
-//            'placeholder' => '',
-//            'class' => 'form-control');
-//    
-//
-//        $i_type = array();
-//        $temp = $this->m_products->check_product_type();
-//        foreach ($temp as $row) {
-//            $i_type[$row['id']] = unserialize($row['product_type'])['thai'];
-//        }
+        return $query->result_array();
+    }
+
+}

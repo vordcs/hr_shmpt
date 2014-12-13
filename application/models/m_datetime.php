@@ -14,13 +14,10 @@ Class m_datetime extends CI_Model {
     function getDateToday() {
         return date('Y-m-d');
     }
-
-    function getDatetimeNowTH() {
-       
+    function getDatetimeNowTH() {       
         $hour = date("H");
         $minute = date("i");
         $seconds = date("s");
-
         $day = date('d');
         $month = date('m');
         $year = date('Y') + 543;

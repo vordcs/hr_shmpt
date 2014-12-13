@@ -26,7 +26,7 @@
         //*** Column 2 ***//
         newCell = newRow.insertCell(1);
         newCell.id = newCell.uniqueID;
-        newCell.innerHTML = "<INPUT TYPE=\"TEXT\" CLASS=\"form-control text-center\" NAME=\"StationName[]\" ID=\"StationName\"" + intLine + " placeholder=\"ชื่อจุดจอด\" VALUE =\"StationName" + intLine + "\">";
+        newCell.innerHTML = "<INPUT TYPE=\"TEXT\" CLASS=\"form-control text-center\" NAME=\"StationName[]\" ID=\"StationName\"" + intLine + " placeholder=\"ชื่อจุดจอด\" VALUE =\"\">";
 
         //*** Column 3 ***//
         newCell = newRow.insertCell(2);
@@ -71,22 +71,6 @@
         }
         document.getElementById(TravelTime_id).style.display = vis;
         document.getElementById(StopTime_id).style.display = vis;
-
-    }
-    function validateForm()
-    {
-        var chboxs = document.getElementsByClassName("IsSaleTicket");
-        for (var i = 0; i < chboxs.length; i++) {
-            if (chboxs[i].checked) {
-                var t = document.getElementsById(chboxs[i].value);
-                if (t.val() === '') {
-                    console.log('Emty : ' + chboxs[i].value);
-                }
-            }
-            console.log(chboxs[i].value);
-        }
-
-        return false;
     }
 </script>
 
@@ -104,99 +88,117 @@
             </h3>        
         </div>
     </div>
-    <div class="row">    
-
-        <div class="col-md-12">
-            <div class="col-md-6">
-
-            </div>
-            <div class="col-md-6">
-
+    <?php if (validation_errors() != NULL) { ?>
+        <div class="row animated pulse">
+            <div class="alert alert-danger alert-dismissable">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                <h4>ผิดพลาด ! <small>กรุณากรุณากรอกข้อมูลให้ครบ</small></h4>
             </div>
         </div>
-        <div class="col-md-8 col-md-offset-2">
+    <?php } ?>
+    <div class="row">          
+        <div class="col-md-12">
             <div class="panel panel-info">
                 <div class="panel-heading">
                     <h3 class="panel-title">ข้อมูลจุดจอดรถโดยสาร</h3>
                 </div>
-                <div class="panel-body">
-                    <?php echo validation_errors(); ?>
-                    <?php echo $form['form']; ?>                            
-                    <table id="tableStation" class="table table-condensed table-hover">
-                        <thead>
-                            <tr>
-                                <th rowspan="2" class="text-center" style="width:15%;">จุดขายตั๋ว</th>
-                                <th rowspan="2" class="text-center" style="width:50%;">จุดจอด</th>
-                                <th colspan="2" class="text-center" style="width:20%;">ใช้เวลา(นาที)</th>
-                                <th rowspan="2" class="text-center" style="width:10%"></th>
-                            </tr>
-                            <tr>
-                                <th class="text-center" style="width:10%;">เดินทาง</th>
-                                <th class="text-center" style="width:10%;">เวลาพัก</th>
-                            </tr>
-                            <tr class="active">
-                                <td class="text-center">
-                                    <input type="checkbox"  checked disabled="">  
-                                </td>
-                                <td>
-                                    <?php echo $form['Source'] ?>                           
-                                </td> 
-                                <td colspan="3"></td>
-                            </tr>
-                        </thead>
-                        <tbody id="tableBodyStation">    
-                            <?php echo $form['station'] ?>   
-                            <?php
-                            if (count($form['StationName']) > 0) {
-                                for ($j = 0; $j < count($form['StationName']); $j++) {
-                                    $sale_point = $form['IsSaleTiket'][$j];
-                                    $station_name = $form['StationName'][$j];
-                                    $travel_time = $form['TravelTime'][$j];
-                                    $stop_time = $form['StopTime'][$j];
-                                    ?>
-                                    <tr>
-                                        <td class="text-center">
-                                            <?php echo $sale_point ?>
-                                        </td>
-                                        <td class=" <?= (form_error("StationName[$j]")) ? 'has-error' : '' ?>">
-                                            <?php echo $station_name; ?>
-                                        </td>
-                                        <td class="text-center <?php echo (form_error("TravelTime[$j]")) ? 'has-error' : '' ?>">
-                                            <?php echo $travel_time; ?>
-                                        </td>
-                                        <td class="text-center <?php echo (form_error("StopTime[$j]")) ? 'has-error' : ''    ?>">
-                                            <?php  echo $stop_time; ?>
-                                        </td>
-                                        <td class="text-center">
-                                            <a class="btn btn-danger btn-sm" onClick="RemoveRow(this)"><i class="fa fa-times"></i></a>
-                                        </td>
-                                    </tr>
-                                    <?php
+                <div class="panel-body">                    
+                    <div class="col-md-8 col-md-offset-2">
+                        <?php echo $form['form']; ?>                            
+                        <table id="tableStation" class="table table-condensed table-hover">
+                            <thead>
+                                <tr>
+                                    <th rowspan="2" class="text-center" style="width:15%;">จุดขายตั๋ว</th>
+                                    <th rowspan="2" class="text-center" style="width:50%;">จุดจอด</th>
+                                    <th colspan="2" class="text-center" style="width:20%;">ใช้เวลา(นาที)</th>
+                                    <th rowspan="2" class="text-center" style="width:10%"></th>
+                                </tr>
+                                <tr>
+                                    <th class="text-center" style="width:10%;">เดินทาง</th>
+                                    <th class="text-center" style="width:10%;">เวลาพัก</th>
+                                </tr>
+                                <tr class="active">
+                                    <td class="text-center">
+                                        <input type="checkbox"  checked disabled="">  
+                                    </td>
+                                    <td>
+                                        <?php echo $form['Source'] ?>                           
+                                    </td> 
+                                    <td colspan="3"></td>
+                                </tr>
+                            </thead>
+                            <tbody id="tableBodyStation">    
+                                <?php echo $form['station'] ?>   
+                                <?php
+                                if (count($form['StationName']) > 0) {
+                                    for ($j = 0; $j < count($form['StationName']); $j++) {
+                                        $sale_point = $form['IsSaleTiket'][$j];
+                                        $station_name = $form['StationName'][$j];
+                                        $travel_time = $form['TravelTime'][$j];
+                                        $stop_time = $form['StopTime'][$j];
+                                        ?>
+                                        <tr>
+                                            <td class="text-center">
+                                                <?php echo $sale_point ?>
+                                            </td>
+                                            <td class=" <?= (form_error("StationName[$j]")) ? 'has-error' : '' ?>">
+                                                <?php echo $station_name; ?>
+                                            </td>
+                                            <td class="text-center <?php echo (form_error("TravelTime[$j]")) ? 'has-error' : '' ?>">
+                                                <?php echo $travel_time; ?>
+                                            </td>
+                                            <td class="text-center <?php echo (form_error("StopTime[$j]")) ? 'has-error' : '' ?>">
+                                                <?php echo $stop_time; ?>
+                                            </td>
+                                            <td class="text-center">
+                                                <a class="btn btn-danger btn-sm" onClick="RemoveRow(this)"><i class="fa fa-times"></i></a>
+                                            </td>
+                                        </tr>
+                                        <?php
+                                    }
                                 }
-                            }
-                            ?>
-                        </tbody>
-                        <tfoot>
-                            <tr class="active">
-                                <td class="text-center">                           
-                                    <input type="checkbox"  checked disabled="">   
-                                </td>
-                                <td>
-                                    <?php echo $form['Destination'] ?>   
-                                </td>   
-                                <td colspan="3"></td>
-                            </tr>
-                            <tr>
-                                <td colspan="2"></td>
-                                <td colspan="2">
-                                    <a name="btnAddSource"  id="btnAddSource" class="btn btn-block btn-info" onClick="CreateNewRow();"><i class="fa fa-plus"></i>&nbsp;จุดจอด</a>
-                                </td>
-                            </tr>               
-                        </tfoot>
-                    </table>
+                                ?>
+                            </tbody>
+                            <tfoot>
+                                <tr class="active">
+                                    <td class="text-center">                           
+                                        <input type="checkbox"  checked disabled="">   
+                                    </td>
+                                    <td>
+                                        <?php echo $form['Destination'] ?>   
+                                    </td>   
+                                    <td colspan="3"></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2"></td>
+                                    <td colspan="2">
+                                        <a name="btnAddSource"  id="btnAddSource" class="btn btn-block btn-info" onClick="CreateNewRow();"><i class="fa fa-plus"></i>&nbsp;จุดจอด</a>
+                                    </td>
+                                </tr>               
+                            </tfoot>
+                        </table>
+                    </div>
                     <div class="col-md-12 text-center"> 
                         <a  href="javascript:window.history.go(-1);" class="btn btn-danger btn-lg" ><span class="fa fa-times"> ยกเลิก</span></a>   
                         <button type="submit" class="btn btn-success  btn-lg" id="btn_save" ><i class="fa fa-save"></i>&nbsp;บันทึก</button>   
+                    </div>
+                    <div class="col-md-12">   
+                        <ul class="pager">
+                            <li class="previous">
+                                <?php
+                                if ($previous_page != '') {
+                                    echo anchor($previous_page, '<span class="fa fa-angle-double-left"></span> ข้อมูลตารางเวลาเดินรถ');
+                                }
+                                ?>                               
+                            </li>
+                            <li class="next">
+                                <?php
+                                if ($next_page != '') {
+                                    echo anchor($next_page, 'กำหนดค่าโดยสาร <span class="fa fa-angle-double-right"></span>');
+                                }
+                                ?>                                 
+                            </li>
+                        </ul>
                     </div>
                     <?php echo form_close(); ?>
                 </div>
@@ -205,29 +207,3 @@
     </div>
 </div>
 
-
-<?php
-//                            if (count($form['StationName']) > 0) {
-//                                for ($j = 0; $j < count($form['StationName']); $j++) {
-//                                    $sale_point = $form['IsSalePoint'][$j];
-//                                    $station_name = $form['StationName'][$j];
-//                                    $travel_time = $form['TravelTime'][$j];
-?>
-<!--                                    <tr>
-                                        <td class="text-center">
-<?php // echo $sale_point ?>
-                                        </td>
-                                        <td class="<? (form_error("StationName[$j]")) ? 'has-error' : '' ?>">
-<?php // echo $station_name; ?>
-                                        </td>
-                                        <td class="<? (form_error("TravelTime[$j]")) ? 'has-error' : '' ?>">
-<?php // echo $travel_time; ?>
-                                        </td>
-                                        <td>
-                                            <a class="btn btn-danger btn-sm" onClick="RemoveRow(this)"><i class="fa fa-minus"></i></a>
-                                        </td>-->
-<!--</tr>-->
-<?php
-//                                }
-//                            }
-?>

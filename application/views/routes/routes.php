@@ -26,14 +26,13 @@ function last_around($start_time, $interval_time, $number) {
     <br>
     <div class="row">        
         <div class="page-header">
-            <h1>เส้นทางเดินรถ&nbsp;
+            <h3>เส้นทางเดินรถ&nbsp;
                 <small></small>
-            </h1>
+            </h3>
         </div>
-    </div>
+    </div> 
     <div class="row">        
-        <div class="col-md-12">
-            <br>
+        <div class="col-md-12">           
             <div class="panel panel-info">
                 <div class="panel-heading">
                     <h3 class="panel-title"><i class="fa fa-search"></i>&nbsp;&nbsp;ค้นหา</h3>
@@ -125,6 +124,7 @@ function last_around($start_time, $interval_time, $number) {
                         $rcode = $r['RCode'];
                         $source = $r['RSource'];
                         $destination = $r['RDestination'];
+                        $schedule_type = $r["ScheduleType"];
                         $route_name = '  เส้นทางสาย ' . $rcode . ' ' . ' ' . $source . ' - ' . $destination;
                         ?>
                         <div class="col-md-offset-1 col-sm-10">
@@ -145,7 +145,7 @@ function last_around($start_time, $interval_time, $number) {
                                                     <th style="width: 20%">เที่ยวสุดท้าย</th>
                                                     <th style="width: 15%">ออกทุกๆ (นาที)</th>
                                                     <th style="width: 15%">จำนวนเที่ยว</th>
-                                                    <th style="width: 20%">ใช้เวลา</th>
+                                                    <th style="width: 20%">ใช้เวลา (ชั่วโมง)</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -154,19 +154,45 @@ function last_around($start_time, $interval_time, $number) {
                                                 $last_time = '';
                                                 $IntervalEachAround = '';
                                                 $AroundNumber = '';
-                                                $time = ''
+                                                $time = '';
+                                                foreach ($route_detail as $rd) {
+                                                    if ($rcode == $rd['RCode'] && $vtid == $rd['VTID']) {
+                                                        echo $rd["RID"] . $rd['StartPoint'];
+                                                    }
+                                                }
                                                 ?>
-
                                                 <tr>   
                                                     <?php
-//                                                    StartPoint->S 
                                                     foreach ($route_detail as $rd) {
                                                         if ($rcode == $rd['RCode'] && $vtid == $rd['VTID'] && 'S' == $rd['StartPoint']) {
-                                                            $first_time = $rd['StartTime'];
-                                                            $last_time = last_around($rd['StartTime'], $rd['IntervalEachAround'], $rd['AroundNumber']);
-                                                            $IntervalEachAround = $rd['IntervalEachAround'];
-                                                            $AroundNumber = $rd['AroundNumber'];
-                                                            $time = gmdate('H:i', $rd['Time'] * 60);
+                                                            $rid_s = $rd['RID'];
+                                                            if ($schedule_type != 1) {
+                                                                //auto
+                                                                $first_time = $rd['StartTime'];
+                                                                $last_time = last_around($rd['StartTime'], $rd['IntervalEachAround'], $rd['AroundNumber']);
+                                                                $IntervalEachAround = $rd['IntervalEachAround'];
+                                                                $AroundNumber = $rd['AroundNumber'];
+                                                            } else {
+                                                                //manual 
+                                                                $n = 0;
+                                                                foreach ($schedule_manual as $sm) {
+                                                                    if ($sm["RID"] == $rid_s) {
+                                                                        $n++;
+                                                                    }
+                                                                    if ($sm["RID"] == $rid_s && $sm['SeqNo'] == 1) {
+                                                                        $first = date('H:i', strtotime($sm['Time']));
+                                                                    }
+                                                                    if ($sm["RID"] == $rid_s && $sm['SeqNo'] == $n) {
+                                                                        $last = date('H:i', strtotime($sm['Time']));
+                                                                    }
+                                                                }
+
+                                                                $first_time = $first;
+                                                                $last_time = $last;
+                                                                $IntervalEachAround = '-';
+                                                                $AroundNumber = $n;
+                                                            }
+                                                            $time = gmdate('H.i', $rd['Time'] * 60);
                                                         }
                                                     }
                                                     ?>
@@ -183,11 +209,33 @@ function last_around($start_time, $interval_time, $number) {
 //                                                    StartPoint -> D
                                                     foreach ($route_detail as $rd) {
                                                         if ($rcode == $rd['RCode'] && $vtid == $rd['VTID'] && 'D' == $rd['StartPoint']) {
-                                                            $first_time = $rd['StartTime'];
-                                                            $last_time = last_around($rd['StartTime'], $rd['IntervalEachAround'], $rd['AroundNumber']);
-                                                            $IntervalEachAround = $rd['IntervalEachAround'];
-                                                            $AroundNumber = $rd['AroundNumber'];
-                                                            $time = gmdate('H:i', $rd['Time'] * 60);
+                                                            $rid_d = $rd['RID'];
+                                                            if ($schedule_type != 1) {
+                                                                //auto
+                                                                $first_time = $rd['StartTime'];
+                                                                $last_time = last_around($rd['StartTime'], $rd['IntervalEachAround'], $rd['AroundNumber']);
+                                                                $IntervalEachAround = $rd['IntervalEachAround'];
+                                                                $AroundNumber = $rd['AroundNumber'];
+                                                            } else {
+                                                                //manual
+                                                                $n = 0;
+                                                                foreach ($schedule_manual as $sm) {
+                                                                    if ($sm["RID"] == $rid_d) {
+                                                                        $n++;
+                                                                    }
+                                                                    if ($sm["RID"] == $rid_d && $sm['SeqNo'] == 1) {
+                                                                        $first = date('H:i', strtotime($sm['Time']));
+                                                                    }
+                                                                    if ($sm["RID"] == $rid_d && $sm['SeqNo'] == $n) {
+                                                                        $last = date('H:i', strtotime($sm['Time']));
+                                                                    }
+                                                                }
+                                                                $first_time = $first;
+                                                                $last_time = $last;
+                                                                $IntervalEachAround = '-';
+                                                                $AroundNumber = $n;
+                                                            }
+                                                            $time = gmdate('H.i', $rd['Time'] * 60);
                                                         }
                                                     }
                                                     ?>
@@ -201,39 +249,7 @@ function last_around($start_time, $interval_time, $number) {
 
                                             </tbody>
                                         </table>
-                                    </div>
-
-                                    <div class="col-md-offset-1 col-md-10 hidden">
-                                        <div class="panel-group" id="accordion<?= $rcode . $vtid ?>" role="tablist" aria-multiselectable="true">
-                                            <div class="panel">
-                                                <div class="panel-heading" role="tab" id="heading<?= $rcode . $vtid ?>">
-                                                    <h4 class="panel-title">
-                                                        <a data-toggle="collapse" data-parent="#accordion<?= $rcode . $vtid ?>" href="#collapse<?= $rcode . $vtid ?>" aria-expanded="true" aria-controls="collapseOne">
-                                                            &nbsp;&nbsp;จุดขายตั๋ว
-                                                        </a>
-                                                    </h4>
-                                                </div>
-                                                <div id="collapse<?= $rcode . $vtid ?>" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading<?= $rcode . $vtid ?>">
-                                                    <div class="panel-body">
-                                                        <?php
-                                                        foreach ($stations as $s) {
-                                                            $station_name = $s['StationName'];
-                                                            if ($rcode == $s['RCode'] && $vtid == $s['VTID'] && $s['IsSaleTicket'] == 1) {
-                                                                ?>                                                                
-                                                                <span class="label label-default">
-                                                                    <?= $station_name ?>  
-                                                                </span>                                                         
-
-                                                                <?php
-                                                            }
-                                                        }
-                                                        ?>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
+                                    </div>  
                                     <div class="col-md-offset-1 col-md-10">
                                         <div class="col-md-2">
                                             <span class="text">
@@ -247,15 +263,13 @@ function last_around($start_time, $interval_time, $number) {
                                                     $station_name = $s['StationName'];
                                                     if ($rcode == $s['RCode'] && $vtid == $s['VTID'] && $s['IsSaleTicket'] == 1) {
                                                         ?>
-                                                        &nbsp;&nbsp;
-                                                        <span class="label label-default">
-                                                            <span class="fa fa-dot-circle-o">
-                                                                &nbsp
-                                                                <span class="">
+                                                        &nbsp;&nbsp;                                                        
+                                                            <span class="fa fa-tag">                                                                
+                                                                <span class="text">
                                                                     <?= $station_name ?> 
                                                                 </span>
                                                             </span> 
-                                                        </span>  
+                                                         
                                                         &nbsp;&nbsp;
                                                         <?php
                                                     }

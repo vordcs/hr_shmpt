@@ -30,7 +30,7 @@ function get_price($data, $source_id, $destination_id) {
             </h3>        
         </div>
     </div>
-    <div class="row clearfix">
+    <div class="row clearfix animated fadeIn">
         <div class="col-md-12">
             <div class="panel panel-info">
                 <div class="panel-heading">
@@ -51,87 +51,128 @@ function get_price($data, $source_id, $destination_id) {
                 <div class="panel-body">
                     <?php
                     foreach ($route_detail as $rd) {
+                        $rid = $rd["RID"];
                         $start_point = $rd['StartPoint'];
                         $start_time = $rd['StartTime'];
                         $interval = $rd['IntervalEachAround'];
                         $around = $rd['AroundNumber'];
-                        ?>
-                        <div class="col-md-6">
-                            <div class="">                                
-                                <p class="lead">                            
-                                    <?php echo '<strong>' . $rd['RSource'] . '  <span class="fa fa-arrow-circle-right fa-fw"></span>  ' . $rd['RDestination'] . '<strong>'; ?>
-                                </p>
-                            </div>
-                            <div class="col-md-8 form-horizontal">
-                                <div class="form-group">
-                                    <label for="" class="col-sm-4 control-label">เวลาเที่ยวแรก</label>
-                                    <div class="col-sm-5">
-                                        <input type="text" class="form-control text-center" value="<?php echo date('H:i', strtotime($start_time)) ?>" disabled> 
-                                    </div>
+                        if ($rd["ScheduleType"] == "1") {
+                            ?>
+                            <div class="col-md-6">
+                                <div class="col-md-12">                                
+                                    <p class="lead">                            
+                                        <?php echo '<strong>' . $rd['RSource'] . '  <span class="fa fa-arrow-circle-right fa-fw"></span>  ' . $rd['RDestination'] . '<strong>'; ?>
+                                    </p>
                                 </div>
-
-                                <div class="form-group">
-                                    <label for="" class="col-sm-4 control-label">ระยะห่าง</label>
-                                    <div class="col-sm-5">
-                                        <input type="text" class="form-control text-center" value="<?php echo $interval ?>" disabled> 
-                                    </div>
-                                    <div class="col-sm-2">
-                                        <span class="">นาที</span>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="" class="col-sm-4 control-label">จำนวนเที่ยว</label>
-                                    <div class="col-sm-5">
-                                        <input type="text" class="form-control text-center" value="<?php echo $around ?>" disabled> 
-                                    </div>
-                                    <div class="col-sm-2">
-                                        <span class="">เที่ยว/วัน</span>
-                                    </div>
-                                </div>                                
-                            </div>
-                            <div class="col-md-4">
-                                <div class="panel-group panel-group-lists" id="accordion<?= $start_point ?>">
-                                    <div class="panel">
-                                        <div class="panel-heading">
-                                            <h4 class="panel-title">
-                                                <a data-toggle="collapse" data-parent="#accordion<?= $start_point ?>" href="#<?= $start_point ?>">
-                                                    ตารางเวลาเดินรถ
-                                                </a>
-                                            </h4>
-                                        </div>
-                                        <div id="<?= $start_point ?>" class="panel-collapse collapse">
-                                            <table id="table" class="table table-striped table-condensed">
-                                                <thead>
-                                                    <tr>
-                                                        <th style="width: 20%">ลำดับ</th>
-                                                        <th style="width: 80%">เวลา</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="table_body<?= $start_point ?>">
-                                                    <?php
-                                                    if ($start_time != '' && $interval != '' && $around != '') {
-                                                        for ($j = 0; $j < $around; $j++) {
-                                                            $time = strtotime($start_time) + $interval * 60 * $j;
-                                                            ?>
-                                                            <tr>
-                                                                <td class="text-center"><?= $j + 1 ?></td>
-                                                                <td class="text-center"><?= date('H:i', $time); ?></td>
-                                                            </tr>
-                                                            <?php
-                                                        }
-                                                    }
+                                <div class="col-md-8 col-md-offset-2">
+                                    <table class="table table-bordered table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th style="width: 20%">เที่ยวที่</th>
+                                                <th style="width: 60%">เวลา</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php
+                                            foreach ($schedule_manual as $sm) {
+                                                if ($rid == $sm["RID"]) {
+                                                    $seq_no = $sm["SeqNo"];
+                                                    $time = date("H:i", strtotime($sm["Time"]));
                                                     ?>
-                                                </tbody>
-                                            </table>
+                                                    <tr>
+                                                        <td class="text-center"> <?= $seq_no ?></td>
+                                                        <td class="text-center"><?= $time ?></td>
+                                                    </tr>
+                                                    <?php
+                                                }
+                                            }
+                                            ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <?php
+                        } else {
+                            ?>
+
+                            <div class="col-md-6">
+                                <div class="">                                
+                                    <p class="lead">                            
+                                        <?php echo '<strong>' . $rd['RSource'] . '  <span class="fa fa-arrow-circle-right fa-fw"></span>  ' . $rd['RDestination'] . '<strong>'; ?>
+                                    </p>
+                                </div>
+                                <div class="col-md-8 form-horizontal">
+                                    <div class="form-group">
+                                        <label for="" class="col-sm-4 control-label">เวลาเที่ยวแรก</label>
+                                        <div class="col-sm-5">
+                                            <input type="text" class="form-control text-center" value="<?php echo date('H:i', strtotime($start_time)) ?>" disabled> 
                                         </div>
                                     </div>
-                                </div>
 
+                                    <div class="form-group">
+                                        <label for="" class="col-sm-4 control-label">ระยะห่าง</label>
+                                        <div class="col-sm-5">
+                                            <input type="text" class="form-control text-center" value="<?php echo $interval ?>" disabled> 
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <span class="">นาที</span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="" class="col-sm-4 control-label">จำนวนเที่ยว</label>
+                                        <div class="col-sm-5">
+                                            <input type="text" class="form-control text-center" value="<?php echo $around ?>" disabled> 
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <span class="">เที่ยว/วัน</span>
+                                        </div>
+                                    </div>                                
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="panel-group panel-group-lists" id="accordion<?= $start_point ?>">
+                                        <div class="panel">
+                                            <div class="panel-heading">
+                                                <h4 class="panel-title">
+                                                    <a data-toggle="collapse" data-parent="#accordion<?= $start_point ?>" href="#<?= $start_point ?>">
+                                                        ตารางเวลาเดินรถ
+                                                    </a>
+                                                </h4>
+                                            </div>
+                                            <div id="<?= $start_point ?>" class="panel-collapse collapse">
+                                                <table id="table" class="table table-striped table-condensed">
+                                                    <thead>
+                                                        <tr>
+                                                            <th style="width: 20%">ลำดับ</th>
+                                                            <th style="width: 80%">เวลา</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="table_body<?= $start_point ?>">
+                                                        <?php
+                                                        if ($start_time != '' && $interval != '' && $around != '') {
+                                                            for ($j = 0; $j < $around; $j++) {
+                                                                $time = strtotime($start_time) + $interval * 60 * $j;
+                                                                ?>
+                                                                <tr>
+                                                                    <td class="text-center"><?= $j + 1 ?></td>
+                                                                    <td class="text-center"><?= date('H:i', $time); ?></td>
+                                                                </tr>
+                                                                <?php
+                                                            }
+                                                        }
+                                                        ?>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                </div>
 
                             </div>
 
-                        </div>
-                        <?php
+                            <?php
+                        }
                     }
                     ?>
 
@@ -139,7 +180,7 @@ function get_price($data, $source_id, $destination_id) {
             </div>
         </div>
     </div>
-    <div class="row clearfix">
+    <div class="row clearfix animated fadeIn">
         <div class="col-md-3">
             <div class="panel panel-info">
                 <div class="panel-heading">

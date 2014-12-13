@@ -7,9 +7,14 @@
 <div class="container">
     <div class="row">        
         <div class="page-header">
-            <h1>ตารางเดินรถ&nbsp;
-                <small>วันที่ </small>
-            </h1>
+            <h3>ตารางเวลาเดินรถ&nbsp;
+                <small></small>
+            </h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+
         </div>
     </div>
     <div class="row">
@@ -54,50 +59,84 @@
             </div>
         </div>     
     </div>
-    <?php for ($i = 1; $i <= 3; $i++) { ?>
+    <?php
+    foreach ($vehicles_type as $v_type) {
+        ?>
         <div class="row">      
             <div class="col-md-12">                
-                <h3>ประเภทรถ <?= $i ?></h3>
-                <?php for ($j = 1; $j <= 3; $j++) { ?>
-                    <div class="col-md-4">
-                        <div class="panel panel-primary">
-                            <div class="panel-heading">
-                                <h3 class="panel-title">234 ขอนแก่น-อำนาจเจริญ</h3>
-                            </div>
-                            <div class="panel-body">
+                <h3><?= $v_type['VTDescription'] ?></h3>                
+                <?php
+                if (count($route) <= 0) {
+                    ?>
 
-                                <table class="table table-hover table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th rowspan="2"></th>
-                                            <th colspan="2">จำนวนเที่ยว</th>
-                                        </tr>
-                                        <tr>
-                                            <th>ทั้งหมด</th>
-                                            <th>คงเหลือ</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>ไปอำนาจเจริญ</td>
-                                            <td></td>
-                                            <td></td>
-                                        </tr>   
-                                        <tr>
-                                            <td>ไปขอนแก่น</td>
-                                            <td></td>
-                                            <td></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <div class="col-md-12">
-                                    <a href="<?= base_url('schedule/view') ?>" class="btn btn-block"><i class="fa fa-list-ol"></i>&nbsp;ตารางเวลา</a>
+                    <?php
+                } else {
+                    foreach ($route as $r) {
+                        if ($r['VTID'] == $v_type['VTID']) {
+                            $vtid = $r['VTID'];
+                            $type_name = $v_type['VTDescription'];
+                            $rcode = $r['RCode'];
+                            $source = $r['RSource'];
+                            $destination = $r['RDestination'];
+                            $route_name = '' . $rcode . ' ' . ' ' . $source . ' - ' . $destination;
+                            ?>
+                            <div class="panel panel-info">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title"><?= $route_name ?></h3>
+                                </div>
+                                <div class="panel-body">
+                                    <?php
+                                    foreach ($route_detail as $rd) {
+                                        $source = $rd['RSource'];
+                                        $destination = $rd['RDestination'];
+                                        $start_point = $rd['StartPoint'];
+                                        if ($rcode == $rd["RCode"] && $vtid == $rd["VTID"]) {
+                                            ?>
+                                            <div class="col-md-6">
+                                                <span class="lead"> 
+                                                    <i>ไป</i>&nbsp</strong>
+                                                    <strong><?php echo $destination; ?></strong>
+                                                </span> 
+                                                <table class="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th style="width: 20%">รอบที่</th>
+                                                            <th style="width: 40%">เวลา</th>
+                                                            <th style="width: 40%">รถเบอร์</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr class="active">
+                                                            <td class="text-center">1</td>
+                                                            <td class="text-center">7:00</td>
+                                                            <td class="text-center">123-1</td>
+                                                        </tr>
+                                                        <tr class="success">
+                                                            <td class="text-center">2</td>
+                                                            <td class="text-center">7:30</td>
+                                                            <td class="text-center">123-2</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                                <br>
+                                                <div class="col-md-12">
+                                                    <a href="<?= base_url('schedule/view') ?>" class="btn btn-block"><i class="fa fa-list-ol"></i>&nbsp;ตารางเวลา</a>
+                                                </div>
+                                            </div>
+                                            <?php
+                                        }
+                                    }
+                                    ?>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                <?php } ?>
+                            <?php
+                        }
+                    }
+                }
+                ?>
             </div>
         </div>
     <?php } ?>
+
 </div>
+
