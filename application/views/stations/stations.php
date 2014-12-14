@@ -9,8 +9,7 @@
 <?php
 ?>
 
-<div class="container-fluid">
-    <br>
+<div class="container-fluid">    
     <div class="row">        
         <div class="page-header">        
             <h3>

@@ -6,8 +6,6 @@ if (!defined('BASEPATH'))
 class m_cost extends CI_Model {
 
     public function get_cost($cid = null, $ctid = NULL) {
-
-
         $this->db->join('cost_type', 'cost_type.CostTypeID = cost.CostTypeID');
         $this->db->join('cost_detail', 'cost_detail.CostDetailID = cost.CostDetailID');
         $this->db->join('vehicles_has_cost', 'vehicles_has_cost.CostID = cost.CostID');
@@ -17,7 +15,7 @@ class m_cost extends CI_Model {
         if ($ctid != NULL) {
             $this->db->where('cost.CostTypeID', $ctid);
         }
-        $this->db->where('cost.CostDate', $this->m_datetime->getDateTodayTH());
+        $this->db->where('cost.CostDate', $this->m_datetime->getDateToday());
         $query = $this->db->get('cost');
         return $query->result_array();
     }
@@ -85,8 +83,8 @@ class m_cost extends CI_Model {
             $this->db->where('cost.CostDate', $this->m_datetime->setDateFomat($form));
         }
         if ($form != NULL && $to != NULL) {
-            $this->db->where('cost.CostDate =>', $this->m_datetime->setDateFomat($form));
-            $this->db->where('cost.CostDate =<', $this->m_datetime->setDateFomat($to));
+            $this->db->where('cost.CostDate >=', $this->m_datetime->setDateFomat($form));
+            $this->db->where('cost.CostDate <=', $this->m_datetime->setDateFomat($to));
         }
         $query = $this->db->get('cost');
         return $query->result_array();
@@ -159,7 +157,7 @@ class m_cost extends CI_Model {
         return $form_add;
     }
 
-    public function set_form_search() {
+    public function set_form_search($rcode = NULL, $vtid = NULL) {
         //ข้อมูลเส้นทาง
         $i_RCode[0] = 'เส้นทางทั้งหมด';
         foreach ($this->get_route() as $value) {
@@ -191,8 +189,13 @@ class m_cost extends CI_Model {
 
         $dropdown = 'class="selecter_3" data-selecter-options = \'{"cover":"true"}\' ';
 
+        $v = '';
+        if ($rcode != NULL && $vtid != NULL) {
+            $v = "view/$rcode/$vtid";
+        }
+
         $form_search = array(
-            'form' => form_open('cost/', array('role=' => 'form', 'id' => 'form_search_cost')),
+            'form' => form_open("cost/$v", array('role=' => 'form', 'id' => 'form_search_cost')),
             'RCode' => form_dropdown('RCode', $i_RCode, set_value('RCode'), $dropdown),
             'VTID' => form_dropdown('VTID', $i_VTID, set_value('VTID'), 'class="selecter_3" '),
             'VCode' => form_input($i_VCode),
@@ -210,6 +213,15 @@ class m_cost extends CI_Model {
         $this->form_validation->set_rules('VCode', 'เบอร์รถ', 'trim|required|xss_clean|callback_check_vcode');
         $this->form_validation->set_rules('CostValue', 'จำนวนเงิน', 'trim|required|xss_clean');
         $this->form_validation->set_rules('CostNote', 'หมายเหตุ', 'trim|xss_clean');
+        return TRUE;
+    }
+    public function varlidation_form_search() {
+        $this->form_validation->set_rules('RCode','เส้นทาง','trim|xss_clean');
+        $this->form_validation->set_rules('VTID','ประเภทรถ','trim|xss_clean');
+        $this->form_validation->set_rules('VCode','เบอร์รถ','trim|xss_clean');
+        $this->form_validation->set_rules('DateForm','จากวันที่','trim|xss_clean');
+        $this->form_validation->set_rules('DateTo','ถึงวันที่','trim|xss_clean');
+        
         return TRUE;
     }
 

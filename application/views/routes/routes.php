@@ -18,7 +18,7 @@ function last_around($start_time, $interval_time, $number) {
         $interval = $interval_time * 60 * $i;
         $time = strtotime($start_time) + $interval;
     }
-    return date('H:i:s', $time);
+    return date('H:i', $time);
 }
 ?>
 

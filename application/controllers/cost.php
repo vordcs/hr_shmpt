@@ -13,6 +13,7 @@ class cost extends CI_Controller {
         $this->load->model('m_template');
         $this->load->model('m_cost');
         $this->load->model('m_route');
+        $this->load->model('m_station');
         $this->load->model('m_vehicle');
         $this->load->library('form_validation');
 
@@ -24,6 +25,8 @@ class cost extends CI_Controller {
 
         $data = array(
             'form' => $this->m_cost->set_form_search(),
+            'route_details' => $this->m_route->get_route(),
+            'stations' => $this->m_station->get_stations(),
         );
 
         $data['strtitle'] = '';
@@ -61,15 +64,13 @@ class cost extends CI_Controller {
 
         if ($from != NULL || $to != NULL) {
 
-            if ($from != NULL && $to == NULL){
-                $data['strtitle'] .='วันที่ '.$this->m_datetime->getDateThaiString($from);
+            if ($from != NULL && $to == NULL) {
+                $data['strtitle'] .='วันที่ ' . $this->m_datetime->getDateThaiString($from);
             }
-            
-            if ($from != NULL && $to != NULL){
-                $data['strtitle'] .='วันที่ '.$this->m_datetime->getDateThaiString($from);
-                $data['strtitle'] .='ถึง '.$this->m_datetime->getDateThaiString($to);
+            if ($from != NULL && $to != NULL) {
+                $data['strtitle'] .='วันที่ ' . $this->m_datetime->getDateThaiString($from);
+                $data['strtitle'] .='ถึง ' . $this->m_datetime->getDateThaiString($to);
             }
-            
             $data['cost'] = $this->m_cost->search_cost($from, $to);
         } else {
             $data['cost'] = $this->m_cost->get_cost();
@@ -81,13 +82,76 @@ class cost extends CI_Controller {
 //            'cost' => $data['cost'],
 //            'cost_detail' => $data['cost_detail'], 
 //            'cost_types' => $data['cost_types'],
-            'routes' => $data['routes'],
+//            'routes' => $data['routes'],
+//            'route_details' => $data["route_details"],
+//            'stations' => $data['stations'],
 //            'vehicles' => $data['vehicles'],
 //            'form' => $data['form'],
         );
 
-//        $this->m_template->set_Debug($data_debug);
+        $this->m_template->set_Title('ค่าใช้จ่าย');
+        $this->m_template->set_Debug($data_debug);
         $this->m_template->set_Content('cost/cost', $data);
+        $this->m_template->showTemplate();
+    }
+
+    public function view($rcode, $vtid) {
+        $route_detail = $this->m_route->get_route_detail($rcode, $vtid);
+        $source = $route_detail[0]['RSource'];
+        $desination = $route_detail[0]['RDestination'];
+        $route_name = 'เส้นทาง สาย ' . $route_detail[0]['RCode'] . ' ' . ' ' . $source . ' - ' . $desination;
+        $date = $this->m_datetime->DateThaiToDay();
+
+        $data = array(
+            'page_title' => 'ค่าใช้จ่าย ' . $route_name,
+            'page_title_small' => 'ประจำวันที่ ' . $date,
+            'form' => $this->m_cost->set_form_search($rcode, $vtid),
+            'route_details' => $route_detail,
+            'stations' => $this->m_station->get_stations($rcode, $vtid),
+            'cost' => $this->m_cost->get_cost(),
+        );
+
+        $data['strtitle'] = '';
+
+        if ($this->m_cost->varlidation_form_search() && $this->form_validation->run() == TRUE) {
+            $from = $this->input->post('DateForm');
+            $to = $this->input->post('DateTo');
+            if ($from != NULL | $to != NULL) {
+                $data['strtitle'] .= 'ผลการค้นหา : ';
+            }
+            if ($from != NULL && $to == NULL) {
+                $data['strtitle'] .='วันที่ ' . $this->m_datetime->getDateThaiString($from);
+                $data['cost'] = $this->m_cost->search_cost($from);
+            }
+            if ($from != NULL && $to != NULL) {
+                $data['strtitle'] .='จากวันที่ ' . $this->m_datetime->getDateThaiString($from);
+                $data['strtitle'] .=' ถึง ' . $this->m_datetime->getDateThaiString($to);
+                $data['cost'] = $this->m_cost->search_cost($from, $to);
+            }
+        }
+
+        $data['vehicles'] = $this->m_vehicle->get_vehicle();
+        $data['routes'] = $this->m_route->get_route($rcode, $vtid);
+
+        $data['cost_detail'] = $this->m_cost->get_cost_detail();
+        $data['cost_types'] = $this->m_cost->get_cost_type();
+
+        $data['date'] = $this->m_datetime->DateThaiToDay();
+
+        $data_debug = array(
+//            'cost' => $data['cost'],
+//            'cost_detail' => $data['cost_detail'], 
+//            'cost_types' => $data['cost_types'],
+//            'routes' => $data['routes'],
+//            'route_details' => $data["route_details"],F
+//            'stations' => $data['stations'],
+//            'vehicles' => $data['vehicles'],
+//            'form' => $data['form'],
+        );
+
+        $this->m_template->set_Title("ค่าใช้จ่าย $route_name");
+        $this->m_template->set_Debug($data_debug);
+        $this->m_template->set_Content('cost/view_cost', $data);
         $this->m_template->showTemplate();
     }
 
@@ -117,7 +181,7 @@ class cost extends CI_Controller {
         $this->m_template->showTemplate();
     }
 
-    //ตรวจสอบเบอร์รถ
+//ตรวจสอบเบอร์รถ
     public function check_vcode($str) {
         $con = array(
             'VCode' => $str,
