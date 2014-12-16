@@ -66,12 +66,26 @@
                 <li>
                     <?= anchor('candidate', 'ผู้สมัครงาน') ?>
                 </li>
-                <li class="active">เพิ่มผู้สมัครงาน</li>
+                <li class="active">
+                    <?php
+                    if ($mode == 'add')
+                        echo 'เพิ่มผู้สมัครงาน';
+                    elseif ($mode == 'edit')
+                        echo 'แก้ไขผู้สมัครงาน';
+                    ?>
+                    &nbsp;</li>
             </ul>
             <div class="page-header">
                 <h1>สมัครงาน
                     <font color="#777777">
-                    <span style="font-size: 23px; line-height: 23.399999618530273px;">ระบบรับสมัครพนักงานใหม่</span>
+                    <span style="font-size: 23px; line-height: 23.399999618530273px;">
+                        <?php
+                        if ($mode == 'add')
+                            echo 'ระบบรับสมัครพนักงานใหม่';
+                        elseif ($mode == 'edit')
+                            echo 'ระบบรับสมัครพนักงานใหม่(แก้ไข)';
+                        ?>
+                    </span>
                     </font>
                 </h1>
             </div>
@@ -397,7 +411,9 @@
                                     <td><?= $form_input['SonAge'][$i] ?></td>
                                     <td><?= $form_input['SonOccupation'][$i] ?></td>                                        
                                     </tr>   
-                                <?php } ?>
+                                    <?php
+                                }
+                                ?>
 <!--                                    <tr>
 <td>1</td>
 <td><?= $form_input['SonTitle'] ?></td>
@@ -601,7 +617,9 @@
                                         <td><?= $form_input['ExSaraly'][$i] ?></td>
                                         <td><?= $form_input['ReasonOfResign'][$i] ?></td>                                  
                                     </tr>   
-                                <?php } ?>
+                                    <?php
+                                }
+                                ?>
                             </tbody>
                         </table>
                         <div class="col-md-12 text-center">
