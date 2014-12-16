@@ -31,8 +31,25 @@ class m_candidate extends CI_Model {
 
     function insert_all_data($data) {
         $ECID = $this->insert_emergency($data['emergency']);
+        if ($ECID == FALSE)
+            return FALSE;
         $data['ECID'] = $ECID;
+
         $CID = $this->insert_person_information($data);
+        if ($CID == FALSE)
+            return FALSE;
+
+        $data['parent']['CID'] = $CID;
+        if (count($data['parent']) > 0 && !$this->insert_parent($data['parent']))
+            return FALSE;
+
+        if ($data['experience']['ExCompanyName'] != NULL && !$this->insert_experience($data['experience'], $CID))
+            return FALSE;
+
+        if ($data['education']['InstitutionName'] != NULL && !$this->insert_education($data['education'], $CID))
+            return FALSE;
+
+
         return $CID;
     }
 
@@ -40,11 +57,14 @@ class m_candidate extends CI_Model {
         unset($data['emergency']);
         unset($data['experience']);
         unset($data['family']);
+        unset($data['parent']);
         unset($data['education']);
         $data['CID'] = $this->gen_cid();
         $data = $this->set_create_date($data);
-        $this->db->insert('candidate', $data);
-        return $this->db->insert_id();
+        if ($this->db->insert('candidate', $data))
+            return $data['CID'];
+        else
+            return FALSE;
     }
 
     function gen_cid() {
@@ -64,16 +84,57 @@ class m_candidate extends CI_Model {
         return $last_cid;
     }
 
-    function insert_experience($data) {
+    function insert_parent($data) {
         $data = $this->set_create_date($data);
-        $this->db->insert('candidate_emergency_contact', $data);
-        return $this->db->insert_id();
+        if ($this->db->insert('candidate_parent', $data))
+            return $data['CID'];
+        else
+            return FALSE;
+    }
+
+    function insert_experience($data, $CID) {
+        $pre_data = array();
+        for ($i = 0; $i < count($data['ExCompanyName']); $i++) {
+            $pre_data[$i]['CID'] = $CID;
+            $pre_data[$i]['ExSeqNo'] = $i;
+            $pre_data[$i]['ExCompanyName'] = $data['ExCompanyName'][$i];
+            $pre_data[$i]['ExDateForm'] = $data['ExDateForm'][$i];
+            $pre_data[$i]['ExDateTo'] = $data['ExDateTo'][$i];
+            $pre_data[$i]['ExPositionName'] = $data['ExPositionName'][$i];
+            $pre_data[$i]['ExSaraly'] = $data['ExSaraly'][$i];
+            $pre_data[$i]['ReasonOfResign'] = $data['ReasonOfResign'][$i];
+        }
+        for ($i = 0; $i < count($pre_data); $i++) {
+            $pre_data[$i] = $this->set_create_date($pre_data[$i]);
+        }
+        if ($this->db->insert_batch('candidate_experience', $pre_data))
+            return $this->db->insert_id();
+        else
+            return FALSE;
+    }
+
+    function insert_education($data, $CID) {
+        $pre_data = array();
+        for ($i = 0; $i < count($data['InstitutionName']); $i++) {
+            $pre_data[$i]['CID'] = $CID;
+            $pre_data[$i]['EDSeqNo'] = $i;
+            $pre_data[$i]['InstitutionName'] = $data['InstitutionName'][$i];
+            $pre_data[$i]['EDMajor'] = $data['EDMajor'][$i];
+            $pre_data[$i]['EDDateFrom'] = $data['EDDateFrom'][$i];
+            $pre_data[$i]['EDDateTo'] = $data['EDDateTo'][$i];
+        }
+        if ($this->db->insert_batch('candidate_education', $pre_data))
+            return $this->db->insert_id();
+        else
+            return FALSE;
     }
 
     function insert_emergency($data) {
         $data = $this->set_create_date($data);
-        $this->db->insert('candidate_emergency_contact', $data);
-        return $this->db->insert_id();
+        if ($this->db->insert('candidate_emergency_contact', $data))
+            return $this->db->insert_id();
+        else
+            return FALSE;
     }
 
     function set_form() {
@@ -549,11 +610,11 @@ class m_candidate extends CI_Model {
             'FatherOccupation' => form_input($i_FatherOccupation),
             'FatherIsAlive' => $i_FatherIsAlive,
             'MotherTitle' => form_dropdown('MotherTitle', $i_MotherTitle, set_value('MotherTitle'), "class=\"selecter_1\""),
-            'MotherFirstName' => form_input($i_FatherFirstName),
-            'MotherLastName' => form_input($i_FatherLastName),
-            'MotherAge' => form_input($i_FatherAge),
-            'MotherOccupation' => form_input($i_FatherOccupation),
-            'MotherIsAlive' => $i_FatherIsAlive,
+            'MotherFirstName' => form_input($i_MotherFirstName),
+            'MotherLastName' => form_input($i_MotherLastName),
+            'MotherAge' => form_input($i_MotherAge),
+            'MotherOccupation' => form_input($i_MotherOccupation),
+            'MotherIsAlive' => $i_MotherIsAlive,
             // Education information
             'InstitutionName' => $f_InstitutionName,
             'EDMajor' => $f_EDMajor,
@@ -699,6 +760,21 @@ class m_candidate extends CI_Model {
                 'SonLastName' => $this->input->post('SonLastName'),
                 'SonAge' => $this->input->post('SonAge'),
                 'SonOccupation' => $this->input->post('SonOccupation')),
+            // Parent information
+            'parent' => array(
+                'FatherTitle' => $this->input->post('FatherTitle'),
+                'FatherFirstName' => $this->input->post('FatherFirstName'),
+                'FatherLastName' => $this->input->post('FatherLastName'),
+                'FatherAge' => $this->input->post('FatherAge'),
+                'FatherOccupation' => $this->input->post('FatherOccupation'),
+                'FatherIsAlive' => $this->input->post('FatherIsAlive'),
+                'MotherTitle' => $this->input->post('MotherTitle'),
+                'MotherFirstName' => $this->input->post('MotherFirstName'),
+                'MotherLastName' => $this->input->post('MotherLastName'),
+                'MotherAge' => $this->input->post('MotherAge'),
+                'MotherOccupation' => $this->input->post('MotherOccupation'),
+                'MotherIsAlive' => $this->input->post('MotherIsAlive'),
+            ),
             // Education information
             'education' => array(
                 'InstitutionName' => $this->input->post('InstitutionName'),

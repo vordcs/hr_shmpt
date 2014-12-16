@@ -49,7 +49,7 @@ class candidate extends CI_Controller {
         $temp['POST'] = $this->m_candidate->get_post();
         //$temp['debug'] = count($this->input->post('NumberSon'));
         //$temp['FORM'] = $this->m_candidate->set_form();
-        $this->m_template->set_Debug($temp);
+        //$this->m_template->set_Debug($temp);
         $this->m_template->set_Content('candidate/frm_candidate', $data);
         $this->m_template->showTemplate();
     }
