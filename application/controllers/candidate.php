@@ -49,25 +49,32 @@ class candidate extends CI_Controller {
             redirect('candidate');
 
         $data = array();
+        $c_data = $this->m_candidate->check_candidate_detail($CID);
 
         if ($this->m_candidate->set_validation() && $this->form_validation->run()) {
             echo '1';
-            $input_data = $this->m_candidate->get_post();
-            $input_data['debug'] = $this->m_candidate->insert_all_data($input_data);
+
+            $input_data['CID'] = $CID;
+            $input_data += $this->m_candidate->get_post();
+            $input_data['emergency']['ECID'] = $c_data['ECID'];
+            
+            
+            //$input_data['data'] = $c_data;
+
+            $input_data['debug'] = $this->m_candidate->update_all_data($input_data);
             $data['form_input'] = $this->m_candidate->set_form();
             $this->m_template->set_Debug($input_data);
         } else {
             echo '2';
-            $c_data = $this->m_candidate->check_candidate_detail($CID);
             $data['c_data'] = $c_data;
             $data['form_input'] = $this->m_candidate->set_form($c_data);
         }
 
         $data['mode'] = 'edit';
-        $data['form_open'] = form_open('candidate/edit/'.$CID, 'id="frm_main" class="form-horizontal"');
+        $data['form_open'] = form_open('candidate/edit/' . $CID, 'id="frm_main" class="form-horizontal"');
         $data['form_close'] = form_close();
 
-        $this->m_template->set_Debug($this->m_candidate->check_candidate_detail($CID));
+        //$this->m_template->set_Debug($this->m_candidate->check_candidate_detail($CID));
         $this->m_template->set_Content('candidate/frm_candidate', $data);
         $this->m_template->showTemplate();
     }

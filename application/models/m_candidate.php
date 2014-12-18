@@ -46,22 +46,27 @@ class m_candidate extends CI_Model {
         $this->db->from('candidate_family AS cf');
         $this->db->where('cf.CID', $CID);
         $query = $this->db->get();
-        $data['family'] = $query->result_array()[0];
+        if ($query->num_rows() > 0) {
+            $data['family'] = $query->result_array()[0];
 
-        $this->db->from('candidate_family_detail AS cfd');
-        $this->db->where('cfd.FID', $data['family']['FID']);
-        $query = $this->db->get();
-        $data['family_detail'] = $query->result_array();
+            $this->db->from('candidate_family_detail AS cfd');
+            $this->db->where('cfd.FID', $data['family']['FID']);
+            $query = $this->db->get();
+            if ($query->num_rows() > 0)
+                $data['family_detail'] = $query->result_array();
+        }
 
         $this->db->from('candidate_education AS edu');
         $this->db->where('edu.CID', $CID);
         $query = $this->db->get();
-        $data['education'] = $query->result_array();
+        if ($query->num_rows() > 0)
+            $data['education'] = $query->result_array();
 
         $this->db->from('candidate_experience AS exp');
         $this->db->where('exp.CID', $CID);
         $query = $this->db->get();
-        $data['experience'] = $query->result_array();
+        if ($query->num_rows() > 0)
+            $data['experience'] = $query->result_array();
 
         return $data;
     }
@@ -223,6 +228,156 @@ class m_candidate extends CI_Model {
         $data = $this->set_create_date($data);
         if ($this->db->insert('candidate_emergency_contact', $data))
             return $this->db->insert_id();
+        else
+            return FALSE;
+    }
+
+    function update_all_data($data) {
+        $ECID = $this->update_emergency($data['emergency']);
+        if ($ECID == FALSE)
+            return FALSE;
+        $data['ECID'] = $ECID;
+
+        $CID = $this->update_person_information($data);
+        if ($CID == FALSE)
+            return FALSE;
+
+        $data['parent']['CID'] = $CID;
+        if (count($data['parent']) > 0 && !$this->update_parent($data['parent']))
+            return FALSE;
+
+        if ($data['experience']['ExCompanyName'][0] != NULL && !$this->update_experience($data['experience'], $CID))
+            return FALSE;
+
+        if ($data['education']['InstitutionName'][0] != NULL && !$this->update_education($data['education'], $CID))
+            return FALSE;
+//
+//        if ($data['family']['SpouseFirstName'] != NULL) {
+//            $FID = $this->insert_family($data['family'], $CID);
+//            if ($FID == FALSE)
+//                return FALSE;
+//            if (!$this->insert_family_detail($data['family_detail'], $FID))
+//                return FALSE;
+//        }
+
+        return $CID;
+    }
+
+    function update_person_information($data) {
+        unset($data['emergency']);
+        unset($data['experience']);
+        unset($data['family']);
+        unset($data['family_detail']);
+        unset($data['parent']);
+        unset($data['education']);
+        $data = $this->set_update_date($data);
+        $this->db->where('CID', $data['CID']);
+        $this->db->update('candidate', $data);
+        if ($this->db->affected_rows() == 1)
+            return $data['CID'];
+        else
+            return FALSE;
+    }
+
+    function update_emergency($data) {
+        $data = $this->set_update_date($data);
+        $this->db->where('ECID', $data['ECID']);
+        $this->db->update('candidate_emergency_contact', $data);
+        if ($this->db->affected_rows() == 1)
+            return $data['ECID'];
+        else
+            return FALSE;
+    }
+
+    function update_parent($data) {
+        $data = $this->set_update_date($data);
+        $this->db->where('CID', $data['CID']);
+        $this->db->update('candidate_parent', $data);
+        if ($this->db->affected_rows() == 1)
+            return TRUE;
+        else
+            return FALSE;
+    }
+
+    function update_experience($data, $CID) {
+        $pre_data = array();
+        $count = 0;
+        for ($i = 0; $i < count($data['ExCompanyName']); $i++) {
+            $pre_data[$i]['CID'] = $CID;
+            $pre_data[$i]['ExSeqNo'] = $i;
+            $pre_data[$i]['ExCompanyName'] = $data['ExCompanyName'][$i];
+            $pre_data[$i]['ExDateForm'] = $data['ExDateForm'][$i];
+            $pre_data[$i]['ExDateTo'] = $data['ExDateTo'][$i];
+            $pre_data[$i]['ExPositionName'] = $data['ExPositionName'][$i];
+            $pre_data[$i]['ExSaraly'] = $data['ExSaraly'][$i];
+            $pre_data[$i]['ReasonOfResign'] = $data['ReasonOfResign'][$i];
+            $pre_data[$i] = $this->set_update_date($pre_data[$i]);
+            $query = $this->db->get_where('candidate_experience', array('CID' => $CID, 'ExSeqNo' => $i));
+            if ($query->num_rows() == 0) {
+                $pre_data[$i] = $this->set_create_date($pre_data[$i]);
+                if ($this->db->insert('candidate_experience', $pre_data[$i]))
+                    $count++;
+            } else {
+                $this->db->where('CID', $CID);
+                $this->db->where('ExSeqNo', $i);
+                if ($this->db->update('candidate_experience', $pre_data[$i]))
+                    $count++;
+            }
+        }
+        if (count($pre_data) == $count)
+            return TRUE;
+        else
+            return FALSE;
+    }
+
+    function update_education($data, $CID) {
+        $pre_data = array();
+        $count = 0;
+        for ($i = 0; $i < count($data['InstitutionName']); $i++) {
+            $pre_data[$i]['CID'] = $CID;
+            $pre_data[$i]['EDSeqNo'] = $i;
+            $pre_data[$i]['InstitutionName'] = $data['InstitutionName'][$i];
+            $pre_data[$i]['EDMajor'] = $data['EDMajor'][$i];
+            $pre_data[$i]['EDDateFrom'] = $data['EDDateFrom'][$i];
+            $pre_data[$i]['EDDateTo'] = $data['EDDateTo'][$i];
+            $query = $this->db->get_where('candidate_education', array('CID' => $CID, 'EDSeqNo' => $i));
+            if ($query->num_rows() == 0) {
+                if ($this->db->insert('candidate_education', $pre_data[$i]))
+                    $count++;
+            } else {
+                $this->db->where('CID', $CID);
+                $this->db->where('EDSeqNo', $i);
+                if ($this->db->update('candidate_education', $pre_data[$i]))
+                    $count++;
+            }
+        }
+        if (count($pre_data) == $count)
+            return TRUE;
+        else
+            return FALSE;
+    }
+
+    function update_family($data, $CID) {
+        $this->db->order_by("FID", "desc");
+        $this->db->limit(2);
+        $query = $this->db->get('candidate_family');
+        $temp = $query->result_array();
+        $last_fid = 'FSHMPT0000';
+        foreach ($temp as $row) {
+            $last_fid = $row['FID'];
+            break;
+        }
+        $num = substr($last_fid, 6);
+        $num+=1;
+        $num = str_pad($num, 4, '0', STR_PAD_LEFT);
+        $last_fid = 'FSHMPT' . $num;
+
+
+        $data['CID'] = $CID;
+        $data['FID'] = $last_fid;
+        $data = $this->set_create_date($data);
+        if ($this->db->insert('candidate_family', $data))
+            return $last_fid;
         else
             return FALSE;
     }
@@ -393,28 +548,28 @@ class m_candidate extends CI_Model {
         }
         $i_SpouseFirstName = array(
             'name' => 'SpouseFirstName',
-            'value' => ($c_data != NULL) ? $c_data['family']['SpouseFirstName'] : set_value('SpouseFirstName'),
+            'value' => (isset($c_data['family'])) ? $c_data['family']['SpouseFirstName'] : set_value('SpouseFirstName'),
             'class' => 'form-control');
         $i_SpouseLastName = array(
             'name' => 'SpouseLastName',
-            'value' => ($c_data != NULL) ? $c_data['family']['SpouseLastName'] : set_value('SpouseLastName'),
+            'value' => (isset($c_data['family'])) ? $c_data['family']['SpouseLastName'] : set_value('SpouseLastName'),
             'class' => 'form-control');
         $i_SpouseAge = array(
             'name' => 'SpouseAge',
             'type' => 'number',
             'min' => 18,
-            'value' => ($c_data != NULL) ? $c_data['family']['SpouseAge'] : set_value('SpouseAge'),
+            'value' => (isset($c_data['family'])) ? $c_data['family']['SpouseAge'] : set_value('SpouseAge'),
             'class' => 'form-control');
         $i_SpouseOccupation = array(
             'name' => 'SpouseOccupation',
-            'value' => ($c_data != NULL) ? $c_data['family']['SpouseOccupation'] : set_value('SpouseOccupation'),
+            'value' => (isset($c_data['family'])) ? $c_data['family']['SpouseOccupation'] : set_value('SpouseOccupation'),
             'class' => 'form-control');
         $temp = array(
             'name' => 'SpouseIsAlive',
             'type' => 'radio',
             'value' => 0
         );
-        if ((($c_data != NULL) ? $c_data['family']['SpouseIsAlive'] : set_value('SpouseIsAlive')) == 0)
+        if (((isset($c_data['family'])) ? $c_data['family']['SpouseIsAlive'] : set_value('SpouseIsAlive')) == 0)
             $temp['checked'] = TRUE;
         $i_SpouseIsAlive[0] = form_checkbox($temp) . 'ยังมีชีวิต';
         $temp = array(
@@ -422,7 +577,7 @@ class m_candidate extends CI_Model {
             'type' => 'radio',
             'value' => 0
         );
-        if ((($c_data != NULL) ? $c_data['family']['SpouseIsAlive'] : set_value('SpouseIsAlive')) == 1)
+        if (((isset($c_data['family'])) ? $c_data['family']['SpouseIsAlive'] : set_value('SpouseIsAlive')) == 1)
             $temp['checked'] = TRUE;
         $temp['value'] = 1;
         $i_SpouseIsAlive[1] = form_checkbox($temp) . 'ถึงแก่กรรม';
@@ -430,13 +585,13 @@ class m_candidate extends CI_Model {
             'name' => 'NumberSon',
             'type' => 'number',
             'min' => 0,
-            'value' => ($c_data != NULL) ? $c_data['family']['NumberSon'] : set_value('NumberSon'),
+            'value' => (isset($c_data['family'])) ? $c_data['family']['NumberSon'] : set_value('NumberSon'),
             'class' => 'form-control');
 
         $son_num = $this->input->post('NumberSon');
         if ($son_num == NULL || $son_num == "")
             $son_num = 0;
-        if ($c_data != NULL)
+        if (isset($c_data['family']))
             $son_num = count($c_data['family_detail']);
         $f_SonTitle = array();
         $f_SonFirstName = array();
@@ -563,19 +718,19 @@ class m_candidate extends CI_Model {
         for ($i = 0; $i < 6; $i++) {
             $i_InstitutionName = array(
                 'name' => 'InstitutionName[]',
-                'value' => ($c_data != NULL) ? $c_data['education'][$i]['InstitutionName'] : set_value('InstitutionName[]'),
+                'value' => (isset($c_data['education'])) ? $c_data['education'][$i]['InstitutionName'] : set_value('InstitutionName[]'),
                 'class' => 'form-control');
             $i_EDMajor = array(
                 'name' => 'EDMajor[]',
-                'value' => ($c_data != NULL) ? $c_data['education'][$i]['EDMajor'] : set_value('EDMajor[]'),
+                'value' => (isset($c_data['education'])) ? $c_data['education'][$i]['EDMajor'] : set_value('EDMajor[]'),
                 'class' => 'form-control');
             $i_EDDateFrom = array(
                 'name' => 'EDDateFrom[]',
-                'value' => ($c_data != NULL) ? $c_data['education'][$i]['EDDateFrom'] : set_value('EDDateFrom[]'),
+                'value' => (isset($c_data['education'])) ? $c_data['education'][$i]['EDDateFrom'] : set_value('EDDateFrom[]'),
                 'class' => 'form-control datepicker');
             $i_EDDateTo = array(
                 'name' => 'EDDateTo[]',
-                'value' => ($c_data != NULL) ? $c_data['education'][$i]['EDDateTo'] : set_value('EDDateTo[]'),
+                'value' => (isset($c_data['education'])) ? $c_data['education'][$i]['EDDateTo'] : set_value('EDDateTo[]'),
                 'class' => 'form-control datepicker');
             array_push($f_InstitutionName, form_input($i_InstitutionName));
             array_push($f_EDMajor, form_input($i_EDMajor));
@@ -584,7 +739,7 @@ class m_candidate extends CI_Model {
         }
 
         // Experience information
-        $exp_num = ($c_data != NULL) ? count($c_data['experience']) : count($this->input->post('ExCompanyName'));
+        $exp_num = (isset($c_data['education'])) ? count($c_data['experience']) : count($this->input->post('ExCompanyName'));
         $f_ExCompanyName = array();
         $f_ExDateForm = array();
         $f_ExDateTo = array();
@@ -594,27 +749,27 @@ class m_candidate extends CI_Model {
         for ($i = 0; $i < $exp_num; $i++) {
             $i_ExCompanyName = array(
                 'name' => 'ExCompanyName[]',
-                'value' => ($c_data != NULL) ? $c_data['experience'][$i]['ExCompanyName'] : set_value('ExCompanyName[]'),
+                'value' => (isset($c_data['education'])) ? $c_data['experience'][$i]['ExCompanyName'] : set_value('ExCompanyName[]'),
                 'class' => 'form-control');
             $i_ExDateForm = array(
                 'name' => 'ExDateForm[]',
-                'value' => ($c_data != NULL) ? $c_data['experience'][$i]['ExDateForm'] : set_value('ExDateForm[]'),
+                'value' => (isset($c_data['education'])) ? $c_data['experience'][$i]['ExDateForm'] : set_value('ExDateForm[]'),
                 'class' => 'form-control datepicker');
             $i_ExDateTo = array(
                 'name' => 'ExDateTo[]',
-                'value' => ($c_data != NULL) ? $c_data['experience'][$i]['ExDateTo'] : set_value('ExDateTo[]'),
+                'value' => (isset($c_data['education'])) ? $c_data['experience'][$i]['ExDateTo'] : set_value('ExDateTo[]'),
                 'class' => 'form-control datepicker');
             $i_ExPositionName = array(
                 'name' => 'ExPositionName[]',
-                'value' => ($c_data != NULL) ? $c_data['experience'][$i]['ExPositionName'] : set_value('ExPositionName[]'),
+                'value' => (isset($c_data['education'])) ? $c_data['experience'][$i]['ExPositionName'] : set_value('ExPositionName[]'),
                 'class' => 'form-control');
             $i_ExSaraly = array(
                 'name' => 'ExSaraly[]',
-                'value' => ($c_data != NULL) ? $c_data['experience'][$i]['ExSaraly'] : set_value('ExSaraly[]'),
+                'value' => (isset($c_data['education'])) ? $c_data['experience'][$i]['ExSaraly'] : set_value('ExSaraly[]'),
                 'class' => 'form-control');
             $i_ReasonOfResign = array(
                 'name' => 'ReasonOfResign[]',
-                'value' => ($c_data != NULL) ? $c_data['experience'][$i]['ReasonOfResign'] : set_value('ReasonOfResign[]'),
+                'value' => (isset($c_data['education'])) ? $c_data['experience'][$i]['ReasonOfResign'] : set_value('ReasonOfResign[]'),
                 'class' => 'form-control');
             array_push($f_ExCompanyName, form_input($i_ExCompanyName));
             array_push($f_ExDateForm, form_input($i_ExDateForm));
@@ -682,7 +837,7 @@ class m_candidate extends CI_Model {
             'Residential' => $i_Residential,
             'MilitaryServiceStatus' => $i_MilitaryServiceStatus,
             'MaritalStatus' => $i_MaritalStatus,
-            'SpouseTitle' => form_dropdown('SpouseTitle', $i_SpouseTitle, ($c_data != NULL) ? $c_data['family']['SpouseTitle'] : set_value('SpouseTitle'), "class=\"selecter_1\""),
+            'SpouseTitle' => form_dropdown('SpouseTitle', $i_SpouseTitle, (isset($c_data['family'])) ? $c_data['family']['SpouseTitle'] : set_value('SpouseTitle'), "class=\"selecter_1\""),
             'SpouseFirstName' => form_input($i_SpouseFirstName),
             'SpouseLastName' => form_input($i_SpouseLastName),
             'SpouseAge' => form_input($i_SpouseAge),
