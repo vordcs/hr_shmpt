@@ -11,7 +11,7 @@ class vehicle extends CI_Controller {
         $this->load->library('form_validation');
         $this->load->model('m_vehicle');
 
-        //Initial language
+//Initial language
         $this->m_template->set_Language(array('plan'));
     }
 
@@ -30,6 +30,8 @@ class vehicle extends CI_Controller {
     public function index() {
         $data = array(
             'form' => $this->m_vehicle->set_form_search(),
+            'page_title' => "การจัดการรถโดยสาร",
+            'page_title_small' => '',
         );
 
         $data['strtitle'] = '';
@@ -70,11 +72,12 @@ class vehicle extends CI_Controller {
 //            'RCode' => $this->input->post('RCode'),
 //            'strtitle' => $data['strtitle'],
 //            'vehicle_types' => $data['vehicle_types'],
-            'route' => $data['route'],
+//            'route' => $data['route'],
 //            'vehicles' => $data['vehicles'],
         );
 
-//        $this->m_template->set_Debug($data_debug);
+        $this->m_template->set_Debug($data_debug);
+        $this->m_template->set_Title('จัดการรถโดยสาร');
         $this->m_template->set_Content('vehicle/vehicles', $data);
         $this->m_template->showTemplate();
     }
@@ -102,10 +105,11 @@ class vehicle extends CI_Controller {
         $data = array(
             'VID' => NULL,
             'page_title' => 'เพิ่มข้อมูล ' . $type_name . ' เส้นทาง ' . $route_name,
+            'page_title_small' => '',
             'RCode' => $route[0]['RCode'],
             'form' => $this->m_vehicle->set_form_add($rcode, $vtid),
         );
-        //Load form add
+//Load form add
 //        $this->m_template->set_Debug($data);
         $this->m_template->set_Title('เพิ่มรถโดยสาร');
         $this->m_template->set_Content('vehicle/frm_vehicle', $data);
@@ -117,7 +121,7 @@ class vehicle extends CI_Controller {
         if ($this->m_vehicle->validation_form_edit() && $this->form_validation->run() == TRUE) {
             $form_data = $this->m_vehicle->get_post_form_edit($vid);
 //            $this->m_template->set_Debug($form_data);
-            //Update data
+//Update data
             $this->m_vehicle->update_vehicle($form_data);
             redirect('vehicle/');
         }
@@ -132,6 +136,7 @@ class vehicle extends CI_Controller {
             $data = array(
                 'VID' => $vid,
                 'page_title' => 'แก้ไขข้อมูล ' . $type_name . ' เส้นทาง ' . $route_name,
+                'page_title_small' => '',
                 'RCode' => $route[0]['RCode'],
                 'form' => $this->m_vehicle->set_form_edit($rcode, $vtid, $detail[0]),
             );
@@ -145,7 +150,7 @@ class vehicle extends CI_Controller {
         $this->m_template->showTemplate();
     }
 
-    //ตรวจสอบหมายเลขทะเบียนรถ
+//ตรวจสอบหมายเลขทะเบียนรถ
     public function check_numberplate($str) {
         $con = array(
             'NumberPlate' => $str,
@@ -160,7 +165,7 @@ class vehicle extends CI_Controller {
         }
     }
 
-    //ตรวจสอบเบอร์รถ
+//ตรวจสอบเบอร์รถ
     public function check_vcode($str) {
         $con = array(
             'VCode' => $str,
@@ -174,7 +179,7 @@ class vehicle extends CI_Controller {
             return TRUE;
         }
     }
-    
+
 //    check dropdown
     public function check_dropdown($str) {
 //        $this->input->post('PolicyType')

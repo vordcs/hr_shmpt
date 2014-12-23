@@ -39,7 +39,7 @@ class m_cost extends CI_Model {
 
     function get_vehicle($vcode = NULL, $vtid = NULL) {
         $this->db->join('vehicles_type', 'vehicles.VTID = vehicles_type.VTID');
-        $this->db->join('routes_has_vehicles', 'vehicles.VID = routes_has_vehicles.VID', 'left');
+        $this->db->join('t_routes_has_vehicles', 'vehicles.VID = t_routes_has_vehicles.VID', 'left');
         if ($vcode != NULL) {
             $this->db->where('vehicles.VCode', $vcode);
         }

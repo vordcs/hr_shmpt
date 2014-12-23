@@ -34,7 +34,7 @@ class route extends CI_Controller {
             'form_search' => $this->m_route->set_form_search_route(),
             'route_detail' => $this->m_route->get_route_detail(),
             'stations' => $this->m_station->get_stations(),
-            'schedule_manual' =>$this->m_route->get_schedule_manual() ,
+            'schedule_manual' => $this->m_route->get_schedule_manual(),
         );
 
         $data['strtitle'] = '';
@@ -79,8 +79,10 @@ class route extends CI_Controller {
         $this->m_template->showTemplate();
     }
 
-    public function add($type_id) {
-
+    public function add($type_id = NULL) {
+        if ($type_id == NULL) {
+            redirect('route/');
+        }
         $this->set_type($type_id);
 
         if ($this->m_route->validation_form_add_route() && $this->form_validation->run() == TRUE) {

@@ -14,14 +14,15 @@ Class m_datetime extends CI_Model {
     function getDateToday() {
         return date('Y-m-d');
     }
-    function getDatetimeNowTH() {       
+
+    function getDatetimeNowTH() {
         $hour = date("H");
         $minute = date("i");
         $seconds = date("s");
         $day = date('d');
         $month = date('m');
         $year = date('Y') + 543;
-        $today = $year . '-' . $month . '-' . $day . ' ' . $hour.':'.$minute.':'.$seconds;
+        $today = $year . '-' . $month . '-' . $day . ' ' . $hour . ':' . $minute . ':' . $seconds;
         $dt = new DateTime($today);
         $datetime = $dt->format('Y-m-d H:i:s');
         return $datetime;
@@ -38,6 +39,10 @@ Class m_datetime extends CI_Model {
         return $date;
     }
 
+    function getTimeNow() {
+        return date('H:i:s');
+    }
+
     public function getDateThaiString($strDate) {
 //        string input 2557-11-15
         if ($strDate == NULL) {
@@ -51,6 +56,36 @@ Class m_datetime extends CI_Model {
         }
     }
 
+    function setTHDateToDB($input_date) {
+        $date = NULL;
+        if ($input_date != NULL || $input_date != '') {
+            $d = new DateTime($input_date);
+            if ($d->format('Y') > date('Y')) {
+                $date .= ($d->format('Y') - 543) . '-';
+                $date .= ($d->format('m')) . '-';
+                $date .= $d->format('d');
+            } else {
+                $date = $d->format('Y-m-d');
+            }
+        }
+        return $date;
+    }
+
+    function setDBDateToTH($input_date) {
+        $date = NULL;
+        if ($input_date != NULL || $input_date != '') {
+            $d = new DateTime($input_date);
+            if ($d->format('Y') > date('Y')) {
+                $date .= ($d->format('Y') + 543) . '-';
+                $date .= ($d->format('m')) . '-';
+                $date .= $d->format('d');
+            } else {
+                $date = $d->format('Y-m-d');
+            }
+        }
+        return $date;
+    }
+
     function setDateFomat($input_date) {
         $date = NULL;
         $d = new DateTime($input_date);
@@ -61,6 +96,7 @@ Class m_datetime extends CI_Model {
         } else {
             $date = $d->format('Y-m-d');
         }
+
         return $date;
     }
 
@@ -68,6 +104,12 @@ Class m_datetime extends CI_Model {
         $y = new DateTime($input_year);
         $year = $y->format('yyyy');
         return $year;
+    }
+
+    public function setTimeFormat($input_time) {
+        $t = strtotime($input_time);
+        $time = $t->format('H:i:s');
+        return date('H:i', $time);
     }
 
     public function monthTHtoDB($str_date_th) {

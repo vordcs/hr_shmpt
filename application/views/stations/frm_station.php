@@ -104,7 +104,8 @@
                 </div>
                 <div class="panel-body">                    
                     <div class="col-md-8 col-md-offset-2">
-                        <?php echo $form['form']; ?>                            
+                        <?php echo $form['form']; ?> 
+                        <?php echo $form['TimeTotal']; ?> 
                         <table id="tableStation" class="table table-condensed table-hover">
                             <thead>
                                 <tr>

@@ -15,10 +15,13 @@ $date = date('Y-m-d');
 ?>
 <div class="container">
     <div class="row">        
-        <div class="page-header">
-            <h3>ตารางเดินรถ&nbsp;
-                <small>วันที่ <?= $date ?></small>
-            </h3>
+        <div class="page-header">        
+            <h3>
+                <?php echo $page_title; ?>                
+                <font color="#777777">
+                <span style="font-size: 23px; line-height: 23.399999618530273px;"><?php echo $page_title_small; ?></span>                
+                </font>
+            </h3>        
         </div>
     </div>
     <div class="row">
@@ -47,85 +50,80 @@ $date = date('Y-m-d');
         </div>
     </div>
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-12">
             <div class="panel panel-info">
                 <div class="panel-heading">
-                    <h3 class="panel-title">ไปขอนแก่น</h3>
+                    <h3 class="panel-title">ตารางเวลา</h3>
                 </div>
                 <div class="panel-body">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th style="width: 10%;">รอบที่</th>
-                                <th style="width: 45%;">รถ</th>
-                                <th style="width: 45%;">เวลา</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php
-                            $round = 10;
-                            $start = "06:00:00";
-                            $duration = "01:00:00";
+                    <?php
+                    foreach ($route_detail as $rd) {
+                        $rid = $rd['RID'];
+                        $source = $rd['RSource'];
+                        $destination = $rd['RDestination'];
+                        $start_point = $rd['StartPoint'];
+                        ?>
+                        <div class="col-md-6 animated fadeInUp">
+                            <span class="lead"> 
+                                <i>ไป</i>&nbsp</strong>
+                                <strong><?php echo $destination; ?></strong>
+                            </span> 
+                            <div class="col-md-10 col-md-offset-1">
+                                <table class="table table-hover table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 15%;">รอบที่</th>                                        
+                                            <th style="width: 30%;">เวลาออก</th>
+                                            <th style="width: 30%;">รถ</th>
+                                            <th style="width: 20%;"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php
+                                        foreach ($schedule as $s) {
+                                            $tsid = $s['TSID'];
+                                            $seq_no = $s['SeqNo'];
+                                            $time_depart = $s['TimeDepart'];
+                                            if ($rid == $s['RID']) {
+                                                ?>                            
+                                                <tr>
+                                                    <td class="text-center"><?= $seq_no ?></td>
+                                                    <td class="text-center"><?= $time_depart ?></td>
+                                                    <td class="text-center"></td>
+                                                    <td class="text-center"></td>
+                                                </tr>
+                                                <?php
+                                            }
+                                        }
+                                        ?>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td class="text-right"><a class="btn btn-success"><i class="fa fa-plus"></i>&nbsp;เพิ่มเวลา</a></td>
+                                        </tr>
+                                    </tfoot>
+                                </table> 
+                            </div>
 
-                            for ($i = 1; $i <= $round; $i++) {
-                                ?>                            
-                                <tr>
-                                    <td><?= $i ?></td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <?php
-                            }
-                            ?>
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td class="text-right"><a class="btn btn-success btn-sm"><i class="fa fa-plus"></i>&nbsp;เพิ่มเวลา</a></td>
-                            </tr>
-                        </tfoot>
+                        </div>
+                        <?php
+                    }
+                    ?>
 
-                    </table>
+
+
                 </div>
             </div>
-        </div>
-        <div class="col-md-6">
-            <div class="panel panel-primary">
-                <div class="panel-heading">
-                    <h3 class="panel-title">ไปมุกดาหาร</h3>
-                </div>
-                <div class="panel-body">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th style="width: 10%;">รอบที่</th>
-                                <th style="width: 45%;">รถ</th>
-                                <th style="width: 45%;">เวลา</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td class="text-right"><a class="btn btn-success btn-sm"><i class="fa fa-plus"></i>&nbsp;เพิ่มเวลา</a></td>
-                            </tr>
-                        </tfoot>
-                    </table>
-                </div>
-            </div>
-        </div>
+        </div>   
+    </div>
+    <div class="row animated fadeInUp">
         <div class="col-md-12">
-            <div class="panel panel-primary">
+            <div class="panel panel-info">
                 <div class="panel-heading">
-                    <h3 class="panel-title"></h3>
+                    <h3 class="panel-title">ตารางเดินรถ</h3>
                 </div>
                 <div class="panel-body">
 

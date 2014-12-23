@@ -88,7 +88,7 @@ function last_around($start_time, $interval_time, $number) {
         foreach ($vehicles_type as $v_type) {
             $add = array(
                 'type' => "button",
-                'class' => "btn btn-primary btn-lg pull-right",
+                'class' => "btn btn-success btn-lg pull-right",
             );
             $n = 0;
             foreach ($route as $r) {
@@ -125,7 +125,7 @@ function last_around($start_time, $interval_time, $number) {
                         $source = $r['RSource'];
                         $destination = $r['RDestination'];
                         $schedule_type = $r["ScheduleType"];
-                        $route_name = '  เส้นทางสาย ' . $rcode . ' ' . ' ' . $source . ' - ' . $destination;
+                        $route_name = '  เส้นทาง ' . $rcode . ' ' . ' ' . $source . ' - ' . $destination;
                         ?>
                         <div class="col-md-offset-1 col-sm-10">
                             <div class="panel panel-info">
@@ -140,9 +140,9 @@ function last_around($start_time, $interval_time, $number) {
                                         <table class="table table-hover">
                                             <thead>
                                                 <tr>
-                                                    <th style="width: 20%"><?= $source ?></th>
-                                                    <th style="width: 20%">เที่ยวแรก</th>
-                                                    <th style="width: 20%">เที่ยวสุดท้าย</th>
+                                                    <th style="width: 30%"></th>
+                                                    <th style="width: 15%">เที่ยวแรก</th>
+                                                    <th style="width: 15%">เที่ยวสุดท้าย</th>
                                                     <th style="width: 15%">ออกทุกๆ (นาที)</th>
                                                     <th style="width: 15%">จำนวนเที่ยว</th>
                                                     <th style="width: 20%">ใช้เวลา (ชั่วโมง)</th>
@@ -154,12 +154,7 @@ function last_around($start_time, $interval_time, $number) {
                                                 $last_time = '';
                                                 $IntervalEachAround = '';
                                                 $AroundNumber = '';
-                                                $time = '';
-                                                foreach ($route_detail as $rd) {
-                                                    if ($rcode == $rd['RCode'] && $vtid == $rd['VTID']) {
-                                                        echo $rd["RID"] . $rd['StartPoint'];
-                                                    }
-                                                }
+                                                $time = '';                                             
                                                 ?>
                                                 <tr>   
                                                     <?php
@@ -196,7 +191,7 @@ function last_around($start_time, $interval_time, $number) {
                                                         }
                                                     }
                                                     ?>
-                                                    <td><strong>ไป <?= $destination ?></strong></td>
+                                                    <td><strong> <?= $source ?> </strong>&nbsp;<span class="fa fa-arrow-right"></span> &nbsp;<strong><?= $destination ?></strong></td>
                                                     <td class="text-center"><?= $first_time ?></td>
                                                     <td class="text-center"><?= $last_time ?></td>
                                                     <td class="text-center"><?= $IntervalEachAround ?></td>
@@ -239,7 +234,7 @@ function last_around($start_time, $interval_time, $number) {
                                                         }
                                                     }
                                                     ?>
-                                                    <td><strong>ไป <?= $source ?></strong></td>
+                                                    <td><strong> <?= $destination ?> </strong>&nbsp;<span class="fa fa-arrow-right"></span> &nbsp;<strong><?= $source ?></strong></td>
                                                     <td class="text-center"><?= $first_time ?></td>
                                                     <td class="text-center"><?= $last_time ?></td>
                                                     <td class="text-center"><?= $IntervalEachAround ?></td>
@@ -268,8 +263,7 @@ function last_around($start_time, $interval_time, $number) {
                                                                 <span class="text">
                                                                     <?= $station_name ?> 
                                                                 </span>
-                                                            </span> 
-                                                         
+                                                            </span>                                                         
                                                         &nbsp;&nbsp;
                                                         <?php
                                                     }
@@ -327,21 +321,4 @@ function last_around($start_time, $interval_time, $number) {
     </div>
 </div>
 
-<?php
-//                                                    echo anchor('route/station/' . $rcode . '/' . $vtid, '<i class="fa fa-bus" ></i>  จุดจอดและอัตราค่าโดยสาร', $point_price);
-//                                                    $view_detail = array(
-//                                                        'type' => "button",
-//                                                        'class' => "btn btn-primary  hidden",
-//                                                        'data-toggle' => "tooltip",
-//                                                        'data-placement' => "top",
-//                                                        'title' => "ตารางเวลา " . $type_name . " " . $route_name,
-//                                                    );
-//                                                    $point_price = array(
-//                                                        'type' => "button",
-//                                                        'class' => "btn btn-primary  hidden",
-//                                                        'data-toggle' => "tooltip",
-//                                                        'data-placement' => "top",
-//                                                        'title' => "จุดจอดและอัตราค่าโดยสาร " . $type_name . " " . $route_name,
-//                                                    );
-?>
 

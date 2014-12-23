@@ -10,7 +10,7 @@ class m_vehicle extends CI_Model {
         $this->db->join('vehicles_registration', 'vehicles.RegID =vehicles_registration.RegID');
         $this->db->join('vehicles_insurance_act', 'vehicles.ActID = vehicles_insurance_act.ActID');
 
-        $this->db->join('routes_has_vehicles', 'vehicles.VID = routes_has_vehicles.VID');
+       $this->db->join('t_routes_has_vehicles', 'vehicles.VID = t_routes_has_vehicles.VID');
 
         if ($vid != NULL) {
             $this->db->where('vehicles.VID', $vid);
@@ -23,16 +23,18 @@ class m_vehicle extends CI_Model {
         $vcode = $this->input->post('VCode');
         $number_plate = $this->input->post('NumberPlate');
 
-        if ($vcode != NULL)
+        if ($vcode != NULL){
             $this->db->where('Vcode', $vcode);
+        }
 
-        if ($number_plate != NULL)
+        if ($number_plate != NULL){
             $this->db->where('NumberPlate', $number_plate);
+        }
 
         $this->db->join('vehicles_type', 'vehicles.VTID = vehicles_type.VTID');
-        $this->db->join('vehicles_registration', 'vehicles.RegID =vehicles_registration.RegID');
+        $this->db->join('vehicles_registration', 'vehicles.RegID = vehicles_registration.RegID');
         $this->db->join('vehicles_insurance_act', 'vehicles.ActID = vehicles_insurance_act.ActID');
-        $this->db->join('routes_has_vehicles', 'vehicles.VID = routes_has_vehicles.VID');
+        $this->db->join('t_routes_has_vehicles', 'vehicles.VID = t_routes_has_vehicles.VID');
         $query = $this->db->get('vehicles');
         return $query->result_array();
     }
@@ -85,7 +87,7 @@ class m_vehicle extends CI_Model {
             'RCode' => $data['RCode'],
             'VID' => $v_id,
         );
-        $this->db->insert('routes_has_vehicles', $data_v_r);
+        $this->db->insert('t_routes_has_vehicles', $data_v_r);
 
         return $v_id;
     }
@@ -271,14 +273,16 @@ class m_vehicle extends CI_Model {
         $i_VStatus = array('ปกติ', 'ซ่อมบำรุง');
 
         //ข้อมูลทะเบียน
+        $date_registered = $this->m_datetime->setDBDateToTH($data ['DateRegistered']);
         $i_DateRegistered = array(
             'name' => 'DateRegistered',
-            'value' => (set_value('DateRegistered') == NULL) ? $data ['DateRegistered'] : set_value('DateRegistered'),
+            'value' => (set_value('DateRegistered') == NULL) ? $date_registered : set_value('DateRegistered'),
             'placeholder' => 'วันที่ต่อทะเบียน',
             'class' => 'form-control datepicker');
+        $date_expire = $this->m_datetime->setDBDateToTH($data ['DateExpire']);
         $i_DateExpire = array(
             'name' => 'DateExpire',
-            'value' => (set_value('DateExpire') == NULL) ? $data ['DateExpire'] : set_value('DateExpire'),
+            'value' => (set_value('DateExpire') == NULL) ? $date_expire : set_value('DateExpire'),
             'placeholder' => 'วันหมดอายุ',
             'class' => 'form-control datepicker');
         $i_VRNote = array(
@@ -300,17 +304,20 @@ class m_vehicle extends CI_Model {
             $i_PolicyType[$value['StringValue']] = $value['StringValue'];
         }
 
-
+        $policy_start = $this->m_datetime->setDBDateToTH($data ['PolicyStart']);
         $i_PolicyStart = array(
             'name' => 'PolicyStart',
-            'value' => (set_value('PolicyStart') == NULL) ? $data ['PolicyStart'] : set_value('PolicyStart'),
+            'value' => (set_value('PolicyStart') == NULL) ? $policy_start : set_value('PolicyStart'),
             'placeholder' => 'วันที่เริ่มกรมธรรม์',
             'class' => 'form-control datepicker');
+
+        $policy_end = $this->m_datetime->setDBDateToTH($data ['PolicyEnd']);
         $i_PolicyEnd = array(
             'name' => 'PolicyEnd',
-            'value' => (set_value('PolicyEnd') == NULL) ? $data ['PolicyEnd'] : set_value('PolicyEnd'),
+            'value' => (set_value('PolicyEnd') == NULL) ? $policy_end : set_value('PolicyEnd'),
             'placeholder' => 'วันสิ้นสุดกรมธรรม์',
             'class' => 'form-control datepicker');
+
         $i_PolicyNumber = array(
             'name' => 'PolicyNumber',
             'value' => (set_value('PolicyNumber') == NULL) ? $data ['PolicyNumber'] : set_value('PolicyNumber'),
@@ -361,7 +368,7 @@ class m_vehicle extends CI_Model {
         $i_VTID[0] = 'ประเภทรถทั้งหมด';
         foreach ($this->get_vehicle_types() as $value) {
             $i_VTID[$value['VTID']] = $value['VTDescription'];
-        }         
+        }
         $i_NumberPlate = array(
             'name' => 'NumberPlate',
             'value' => set_value('NumberPlate'),
@@ -388,16 +395,14 @@ class m_vehicle extends CI_Model {
     }
 
     function validation_form_add() {
-
-//       ข้อมูลรถ
-        $this->form_validation->set_rules('NumberPlate', 'ทะเบียนรถ', 'trim|required|xss_clean|callback_check_numberplate');
-        $this->form_validation->set_rules('VCode', 'เบอร์รถ', 'trim|required|xss_clean|callback_check_vcode');
+////       ข้อมูลรถ
+//        $this->form_validation->set_rules('NumberPlate', 'ทะเบียนรถ', 'trim|required|xss_clean|callback_check_numberplate');
+        $this->form_validation->set_rules('VCode', 'เบอร์รถ', 'trim|required|callback_check_vcode');
         $this->form_validation->set_rules('VColor', 'สีรถ', 'trim|required|xss_clean');
         $this->form_validation->set_rules('VBrand', 'ยี่ห้อรถ', 'trim|required|xss_clean');
         $this->form_validation->set_rules('VSeat', 'จำนวนที่นั่ง', 'trim|required|xss_clean');
         $this->form_validation->set_rules('RegNote', 'หมายเหตุ', 'trim|xss_clean');
-
-////      ข้อมูลทะเบียน
+///      ข้อมูลทะเบียน
         $this->form_validation->set_rules('DateRegistered', 'วันที่ต่อทะเบียน', 'trim|required|xss_clean');
         $this->form_validation->set_rules('DateExpire', 'วันหมดอายุ', 'trim|required|xss_clean');
         $this->form_validation->set_rules('VRNote', 'หมายเหตุ', 'trim|xss_clean');
@@ -447,21 +452,27 @@ class m_vehicle extends CI_Model {
             'VColor' => $this->input->post('VColor'),
             'VBrand' => $this->input->post('VBrand'),
             'VSeat' => $this->input->post('VSeat'),
+            'CreateBy' => '',
+            'CreateDate' => $this->m_datetime->getDatetimeNow(),
         );
 //      ข้อมูลทะเบียน        
         $data_registered = array(
-            'DateRegistered' => $this->m_datetime->setDateFomat($this->input->post('DateRegistered')),
-            'DateExpire' => $this->m_datetime->setDateFomat($this->input->post('DateExpire')),
+            'DateRegistered' => $this->m_datetime->setTHDateToDB($this->input->post('DateRegistered')),
+            'DateExpire' => $this->m_datetime->setTHDateToDB($this->input->post('DateExpire')),
             'VRNote' => $this->input->post('VRNote'),
+            'CreateBy' => '',
+            'CreateDate' => $this->m_datetime->getDatetimeNow(),
         );
 //       ประกันและพรบ    
         $data_act = array(
             'InsuranceCompanyName' => $this->input->post('InsuranceCompanyName'),
             'PolicyType' => $this->input->post('PolicyType'),
-            'PolicyStart' => $this->input->post('PolicyStart'),
-            'PolicyEnd' => $this->input->post('PolicyEnd'),
+            'PolicyStart' => $this->m_datetime->setTHDateToDB($this->input->post('PolicyStart')),
+            'PolicyEnd' => $this->m_datetime->setTHDateToDB($this->input->post('PolicyEnd')),
             'PolicyNumber' => $this->input->post('PolicyNumber'),
             'ActNote' => $this->input->post('ActNote'),
+            'CreateBy' => '',
+            'CreateDate' => $this->m_datetime->getDatetimeNow(),
         );
 
         $form_data = array(
@@ -495,16 +506,16 @@ class m_vehicle extends CI_Model {
         );
 //      ข้อมูลทะเบียน        
         $data_registered = array(
-            'DateRegistered' => $this->m_datetime->setDateFomat($this->input->post('DateRegistered')),
-            'DateExpire' => $this->m_datetime->setDateFomat($this->input->post('DateExpire')),
+            'DateRegistered' => $this->m_datetime->setTHDateToDB($this->input->post('DateRegistered')),
+            'DateExpire' => $this->m_datetime->setTHDateToDB($this->input->post('DateExpire')),
             'VRNote' => $this->input->post('VRNote'),
         );
 //       ประกันและพรบ    
         $data_act = array(
             'InsuranceCompanyName' => $this->input->post('InsuranceCompanyName'),
             'PolicyType' => $this->input->post('PolicyType'),
-            'PolicyStart' => $this->input->post('PolicyStart'),
-            'PolicyEnd' => $this->input->post('PolicyEnd'),
+            'PolicyStart' => $this->m_datetime->setTHDateToDB($this->input->post('PolicyStart')),
+            'PolicyEnd' => $this->m_datetime->setTHDateToDB($this->input->post('PolicyEnd')),
             'PolicyNumber' => $this->input->post('PolicyNumber'),
             'ActNote' => $this->input->post('ActNote'),
         );
@@ -519,17 +530,3 @@ class m_vehicle extends CI_Model {
     }
 
 }
-
-//
-//    $i_ = array(
-//            'name' => '',
-//            'value' => set_value(''),
-//            'placeholder' => '',
-//            'class' => 'form-control');
-//    
-//
-//$i_type = array();
-//        $temp = $this->m_products->check_product_type();
-//        foreach ($temp as $row) {
-//            $i_type[$row['id']] = unserialize($row['product_type'])['thai'];
-//        }

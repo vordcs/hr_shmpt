@@ -12,7 +12,7 @@ Class m_template extends CI_Model {
     private $debud_data = NULL;
     private $lang_value = array('theme');
     private $version = '1.0';
-    
+
     function set_Debug($data) {
         $this->debud_data = $data;
     }
@@ -29,14 +29,14 @@ Class m_template extends CI_Model {
     function set_Permission($mode) {
         $this->permission = $mode;
     }
-    
-    function check_Alert(){
+
+    function check_Alert() {
         return $this->session->flashdata('alert');
     }
 
     function check_permission() {
         $sess = $this->session->userdata('login');
-        if ($sess == NULL || $sess== FALSE) {
+        if ($sess == NULL || $sess == FALSE) {
             redirect('login');
         }
         return TRUE;
@@ -46,6 +46,15 @@ Class m_template extends CI_Model {
         foreach ($in as $data) {
             array_push($this->lang_value, $data);
         }
+    }
+
+    public function set_user() {
+        $user_data = array(
+            'EID' => 'E123456789',
+            'UserName' => 'admin',
+            'sale_type' => '1',
+        );
+        $this->session->set_userdata($user_data);
     }
 
     function showTemplate() {
@@ -71,6 +80,9 @@ Class m_template extends CI_Model {
         $data['alert'] = $this->session->userdata('alert');
         $this->session->unset_userdata('alert');
 
+//        กำหนดข้อมูลเริ่มต้นในการทดสอบโปรแกรม
+        $this->set_user();
+        
         $user = $this->session->userdata('user');
         $data['u_name'] = $user['u_name'];
         $data['form_login'] = form_open('logout', array('class' => 'navbar-form pull-right', 'style' => 'height: 40px;'));

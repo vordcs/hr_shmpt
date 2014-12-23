@@ -116,14 +116,14 @@ class m_station extends CI_Model {
             $this->db->delete('t_stations');
         }
     }
-    
-    public function delete_fares($rcode, $vtid,$station_id){
-             $this->db->where('RCode', $rcode);
-                $this->db->where('VTID', $vtid);
-        
+
+    public function delete_fares($rcode, $vtid, $station_id) {
+        $this->db->where('RCode', $rcode);
+        $this->db->where('VTID', $vtid);
+
 //                delete fares and rate 
 //                $this->db->where('SourceID', $s['SID']);
-                $this->db->delete('f_fares');
+        $this->db->delete('f_fares');
 //
 //                $this->db->where('DestinationID', $s['SID']);
 //                $this->db->delete('f_fares');
@@ -149,7 +149,28 @@ class m_station extends CI_Model {
 
         return $rs;
     }
-    
+
+    public function get_stations_detail($rcode = null, $vtid = null, $sid = NULL, $seq = NULL) {
+        if ($rcode != NULL) {
+            $this->db->where('RCode', $rcode);
+        }
+        if ($vtid != NULL) {
+            $this->db->where('VTID', $vtid);
+        }
+        if ($sid != NULL) {
+            $this->db->where('SID', $sid);
+        }
+        if ($seq != NULL) {
+            $this->db->where('Seq', $seq);
+        }
+        $this->db->order_by('Seq');
+        $query = $this->db->get('t_stations');
+
+        $rs = $query->result_array();
+
+        return $rs;
+    }
+
     public function get_fares($rcode, $vtid, $source_id = NULL, $destination_id = NULL) {
 
         $this->db->join('f_fares_has_rate', 'f_fares_has_rate.FID=f_fares.FID');
@@ -169,28 +190,35 @@ class m_station extends CI_Model {
         return $query->result_array();
     }
 
-
     public function set_form_add($rcode = NULL, $vtid = NULL) {
         $station_name = $this->input->post('StationName');
         $travel_time = $this->input->post('TravelTime');
         $is_sale_ticket = $this->input->post('IsSaleTicket');
         $stop_time = $this->input->post('StopTime');
 
-        $route_detail = $this->m_route->get_route($rcode, $vtid);
-        $source = $route_detail[0]['RSource'];
-        $desination = $route_detail[0]['RDestination'];
+        $route = $this->m_route->get_route($rcode, $vtid);
+        $travel_time_total = $route[0]['Time'];
 
         $IsSaleTiket = array();
         $StationName = array();
         $TravelTime = array();
         $StopTime = array();
 
+        $i_TimeTotal = array(
+            'type' => "hidden",
+            'name' => "TimeTotal",
+            'id' => "TimeTotal",
+            'class' => "form-control",
+            'readonly' => "",
+            'value' => $travel_time_total,
+        );
         $i_Source = array(
             'name' => 'Source',
             'value' => $source,
             'placeholder' => 'ต้นทาง',
             'readonly' => '',
-            'class' => 'form-control');
+            'class' => 'form-control'
+        );
 
         $i_Destination = array(
             'name' => 'Destination',
@@ -254,6 +282,7 @@ class m_station extends CI_Model {
 
         $form_add = array(
             'form' => form_open('station/add/' . $rcode . '/' . $vtid, array('class' => 'form-horizontal', 'id' => 'form_station')),
+            'TimeTotal' => form_input($i_TimeTotal),
             'Source' => form_input($i_Source),
             'Destination' => form_input($i_Destination),
             'station' => $i_StationName_,
@@ -277,6 +306,18 @@ class m_station extends CI_Model {
         $i_Station = '';
         $source = $stations_db[0]['StationName'];
         $desination = $stations_db[count($stations_db) - 1]['StationName'];
+
+        $route = $this->m_route->get_route($rcode, $vtid);
+        $travel_time_total = $route[0]['Time'];
+
+        $i_TimeTotal = array(
+            'type' => "hidden",
+            'name' => "TimeTotal",
+            'id' => "TimeTotal",
+            'class' => "form-control",
+            'readonly' => "",
+            'value' => $travel_time_total,
+        );
 
         $i_Source = array(
             'name' => 'Source',
@@ -408,6 +449,7 @@ class m_station extends CI_Model {
 
         $form_edit = array(
             'form' => form_open('station/edit/' . $rcode . '/' . $vtid, array('class' => 'form-horizontal', 'id' => 'form_station')),
+            'TimeTotal' => form_input($i_TimeTotal),
             'Source' => form_input($i_Source),
             'Destination' => form_input($i_Destination),
             'station' => $i_Station,
@@ -421,23 +463,25 @@ class m_station extends CI_Model {
     }
 
     public function get_post_form_add() {
+
         $station_name = $this->input->post('StationName');
         $travel_time = $this->input->post('TravelTime');
         $is_sale_ticket = $this->input->post('IsSaleTicket');
         $stop_time = $this->input->post('StopTime');
-
         $source = $this->input->post('Source');
         $destination = $this->input->post('Destination');
 
+        $TimeTotal = $this->input->post('TimeTotal');
+        
         $station = array();
         $seq = 1;
         $first = array(
             'StationName' => $source,
-            'TravelTime' => '',
+            'TravelTime' => $TimeTotal,
             'IsSaleTicket' => '1',
             'StopTime' => '',
             'Seq' => $seq,
-            'CreateDate' => $this->m_datetime->getDatetimeNowTH(),
+            'CreateDate' => $this->m_datetime->getDatetimeNow(),
         );
         $seq++;
         array_push($station, $first);
@@ -457,7 +501,7 @@ class m_station extends CI_Model {
                     'IsSaleTicket' => $st,
                     'StopTime' => $stop_time[$i],
                     'Seq' => $seq,
-                    'CreateDate' => $this->m_datetime->getDatetimeNowTH(),
+                    'CreateDate' => $this->m_datetime->getDatetimeNow(),
                 );
                 array_push($station, $temp);
                 $seq++;
@@ -466,11 +510,11 @@ class m_station extends CI_Model {
 
         $last = array(
             'StationName' => $destination,
-            'TravelTime' => '',
+            'TravelTime' => $TimeTotal,
             'IsSaleTicket' => '1',
             'StopTime' => '',
             'Seq' => $seq,
-            'CreateDate' => $this->m_datetime->getDatetimeNowTH(),
+            'CreateDate' => $this->m_datetime->getDatetimeNow(),
         );
 
         array_push($station, $last);
@@ -490,7 +534,8 @@ class m_station extends CI_Model {
         $travel_time = $this->input->post('TravelTime');
         $is_sale_ticket = $this->input->post('IsSaleTicket');
         $stop_time = $this->input->post('StopTime');
-
+        $TimeTotal = $this->input->post('TimeTotal');
+        
         $source = $this->input->post('Source');
         $destination = $this->input->post('Destination');
 
@@ -498,11 +543,11 @@ class m_station extends CI_Model {
         $seq = 1;
         $first = array(
             'StationName' => $source,
-            'TravelTime' => '',
+            'TravelTime' => $TimeTotal,
             'IsSaleTicket' => '1',
             'StopTime' => '',
             'Seq' => $seq,
-            'UpdateDate' => $this->m_datetime->getDatetimeNowTH(),
+            'UpdateDate' => $this->m_datetime->getDatetimeNow(),
         );
         $seq++;
         array_push($station, $first);
@@ -521,7 +566,8 @@ class m_station extends CI_Model {
                     'TravelTime' => $travel_time[$i],
                     'IsSaleTicket' => $st,
                     'StopTime' => $stop_time[$i],
-                    'Seq' => $seq
+                    'Seq' => $seq,
+                    'UpdateDate' => $this->m_datetime->getDatetimeNow(),
                 );
                 array_push($station, $temp);
                 $seq++;
@@ -530,7 +576,7 @@ class m_station extends CI_Model {
 
         $last = array(
             'StationName' => $destination,
-            'TravelTime' => '',
+            'TravelTime' => $TimeTotal,
             'IsSaleTicket' => '1',
             'StopTime' => '',
             'Seq' => $seq
@@ -611,115 +657,3 @@ class m_station extends CI_Model {
     }
 
 }
-
-//
-//
-// $i_Station = '';
-//        if (empty($station_post)) {
-//            $j = 0;
-//            for ($i = 1; $i < count($stations_db) - 1; $i++) {
-//                $station_name[$j] = $stations_db[$i]['StationName'];
-//                $travel_time[$j] = $stations_db[$i]['TravelTime'];
-//                $stop_time[$j] = $stations_db[$i]['StopTime'];
-//                $j++;
-//            }
-//        } else {
-//            $is_sale_ticket = $is_sale_ticket_post;
-//            $station_name = $station_post;
-//            $travel_time = $travel_time_post;
-//            $stop_time = $stop_time_post;
-//        }
-//        $number_station = count($stop_time);
-//
-//
-//        $source = $stations_db[0]['StationName'];
-//        $desination = $stations_db[count($stations_db) - 1]['StationName'];
-//
-//        $i_Source = array(
-//            'name' => 'Source',
-//            'value' => $source,
-//            'placeholder' => 'ต้นทาง',
-//            'readonly' => '',
-//            'class' => 'form-control text-center');
-//
-//        $i_Destination = array(
-//            'name' => 'Destination',
-//            'value' => $desination,
-//            'placeholder' => 'ปลายทาง',
-//            'readonly' => '',
-//            'class' => 'form-control text-center');
-//
-//
-//        $IsSalePoint = array();
-//        $StationName = array();
-//        $TravelTime = array();
-//        $StopTime = array();
-//
-//        if (!empty($station_name) && count($station_name) > 0) {
-//            for ($i = 0; $i < $number_station; $i++) {
-//                $name = $station_name[$i];
-//                if ($name != $source && $name != $desination) {
-//                    $checked = '';
-//                    $display = 'none';
-//                    if (!empty($is_sale_ticket) && array_key_exists($i, $is_sale_ticket)) {
-//                        $checked = 'checked';
-//                        $display = 'block';
-//                    } else {
-//                        $travel_time [$i] = NULL;
-//                    }
-////                    if (empty($stop_time)) {
-////                        $stop_time[$i] = $i;
-////                    } 
-//
-//                    $i_IsSalePoint = "<input "
-//                            . "type=\"checkbox\"  "
-//                            . "name=\"IsSaleTicket[$i]\" "
-//                            . "class=\"IsSaleTicket\" "
-//                            . "onclick=\"ShowItemp('$i')\" "
-//                            . "value=\"$i\" "
-//                            . "$checked";
-//
-//                    $i_StationName = array(
-//                        'name' => 'StationName[]',
-//                        'value' => (set_value("StationName[$i]") == NULL) ? $station_name [$i] : set_value("StationName[$i]"),
-//                        'placeholder' => 'ชื่อจุดจอด',
-//                        'class' => 'form-control text-center'
-//                    );
-//
-//                    $i_TravelTime = array(
-//                        'id' => "TravelTime$i",
-//                        'name' => 'TravelTime[]',
-//                        'value' => (set_value("TravelTime[$i]") == NULL) ? $travel_time [$i] : set_value("TravelTime[$i]"),
-//                        'placeholder' => '',
-//                        'class' => 'form-control text-center',
-//                        'style' => "display: $display;>",
-//                    );
-//                    $i_StopTime = array(
-//                        'id' => "StopTime$i",
-//                        'name' => 'StopTime[]',
-//                        'value' => (set_value("StopTime[$i]") == NULL) ? $stop_time[$i] : set_value("StopTime[$i]"),
-//                        'placeholder' => '',
-//                        'class' => 'form-control text-center',
-//                        'style' => "display: $display;>",
-//                    );
-//
-//                    array_push($IsSalePoint, $i_IsSalePoint);
-//                    array_push($StationName, form_input($i_StationName));
-//                    array_push($TravelTime, form_input($i_TravelTime));
-//                    array_push($StopTime, form_input($i_StopTime));
-//                }
-//            }
-//        }
-//
-////      
-//
-//        $form_edit = array(
-//            'form' => form_open('station/edit/' . $rcode . '/' . $vtid, array('class' => 'form-horizontal', 'id' => 'form_station')),
-//            'Source' => form_input($i_Source),
-//            'Destination' => form_input($i_Destination),
-//            'station' => $i_Station,
-//            'IsSalePoint' => $IsSalePoint,
-//            'StationName' => $StationName,
-//            'TravelTime' => $TravelTime,
-//            'StopTime' => $StopTime,
-//        );
