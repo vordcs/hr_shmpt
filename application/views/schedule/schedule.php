@@ -256,8 +256,9 @@ function last_around($start_time, $interval_time, $number) {
                                             $route_name = " ตารางเวลาเดิน $vt_name เส้นทาง " . $rcode . ' ' . ' ' . $source . ' - ' . $destination;
                                             ?>                                           
                                             <div id="<?= $rcode . $vtid ?>" class="tab-pane fade">  
-                                                <a href="<?= base_url("schedule/view/$rcode/$vtid") ?>" class="btn btn-primary btn-sm pull-right"><i class="fa fa-list-ol"></i>&nbsp;จัดการตารางเวลาเดินรถ</a>
-
+                                                <p class="text-right">
+                                                    <a href="<?= base_url("schedule/view/$rcode/$vtid") ?>" class="btn btn-primary btn-sm"><i class="fa fa-list-ol"></i>&nbsp;จัดการตารางเวลาเดินรถ</a>
+                                                </p>
                                                 <?php
                                                 foreach ($route_detail as $rd) {
                                                     if ($rcode == $rd['RCode'] && $vtid == $rd['VTID']) {
@@ -267,7 +268,7 @@ function last_around($start_time, $interval_time, $number) {
                                                         $schedule_type = $rd["ScheduleType"];
                                                         $start_point = $rd['StartPoint'];
                                                         $route_time = $rd['Time'];
-                                                        $route_name = " ตารางเวลาเดิน $vt_name เส้นทาง " . $rcode . ' ' . ' ' . $source . ' - ' . $destination;                                                        
+                                                        $route_name = " ตารางเวลาเดิน $vt_name เส้นทาง " . $rcode . ' ' . ' ' . $source . ' - ' . $destination;
 //                                                              นับจำนวนสถานี
                                                         $num_station = 0;
                                                         foreach ($stations as $s) {
@@ -284,7 +285,7 @@ function last_around($start_time, $interval_time, $number) {
                                                                         <th style="width: 10%"></th>
                                                                         <?php
                                                                         $temp = 0;
-                                                                        if ($start_point == 'S'){
+                                                                        if ($start_point == 'S') {
 //                                                                                    start point S
                                                                             foreach ($stations as $s) {
                                                                                 if ($rcode == $s['RCode'] && $vtid == $s['VTID'] && $s['IsSaleTicket'] == '1') {
@@ -335,10 +336,10 @@ function last_around($start_time, $interval_time, $number) {
                                                                                         $station_name = $s['StationName'];
                                                                                         $travel_time = $s['TravelTime'];
                                                                                         if ($s['Seq'] == '1') {
-//                                                                                                        สถานีต้นทาง
+//                                                                                  สถานีต้นทาง
                                                                                             $time_depart = strtotime($start_time);
                                                                                         } elseif ($s['Seq'] == $num_station) {
-//                                                                                                        สถานีปลายทาง
+//                                                                                  สถานีปลายทาง
                                                                                             $time_depart = strtotime("+$route_time minutes", strtotime($start_time));
                                                                                         } else {
                                                                                             $temp+=$travel_time;

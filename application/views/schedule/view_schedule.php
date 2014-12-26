@@ -24,7 +24,7 @@ $date = date('Y-m-d');
             </h3>        
         </div>
     </div>
-    <div class="row">
+    <div class="row hidden">
         <div class="col-md-12">
             <div class="panel panel-info">
                 <div class="panel-heading">
@@ -90,7 +90,7 @@ $date = date('Y-m-d');
                                                     <td class="text-center"><?= $seq_no ?></td>
                                                     <td class="text-center"><?= $time_depart ?></td>
                                                     <td class="text-center"></td>
-                                                    <td class="text-center"></td>
+                                                    <td class="text-center"><?= $tsid ?></td>
                                                 </tr>
                                                 <?php
                                             }
