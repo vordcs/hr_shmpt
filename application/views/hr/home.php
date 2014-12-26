@@ -9,8 +9,6 @@
         $("#mainmenu ul li").removeAttr('class');
         $("#btnHR").addClass("active");
         $('#myTab a[href="#tabEmployees"]').tab('show') // Select tab by name
-
-
     });
 
 </script>
@@ -34,12 +32,13 @@
     <div class="row">   
         <div class="col-md-12">
             <ul class="nav nav-pills nav-justified">
-                <li class="active"><a href="<?= base_url('hr/') ?>">หน้าหลัก</a></li>
-                <li><a href="<?= base_url('employee/') ?>">พนักงาน</a></li>
-                <li><a href="<?= base_url('master_data/') ?>">ข้อมูลหลัก</a></li>
-                <li><a href="<?= base_url('work_history/') ?>" >ประวัติการทำงาน</a></li>
-                <li><a href="<?= base_url('role_permission/') ?>" >กำหนดสิทธิ์การเข้าใช้</a></li>
-                <li><a href="<?= base_url('username/') ?>" >ข้อมูลการเข้าใช้ระบบ</a></li>    
+                <li class="active"><a href="<?= base_url('hr/home') ?>">หน้าหลัก</a></li>
+                <li><a href="<?= base_url('hr/employee/') ?>">พนักงาน</a></li>
+                <li><a href="<?= base_url('hr/seller/') ?>">พนักงานขายตั๋ว</a></li>
+                <li><a href="<?= base_url('hr/master_data/') ?>">ข้อมูลหลัก</a></li>
+                <li><a href="<?= base_url('hr/work_history/') ?>" >ประวัติการทำงาน</a></li>
+                <li><a href="<?= base_url('hr/role_permission/') ?>" >กำหนดสิทธิ์การเข้าใช้</a></li>
+                <li><a href="<?= base_url('hr/username/') ?>" >ข้อมูลการเข้าใช้ระบบ</a></li>    
             </ul>
         </div>
     </div>

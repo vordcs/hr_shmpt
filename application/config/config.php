@@ -227,7 +227,7 @@ $config['cache_path'] = '';
   | MUST set an encryption key.  See the user guide for info.
   |
  */
-$config['encryption_key'] = 'CBNUKEVordCS';
+$config['encryption_key'] = 'CBNUKEVoRDCS';
 
 /*
   |--------------------------------------------------------------------------
@@ -331,7 +331,7 @@ $config['compress_output'] = FALSE;
   | regarding date handling.
   |
  */
-$config['time_reference'] = 'local';
+$config['time_reference'] = 'gmt';
 
 
 /*

@@ -2,7 +2,6 @@
     jQuery(document).ready(function ($) {
         $("#mainmenu ul li").removeAttr('class');
         $("#btnRoute").addClass("active");
-
     });
 </script>
 

@@ -99,7 +99,7 @@ class cost extends CI_Controller {
         $route_detail = $this->m_route->get_route_detail($rcode, $vtid);
         $source = $route_detail[0]['RSource'];
         $desination = $route_detail[0]['RDestination'];
-        $route_name = 'เส้นทาง สาย ' . $route_detail[0]['RCode'] . ' ' . ' ' . $source . ' - ' . $desination;
+        $route_name = 'เส้นทาง ' . $route_detail[0]['RCode'] . ' ' . ' ' . $source . ' - ' . $desination;
         $date = $this->m_datetime->DateThaiToDay();
 
         $data = array(

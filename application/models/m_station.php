@@ -171,6 +171,22 @@ class m_station extends CI_Model {
         return $rs;
     }
 
+    public function get_stations_sale_ticket($rcode, $vtid) {
+        if ($rcode != NULL) {
+            $this->db->where('RCode', $rcode);
+        }
+        if ($vtid != NULL) {
+            $this->db->where('VTID', $vtid);
+        }
+        $this->db->where('IsSaleTicket', 1);
+        $this->db->order_by('Seq');
+        $query = $this->db->get('t_stations');
+
+        $rs = $query->result_array();
+
+        return $rs;
+    }
+
     public function get_fares($rcode, $vtid, $source_id = NULL, $destination_id = NULL) {
 
         $this->db->join('f_fares_has_rate', 'f_fares_has_rate.FID=f_fares.FID');
@@ -472,7 +488,7 @@ class m_station extends CI_Model {
         $destination = $this->input->post('Destination');
 
         $TimeTotal = $this->input->post('TimeTotal');
-        
+
         $station = array();
         $seq = 1;
         $first = array(
@@ -535,7 +551,7 @@ class m_station extends CI_Model {
         $is_sale_ticket = $this->input->post('IsSaleTicket');
         $stop_time = $this->input->post('StopTime');
         $TimeTotal = $this->input->post('TimeTotal');
-        
+
         $source = $this->input->post('Source');
         $destination = $this->input->post('Destination');
 

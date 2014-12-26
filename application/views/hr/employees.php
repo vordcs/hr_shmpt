@@ -11,19 +11,25 @@
     <div class="row">      
         <div class="col-md-12">
             <div class="page-header">
-                <h2>ระบบบริหารงานบุคคล <small>พนักงาน</small></h2>
+                <h3>
+                    <?php echo $page_title; ?>                   
+                    <font color="#777777">
+                    <span style="font-size: 23px; line-height: 23.399999618530273px;"><?php echo $page_title_small; ?></span>                
+                    </font>
+                </h3>  
             </div>
         </div>
     </div>
     <div class="row">   
         <div class="col-md-12">
             <ul class="nav nav-pills nav-justified">
-                <li><a href="<?= base_url('hr/') ?>">หน้าหลัก</a></li>
-                <li class="active"><a href="<?= base_url('employee/') ?>">พนักงาน</a></li>
-                <li><a href="<?= base_url('master_data/') ?>">ข้อมูลหลัก</a></li>
-                <li><a href="<?= base_url('work_history/') ?>" >ประวัติการทำงาน</a></li>
-                <li><a href="<?= base_url('role_permission/') ?>" >กำหนดสิทธิ์การเข้าใช้</a></li>
-                <li><a href="<?= base_url('username/') ?>" >ข้อมูลการเข้าใช้ระบบ</a></li>    
+                <li><a href="<?= base_url('hr/home') ?>">หน้าหลัก</a></li>
+                <li class="active"><a href="<?= base_url('hr/employee/') ?>">พนักงาน</a></li>
+                <li><a href="<?= base_url('hr/employee/') ?>"><a href="<?= base_url('hr/seller') ?>">พนักงานขายตั๋ว</a></li>
+                <li><a href="<?= base_url('hr/master_data/') ?>">ข้อมูลหลัก</a></li>
+                <li><a href="<?= base_url('hr/work_history/') ?>" >ประวัติการทำงาน</a></li>
+                <li><a href="<?= base_url('hr/role_permission/') ?>" >กำหนดสิทธิ์การเข้าใช้</a></li>
+                <li><a href="<?= base_url('hr/username/') ?>" >ข้อมูลการเข้าใช้ระบบ</a></li>    
             </ul>
         </div>
     </div>

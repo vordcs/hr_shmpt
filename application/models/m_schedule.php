@@ -67,7 +67,7 @@ class m_schedule extends CI_Model {
                 for ($i = 0; $i < (int) $around; $i++) {
                     $s_time = strtotime($start_time) + $interval * 60 * $i;
                     $e_time = strtotime("+$time_duration minutes", $s_time);
-                    $tsid = $this->get_TSID($rid, $i + 1);
+                    $tsid = $this->gen_TSID($rid, $i + 1);
                     if ($tsid != '') {
                         $temp_schedual = array(
                             'TSID' => $tsid,
@@ -91,10 +91,10 @@ class m_schedule extends CI_Model {
                         $seq_no = $sm['SeqNo'];
                         $s_time = strtotime($sm['Time']);
                         $e_time = strtotime("+$time_duration minutes", $s_time);
-                        $tsid = $this->get_TSID($rid, $seq_no);
+                        $tsid = $this->gen_TSID($rid, $seq_no);
                         if ($tsid != '') {
                             $temp_schedual = array(
-                                'TSID' => $this->get_TSID($rid, $seq_no),
+                                'TSID' => $tsid,
                                 'RID' => $rid,
                                 'SeqNo' => $seq_no,
                                 'TimeDepart' => date('H:i:s', $s_time),
@@ -113,7 +113,7 @@ class m_schedule extends CI_Model {
         return $rs;
     }
 
-    public function get_TSID($rid, $around) {
+    public function gen_TSID($rid, $around) {
         $tsid = '';
 
         $this->db->where("RID", $rid);
