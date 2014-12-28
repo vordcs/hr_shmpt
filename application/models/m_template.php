@@ -7,11 +7,16 @@ Class m_template extends CI_Model {
 
     private $title = 'บริษัท สหมิตรภาพ(2512) จำกัด';
     private $view_name = NULL;
+    private $real_alert = NULL;
     private $set_data = NULL;
     private $permission = "ALL";
     private $debud_data = NULL;
     private $lang_value = array('theme');
     private $version = '1.0';
+
+    function set_RealAlert($data) {
+        $this->real_alert = $data;
+    }
 
     function set_Debug($data) {
         $this->debud_data = $data;
@@ -32,6 +37,10 @@ Class m_template extends CI_Model {
 
     function check_Alert() {
         return $this->session->flashdata('alert');
+    }
+
+    function check_RealAlert() {
+        return $this->real_alert;
     }
 
     function check_permission() {
@@ -82,7 +91,7 @@ Class m_template extends CI_Model {
 
 //        กำหนดข้อมูลเริ่มต้นในการทดสอบโปรแกรม
         $this->set_user();
-        
+
         $user = $this->session->userdata('user');
         $data['u_name'] = $user['u_name'];
         $data['form_login'] = form_open('logout', array('class' => 'navbar-form pull-right', 'style' => 'height: 40px;'));
@@ -90,6 +99,7 @@ Class m_template extends CI_Model {
         $data['title'] = $this->title;
         $data['debug'] = $this->debud_data;
         $data['alert'] = $this->check_Alert();
+        $data['real_alert'] = $this->check_RealAlert();
 
         $this->load->view('theme_header', $data);
         if ($this->view_name != NULL) {

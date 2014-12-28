@@ -72,6 +72,8 @@
                         echo 'เพิ่มผู้สมัครงาน';
                     elseif ($mode == 'edit')
                         echo 'แก้ไขผู้สมัครงาน';
+                    elseif ($mode == 'detail')
+                        echo 'ข้อมูลผู้สมัครงาน';
                     ?>
                     &nbsp;</li>
             </ul>
