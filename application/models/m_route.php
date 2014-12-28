@@ -71,7 +71,7 @@ class m_route extends CI_Model {
 
     public function update_route_time($data) {
         $schedule_type = "0";
-        if (!empty($this->input->post('ScheduleType'))) {
+        if ($this->input->post('ScheduleType') != NULL) {
             $schedule_type = $this->input->post('ScheduleType');
         }
         $rid_s = $data['rid'][0]['RID'];
@@ -418,7 +418,7 @@ class m_route extends CI_Model {
         //schedule manual -> ScheduleType = 1
         $i_time_s = array();
         $time_s = array();
-        if (!empty($this->input->post('timeS'))) {
+        if ($this->input->post('timeS') != NULL) {
             $time_s = $this->input->post('timeS');
         } else {
             $time_s = $this->get_schedule_manual($rid_s);
@@ -426,7 +426,7 @@ class m_route extends CI_Model {
 
         if (count($time_s) > 0) {
             for ($i = 0; $i < count($time_s); $i++) {
-                if (!empty($this->input->post('timeS'))) {
+                if ($this->input->post('timeS') != NULL) {
                     $t = strtotime($time_s[$i]);
                 } else {
                     $t = strtotime($time_s[$i]['Time']);
@@ -444,14 +444,14 @@ class m_route extends CI_Model {
         $i_time_d = array();
         $time_d = array();
 
-        if (!empty($this->input->post('timeD'))) {
+        if (($this->input->post('timeD') != NULL)) {
             $time_d = $this->input->post('timeD');
         } else {
             $time_d = $this->get_schedule_manual($rid_d);
         }
         if (count($time_s) > 0) {
             for ($i = 0; $i < count($time_d); $i++) {
-                if (!empty($this->input->post('timeD'))) {
+                if (($this->input->post('timeD') != NULL)) {
                     $t = strtotime($time_d[$i]);
                 } else {
                     $t = strtotime($time_d[$i]['Time']);
