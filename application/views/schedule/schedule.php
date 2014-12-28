@@ -77,9 +77,6 @@ function last_around($start_time, $interval_time, $number) {
             </div>
         </div>     
     </div>
-    <div class="row animated fadeInUp">        
-
-    </div>
     <div class="row animated fadeInUp">
         <div class="col-md-12">
             <div class="panel panel-info">
@@ -131,120 +128,8 @@ function last_around($start_time, $interval_time, $number) {
                                         }
                                     }
                                     ?>
-
                                 </ul>
-                                <div id="TabContent<?= $vtid ?>" class="tab-content">
-                                    <div id="home_schedue" class="tab-pane fade active in">
-                                        <div class="col-md-12 text-center">
-                                            <h4>
-                                                <span class=""><?php echo "ตารางเวลาเดินรถ <u>$vt_name</u>   วันที่ "; ?></span>
-                                            </h4>
-                                        </div>
-                                        <div class="col-md-12">
-                                            <div class="col-md-6 well" >
-                                                <p class="lead text-center">
-                                                    ข้อมูลเวลา
-                                                </p>
-                                                <div class="panel-group" id="accordionTime" role="tablist" aria-multiselectable="true">
-                                                    <?php
-                                                    foreach ($route as $r) {
-                                                        $vtid = $r['VTID'];
-                                                        $type_name = $v_type['VTDescription'];
-                                                        $rcode = $r['RCode'];
-                                                        $source = $r['RSource'];
-                                                        $destination = $r['RDestination'];
-                                                        $schedule_type = $r["ScheduleType"];
-                                                        $route_name = ' เส้นทาง ' . $rcode . ' ' . ' ' . $source . ' - ' . $destination;
-                                                        ?>
-                                                        <div class="panel panel-default">
-                                                            <div class="panel-heading" role="tab" id="headingTime<?= $rcode . $vtid ?>">
-                                                                <h4 class="panel-title">
-                                                                    <a class="collapsed" data-toggle="collapse" data-parent="#accordionTime" href="#collapseTime<?= $rcode . $vtid ?>" aria-expanded="false" aria-controls="collapseTime<?= $rcode . $vtid ?>">
-                                                                        <span class="fa fa-bus">&nbsp;<?= $route_name ?></span>
-                                                                    </a>
-                                                                </h4>
-                                                            </div>
-                                                            <div id="collapseTime<?= $rcode . $vtid ?>" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTime<?= $rcode . $vtid ?>">
-                                                                <table class="table">
-                                                                    <thead>
-                                                                        <tr>
-                                                                            <th><?php echo $route_name; ?></th>
-                                                                        </tr>
-                                                                    </thead>
-                                                                    <tbody>
-
-                                                                    </tbody>
-                                                                </table>
-                                                            </div>
-                                                        </div>
-                                                    <?php } ?> 
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6" >                                              
-                                                <p class="lead text-center">
-                                                    ข้อมูลรถ
-                                                </p>  
-                                                <div class="panel-group" id="accordionVehicles" role="tablist" aria-multiselectable="true">
-                                                    <?php
-                                                    foreach ($route as $r) {
-                                                        $vtid = $r['VTID'];
-                                                        $type_name = $v_type['VTDescription'];
-                                                        $rcode = $r['RCode'];
-                                                        $source = $r['RSource'];
-                                                        $destination = $r['RDestination'];
-                                                        $schedule_type = $r["ScheduleType"];
-                                                        $route_name = "ข้อมูล $vt_name เส้นทาง " . $rcode . ' ' . ' ' . $source . ' - ' . $destination;
-                                                        ?>
-                                                        <div class="panel panel-default">
-                                                            <div class="panel-heading" role="tab" id="heading<?= $rcode . $vtid ?>">
-                                                                <h4 class="panel-title">
-                                                                    <a class="collapsed" data-toggle="collapse" data-parent="#accordionVehicles" href="#collapse<?= $rcode . $vtid ?>" aria-expanded="false" aria-controls="collapse<?= $rcode . $vtid ?>">
-                                                                        <span class="fa fa-bus">&nbsp;<?= $route_name ?></span>
-                                                                    </a>
-                                                                </h4>
-                                                            </div>
-                                                            <div id="collapse<?= $rcode . $vtid ?>" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading<?= $rcode . $vtid ?>">
-                                                                <table class="table table-bordered">
-                                                                    <thead>
-                                                                        <tr>
-                                                                            <th style="width: 20%" rowspan="2">เบอร์รถ</th>
-                                                                            <th style="width: 80%" colspan="3">จำนวนเที่ยว</th>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <th><?php echo "ออกจาก $source"; ?></th>
-                                                                            <th><?php echo "ออกจาก $destination"; ?></th>
-                                                                            <th><?php echo "รวม"; ?></th>
-                                                                        </tr>
-                                                                    </thead>
-                                                                    <tbody>
-                                                                        <?php
-                                                                        foreach ($vehicles as $v) {
-                                                                            if ($rcode == $v['RCode'] && $vtid == $v['VTID']) {
-                                                                                $vid = $v['VID'];
-                                                                                $vcode = $v['VCode'];
-                                                                                ?>
-                                                                                <tr>
-                                                                                    <td class="text-center"><?= "$vcode" ?></td>
-                                                                                    <td class="text-center"><?= "vid = $vid" ?></td>
-                                                                                    <td class="text-center"></td>
-                                                                                    <td class="text-center"></td>
-                                                                                </tr>
-                                                                                <?php
-                                                                            }
-                                                                        }
-                                                                        ?>
-                                                                    </tbody>
-                                                                </table>
-                                                            </div>
-                                                        </div>                                                        
-                                                        <?php
-                                                    }
-                                                    ?>
-                                                </div>                                                
-                                            </div>
-                                            <p>Raw denim you probably haven't heard of them jean shorts Austin. Nesciunt tofu stumptown aliqua, retro synth master cleanse. Mustache cliche tempor, williamsburg carles vegan helvetica.</p>
-                                        </div>
-                                    </div>
+                                <div id="TabContent<?= $vtid ?>" class="tab-content">                                   
                                     <?php
                                     foreach ($route as $r) {
                                         if ($r['VTID'] == $vtid) {
@@ -269,11 +154,16 @@ function last_around($start_time, $interval_time, $number) {
                                                         $start_point = $rd['StartPoint'];
                                                         $route_time = $rd['Time'];
                                                         $route_name = " ตารางเวลาเดิน $vt_name เส้นทาง " . $rcode . ' ' . ' ' . $source . ' - ' . $destination;
-//                                                              นับจำนวนสถานี
+
+                                                        //นับจำนวนสถานี
                                                         $num_station = 0;
+                                                        $num_sale_station = 0;
                                                         foreach ($stations as $s) {
                                                             if ($rcode == $s['RCode'] && $vtid == $s['VTID']) {
                                                                 $num_station ++;
+                                                                if ($s['IsSaleTicket'] == '1') {
+                                                                    $num_sale_station ++;
+                                                                }
                                                             }
                                                         }
                                                         ?>
@@ -281,27 +171,27 @@ function last_around($start_time, $interval_time, $number) {
                                                             <div class="panel-heading"><?php echo $route_name ?></div>
                                                             <table class="table table-hover table-striped table-bordered">
                                                                 <thead>
-                                                                    <tr>
+                                                                    <tr>                                                                        
                                                                         <th style="width: 10%"></th>
                                                                         <?php
-                                                                        $temp = 0;
-                                                                        if ($start_point == 'S') {
-//                                                                                    start point S
-                                                                            foreach ($stations as $s) {
-                                                                                if ($rcode == $s['RCode'] && $vtid == $s['VTID'] && $s['IsSaleTicket'] == '1') {
-                                                                                    $station_name = $s['StationName'];
-                                                                                    $last_seq_station = $s['Seq'];
-                                                                                    $pre_string = "";
-                                                                                    if ($s['Seq'] == '1') {
-                                                                                        $pre_string = "ออกจากสถานีขนส่ง ";
+                                                                        if ($start_point == "S") {
+                                                                            //start point s
+                                                                            for ($i = 0; $i <= $num_station; $i++) {
+                                                                                foreach ($stations as $s) {
+                                                                                    if ($rcode == $s['RCode'] && $vtid == $s['VTID'] && $s['IsSaleTicket'] == '1' && $s['Seq'] == $i) {
+                                                                                        $station_name = $s['StationName'];
+                                                                                        $last_seq_station = $s['Seq'];
+                                                                                        $pre_string = "";
+                                                                                        if ($s['Seq'] == 1) {
+                                                                                            $pre_string = "ออกจากสถานีขนส่ง "; //$pre_string, $station_name;
+                                                                                        }
+                                                                                        $width = 80 / $num_sale_station;
+                                                                                        echo "<th style=\"width: $width%\"> $pre_string $station_name</th>";
                                                                                     }
-                                                                                    ?>
-                                                                                    <th style="width: 20%"><?php echo " $pre_string $station_name"; ?></th>                                                                            
-                                                                                    <?php
                                                                                 }
                                                                             }
                                                                         } else {
-//                                                                         start point D
+                                                                            //start point D
                                                                             for ($i = $num_station; $i >= 0; $i--) {
                                                                                 foreach ($stations as $s) {
                                                                                     if ($rcode == $s['RCode'] && $vtid == $s['VTID'] && $s['IsSaleTicket'] == '1' && $s['Seq'] == $i) {
@@ -309,16 +199,17 @@ function last_around($start_time, $interval_time, $number) {
                                                                                         $last_seq_station = $s['Seq'];
                                                                                         $pre_string = "";
                                                                                         if ($s['Seq'] == $num_station) {
-                                                                                            $pre_string = "ออกจากสถานีขนส่ง ";
+                                                                                            $pre_string = "ออกจากสถานีขนส่ง "; //$pre_string, $station_name;
                                                                                         }
-                                                                                        ?>
-                                                                                        <th style="width: 20%"><?php echo " $pre_string $station_name"; ?></th>                                                                            
-                                                                                        <?php
+                                                                                        $width = 80 / $num_sale_station;
+                                                                                        echo "<th style=\"width: $width%\">$pre_string $station_name</th>";
                                                                                     }
                                                                                 }
                                                                             }
                                                                         }
                                                                         ?>
+                                                                        <th style="width: 10%">เบอร์รถ</th>
+
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
@@ -326,11 +217,16 @@ function last_around($start_time, $interval_time, $number) {
                                                                     foreach ($schedules as $sd) {
                                                                         if ($rid == $sd['RID']) {
                                                                             $seq_no_schedule = $sd['SeqNo'];
-                                                                            $start_time = $sd['TimeDepart']
+                                                                            $start_time = $sd['TimeDepart'];
+                                                                            $vcode = $sd['VCode'];
+                                                                            if ($vcode == '') {
+                                                                                $vcode = '-';
+                                                                            }
                                                                             ?>
                                                                             <tr>
                                                                                 <td class="text-center"><?php echo $seq_no_schedule; ?></td>
                                                                                 <?php
+                                                                                $temp =0;
                                                                                 foreach ($stations as $s) {
                                                                                     if ($rcode == $s['RCode'] && $vtid == $s['VTID'] && $s['IsSaleTicket'] == '1') {
                                                                                         $station_name = $s['StationName'];
@@ -347,11 +243,12 @@ function last_around($start_time, $interval_time, $number) {
                                                                                         }
                                                                                         $time_depart = date('H:i', $time_depart);
                                                                                         ?>
-                                                                                        <td class="text-center"><?= $time_depart ?></td>                                                                            
+                                                                                        <td class="text-center"><?= $time_depart ?></td>   
                                                                                         <?php
                                                                                     }
                                                                                 }
                                                                                 ?>
+                                                                                <td class="text-center"><strong><?= $vcode ?></strong></td>
                                                                             </tr> 
                                                                             <?php
                                                                         }

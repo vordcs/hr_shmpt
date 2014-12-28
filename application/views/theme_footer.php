@@ -30,7 +30,7 @@
         $('#top').click(function () {
             $("html, body").animate({scrollTop: 0}, 500);
         });
-    });
+    });  
     $('#confirm').on('show.bs.modal', function (e) {
 
         var id = $(e.relatedTarget).data('id');

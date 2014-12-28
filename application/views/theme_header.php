@@ -43,7 +43,9 @@
         <!-- thai extension -->
         <?php echo js('bootstrap-datepicker-thai.js?v=' . $version); ?>  
         <?php echo js('/locales/bootstrap-datepicker.th.js?v=' . $version); ?>  
-
+        
+        
+        
         <script type="text/javascript">
             $(window).scroll(function () {
                 if ($(this).scrollTop() > 50) { //use `this`, not `document`

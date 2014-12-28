@@ -43,17 +43,23 @@ Class m_datetime extends CI_Model {
         return date('H:i:s');
     }
 
-    public function getDateThaiString($strDate) {
+    public function getDateThaiString($strDate = NULL) {
 //        string input 2557-11-15
         if ($strDate == NULL) {
-            return '-';
+            $day = date('d');
+            $month = date('m');
+            $year = date('Y') + 543;
+
+            $strDay = $day;
+            $strMonthThai = $this->month_th[(int) $month];
+            $strYear = $year;
         } else {
             $str = explode('-', $strDate);
             $strYear = trim($str[0]);
             $strMonthThai = $this->month_th[(int) $str[1]];
             $strDay = $str[2];
-            return "$strDay $strMonthThai $strYear";
         }
+        return "$strDay $strMonthThai $strYear";
     }
 
     function setTHDateToDB($input_date) {

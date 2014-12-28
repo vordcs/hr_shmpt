@@ -26,15 +26,13 @@ class schedule extends CI_Controller {
             'route_detail' => $this->m_route->get_route_detail(),
         );
 
-        $data['gen_schedule'] = $this->m_schedule->run_schedule();      
-        $rs = $this->m_schedule->insert_schedule($data['gen_schedule']);
-
         $data['schedules'] = $this->m_schedule->get_schedule($this->m_datetime->getDateToday());
-        $data['vehicles'] = $this->m_vehicle->get_vehicle();
+        $data['vehicles'] = $this->m_schedule->get_vehicle();
         $data['vehicles_type'] = $this->m_vehicle->get_vehicle_types();
         $data['route'] = $this->m_route->get_route();
         $data['stations'] = $this->m_station->get_stations();
         $data['schedule_master'] = $this->m_route->get_schedule_manual();
+
 
         $data_debug = array(
 //            'vehicles' => $data['vehicles'],
@@ -44,11 +42,7 @@ class schedule extends CI_Controller {
 //            'form_search' => $data['form_search'],
 //            'stations' => $data['stations'],
 //            'schedules' => $data['schedules'],
-//            'gen_schedule' => $data['gen_schedule'],
-            'data_insert' => $rs,
         );
-
-
 
         $this->m_template->set_Debug($data_debug);
         $this->m_template->set_Title("ตารางเวลาเดินรถ");
@@ -72,17 +66,13 @@ class schedule extends CI_Controller {
             'route_detail' => $this->m_route->get_route_detail($rcode, $vtid),
         );
 
-        $data['rs_gen_schedule'] = $this->m_schedule->run_schedule();
-
-        $data['data_insert'] = $this->m_schedule->insert_schedule($this->m_schedule->run_schedule());
-
-
-        $data['schedule'] = $this->m_schedule->get_schedule($this->m_datetime->getDateToday());
+        $data['schedules'] = $this->m_schedule->get_schedule($this->m_datetime->getDateToday(), $rcode, $vtid);
 
         $data['vehicles_type'] = $this->m_vehicle->get_vehicle_types();
         $data['route'] = $this->m_route->get_route();
         $data['stations'] = $this->m_station->get_stations($rcode, $vtid);
         $data['schedule_master'] = $this->m_route->get_schedule_manual();
+
 
         $data_debug = array(
 //            'vehicles_type' => $data['vehicles_type'],
@@ -91,9 +81,8 @@ class schedule extends CI_Controller {
 //            'stations' => $data['stations'],
 //            'form_search' => $data['form_search'],
 //            'stations' => $data['stations']
-//            'schedule' => $data['schedule'],
-//            'rs_gen_schedule' => $data['rs_gen_schedule'],
-//            'data_insert' => $data['data_insert'],
+//            'schedules' => $data['schedules'],
+            'post' => $this->input->post(),
         );
 
 
@@ -101,6 +90,79 @@ class schedule extends CI_Controller {
         $this->m_template->set_Title("ตารางเวลาเดิน $route_name");
         $this->m_template->set_Content('schedule/view_schedule', $data);
         $this->m_template->showTemplate();
+    }
+
+    public function add($rcode, $vtid, $rid) {
+
+        $route_detail = $this->m_route->get_route($rcode, $vtid, $rid);
+        $vt_name = $route_detail[0]['VTDescription'];
+        $source = $route_detail[0]['RSource'];
+        $desination = $route_detail[0]['RDestination'];
+
+        $route_name = $vt_name . ' เส้นทาง ' . $route_detail[0]['RCode'] . ' ' . ' ' . $source . ' - ' . $desination;
+
+        $data = array(
+//            'form_search' => $this->m_schedule->set_form_search(),
+            'page_title' => 'เพิ่มเที่ยวรถ',
+            'page_title_small' => ' ' . $route_name,
+        );
+
+        $form_data = $rs = array();
+        if ($this->m_schedule->validation_form_add() && $this->form_validation->run() == TRUE) {
+            $form_data = $this->m_schedule->get_post_form_add();
+//            $rs = $this->m_seller->insert_seller($form_data);
+//
+//            $alert['alert_message'] = "เพิ่มข้อมูลสำเร็จ";
+//            $alert['alert_mode'] = "success";
+//            $this->session->set_flashdata('alert', $alert);
+//
+//            redirect('hr/seller/');
+        }
+
+        $data['form'] = $this->m_schedule->set_form_add($rcode, $vtid, $rid);
+
+        $data_debug = array(
+//            'vehicles_type' => $data['vehicles_type'],
+//            'route' => $data['route'],
+//            'route_detail' => $data['route_detail'],
+//            'stations' => $data['stations'],
+//            'form_search' => $data['form_search'],
+//            'stations' => $data['stations']
+//            'schedules' => $data['schedules'],
+//            'post' => $this->input->post(),
+            'form_data' => $form_data,
+        );
+
+
+
+        $this->m_template->set_Debug($data_debug);
+        $this->m_template->set_Title("ตารางเวลาเดิน $route_name");
+        $this->m_template->set_Content('schedule/frm_schedule', $data);
+        $this->m_template->showTemplate();
+    }
+
+    //    ตรวจสอบค่าใน dropdown
+    public function check_dropdown($str) {
+        if ($str === '0') {
+            $this->form_validation->set_message('check_dropdown', 'เลือก %s');
+            return FALSE;
+        } else {
+            return TRUE;
+        }
+    }
+    public function check_schedule($str) {
+        $con = array(
+            'RID' => $this->input->post('RID'),
+            'TimeDepart' => $this->input->post('TimeDepart'),
+            'Date' => $this->input->post('Date'),
+        );
+        $query = $this->db->get_where('t_schedules_day', $con);
+        if ($query->num_row() > 0) {
+            $this->form_validation->set_message('check_schedule', 'เวลา %s ถูกใช้งาน ');
+            return FALSE;
+        } else {
+            return TRUE;
+        }
     }
 
 }

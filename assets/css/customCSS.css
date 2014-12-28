@@ -27,6 +27,59 @@ td{
     padding-left: 30px;
 }
 
+/*clock live*/
+
+
+    .clock {
+        width:100%; 
+        /*margin: 2% auto;*/  
+        /*padding: 3% auto;*/
+        /*border:1px solid #333;*/ 
+        color:#333333; 
+
+    }
+    #Date { 
+        font-family:'BebasNeueRegular', Arial, Helvetica, sans-serif; 
+         font-size:1.2em; 
+        text-align:center; 
+        text-shadow:0 0 5px #cccccc;
+
+    }
+    .clock ul {
+        width:100%; 
+        margin:0 auto; 
+        padding:0px; 
+        list-style:none; 
+        text-align:center; 
+    }
+    .clock ul li { 
+        display:inline; 
+        font-size:3em; 
+        text-align:center; 
+        font-family:'BebasNeueRegular', Arial, Helvetica, sans-serif; 
+        text-shadow:0 0 5px #86f890 ;
+
+    }
+
+    #point { 
+        position:relative; 
+        -moz-animation:mymove 1s ease infinite; 
+        -webkit-animation:mymove 1s ease infinite; 
+        padding-left:10px; padding-right:10px; }
+
+    @-webkit-keyframes mymove 
+    {
+        0% {opacity:1.0; text-shadow:0 0 20px #00c6ff;}
+        50% {opacity:0; text-shadow:none; }
+        100% {opacity:1.0; text-shadow:0 0 20px #00c6ff; }	
+    }
+    @-moz-keyframes mymove 
+    {
+        0% {opacity:1.0; text-shadow:0 0 20px #00c6ff;}
+        50% {opacity:0; text-shadow:none; }
+        100% {opacity:1.0; text-shadow:0 0 20px #00c6ff; }	
+    }
+
 /*form styles*/
 
 /*headings*/

@@ -6,11 +6,24 @@ if (!defined('BASEPATH')) {
 
 class m_schedule extends CI_Model {
 
-    public function get_schedule($date = NULL, $rid = NULL) {
+    public function get_schedule($date = NULL, $rcode = NULL, $vtid = NULL, $rid = NULL) {
+        $this->db->join('t_routes', ' t_schedules_day.RID = t_routes.RID ', 'left');
+        $this->db->join('vehicles_has_schedules', ' vehicles_has_schedules.TSID = t_schedules_day.TSID', 'left');
+        $this->db->join('vehicles', ' vehicles.VID = vehicles_has_schedules.VID', 'left');
 
         if ($date != NULL) {
             $this->db->where('Date', $date);
         }
+        if ($rcode != NULL) {
+            $this->db->where('t_routes.RCode', $rcode);
+        }
+        if ($vtid != NULL) {
+            $this->db->where('t_routes.VTID', $vtid);
+        }
+        if ($rid != NULL) {
+            $this->db->where('t_schedules_day.RID', $rid);
+        }
+        $this->db->order_by('SeqNo', 'asc');
         $query_schedule = $this->db->get("t_schedules_day");
         return $query_schedule->result_array();
     }
@@ -46,93 +59,37 @@ class m_schedule extends CI_Model {
         return $query_schedule->result_array();
     }
 
-    public function run_schedule() {
-        $rs = array();
-        $route = $this->get_route_detail();
-        $n = 0;
-        foreach ($route as $r) {
-            $rid = $r['RID'];
-            $vt_name = $r['VTDescription'];
-            $schedule_type = $r['ScheduleType'];
-            $rcode = $r['RCode'];
-            $source = $r['RSource'];
-            $destination = $r['RDestination'];
-            $start_point = $r['StartPoint'];
-            $time_duration = $r['Time'];
-
-            if ($schedule_type == '0') {
-                $start_time = $r['StartTime'];
-                $interval = $r['IntervalEachAround'];
-                $around = $r['AroundNumber'];
-                for ($i = 0; $i < (int) $around; $i++) {
-                    $s_time = strtotime($start_time) + $interval * 60 * $i;
-                    $e_time = strtotime("+$time_duration minutes", $s_time);
-                    $tsid = $this->gen_TSID($rid, $i + 1);
-                    if ($tsid != '') {
-                        $temp_schedual = array(
-                            'TSID' => $tsid,
-                            'RID' => $rid,
-                            'SeqNo' => $i + 1,
-                            'TimeDepart' => date('H:i:s', $s_time),
-                            'TimeArrive' => date('H:i:s', $e_time),
-                            'Date' => $this->m_datetime->getDateToday(),
-                            'ScheduleNote' => " $vt_name เส้นทาง $rcode  $source - $destination (ไป $destination)",
-                            'CreateDate' => $this->m_datetime->getDatetimeNow(),
-                        );
-                        $rs[$n] = $temp_schedual;
-                        $n++;
-                    }
-                }
-            } else {
-                $schedule_manual = $this->get_schedule_master();
-
-                foreach ($schedule_manual as $sm) {
-                    if ($rid == $sm['RID']) {
-                        $seq_no = $sm['SeqNo'];
-                        $s_time = strtotime($sm['Time']);
-                        $e_time = strtotime("+$time_duration minutes", $s_time);
-                        $tsid = $this->gen_TSID($rid, $seq_no);
-                        if ($tsid != '') {
-                            $temp_schedual = array(
-                                'TSID' => $tsid,
-                                'RID' => $rid,
-                                'SeqNo' => $seq_no,
-                                'TimeDepart' => date('H:i:s', $s_time),
-                                'TimeArrive' => date('H:i:s', $e_time),
-                                'Date' => $this->m_datetime->getDateToday(),
-                                'ScheduleNote' => " $vt_name เส้นทาง $rcode  $source - $destination (ไป $destination)",
-                                'CreateDate' => $this->m_datetime->getDatetimeNow(),
-                            );
-                            $rs[$n] = $temp_schedual;
-                            $n++;
-                        }
-                    }
-                }
-            }
+    public function get_vehicle($rcode = NULL, $vtid = NULL) {
+        $this->db->join('t_routes_has_vehicles', 'vehicles.VID = t_routes_has_vehicles.VID', 'left');
+        if ($rcode != NULL) {
+            $this->db->where('t_routes_has_vehicles.RCode', $rcode);
         }
-        return $rs;
+        if ($vtid != NULL) {
+            $this->db->where('vehicles.VTID', $vtid);
+        }
+        $query = $this->db->get('vehicles');
+        return $query->result_array();
     }
 
-    public function gen_TSID($rid, $around) {
-        $tsid = '';
-
-        $this->db->where("RID", $rid);
-        $this->db->where("SeqNo", $around);
-        $this->db->where('Date', $this->m_datetime->getDateToday());
-        $query = $this->db->get('t_schedules_day');
-        $schedual = $query->result_array();
-
-        if (count($schedual) <= 0) {
-//        วันที่
-            $date = new DateTime();
-            $tsid .=$date->format("Ymd");
-//        เส้นทาง
-            $tsid .= $rid;
-//        เที่ยวที่
-            $tsid .=str_pad($around, 3, '0', STR_PAD_LEFT);
+    public function get_stations($rcode = null, $vtid = null, $sid = NULL, $seq = NULL) {
+        if ($rcode != NULL) {
+            $this->db->where('RCode', $rcode);
         }
+        if ($vtid != NULL) {
+            $this->db->where('VTID', $vtid);
+        }
+        if ($sid != NULL) {
+            $this->db->where('SID', $sid);
+        }
+        if ($seq != NULL) {
+            $this->db->where('Seq', $seq);
+        }
+        $this->db->order_by('Seq');
+        $query = $this->db->get('t_stations');
 
-        return $tsid;
+        $rs = $query->result_array();
+
+        return $rs;
     }
 
     public function get_schedule_master($rid = NULL, $smid = NULL) {
@@ -157,9 +114,13 @@ class m_schedule extends CI_Model {
         if ($vtid != NULL) {
             $this->db->where('t_routes.VTID', $vtid);
         }
-        $this->db->group_by(array('RCode', 't_routes.VTID'));
-        $this->db->where('StartPoint', 'S');
-//        $this->db->order_by('StartPoint');
+        if ($rid != NULL) {
+            
+        } else {
+            $this->db->group_by(array('RCode', 't_routes.VTID'));
+            $this->db->where('StartPoint', 'S');
+        }
+
         $query = $this->db->get('t_routes');
         return $query->result_array();
     }
@@ -177,7 +138,7 @@ class m_schedule extends CI_Model {
         return $query->result_array();
     }
 
-    function set_form_search($rcode = NULL, $vtid = NULL) {
+    public function set_form_search($rcode = NULL, $vtid = NULL) {
         $i_RCode = array(
             'name' => 'RCode',
             'value' => set_value('RID'),
@@ -214,6 +175,78 @@ class m_schedule extends CI_Model {
         return $form_search_route;
     }
 
+    public function set_form_add($rcode, $vtid, $rid) {
+
+        $route_detail = $this->m_route->get_route($rcode, $vtid, $rid);
+
+        $vt_name = $route_detail[0]['VTDescription'];
+        $source = $route_detail[0]['RSource'];
+        $desination = $route_detail[0]['RDestination'];
+        $route_name = $vt_name . ' เส้นทาง ' . $route_detail[0]['RCode'] . ' ' . ' ' . $source . ' - ' . $desination;
+
+        $i_route_name = array(
+            'type' => 'text',
+            'name' => 'route_name',
+            'value' => $route_name,
+            'placeholder' => 'ชื่อเส้นทาง',
+            'class' => 'form-control text-center'
+        );
+
+        $i_date_thai = array(
+            'type' => 'type',
+            'name' => 'date_thai',
+            'value' => $this->m_datetime->getDateThaiString(),
+            'placeholder' => 'วันที่',
+            'class' => 'form-control text-center'
+        );
+
+        $i_RID = array(
+            'type' => 'hidden',
+            'name' => 'RID',
+            'value' => $rid,
+            'placeholder' => 'รหัสเส้นทาง',
+            'class' => 'form-control'
+        );
+
+        $i_Date = array(
+            'type' => 'hidden',
+            'name' => 'Date',
+            'value' => $this->m_datetime->getDateToday(),
+            'placeholder' => 'วันที่',
+            'class' => 'form-control'
+        );
+
+        $i_ScheduleNote = array(
+            'type' => 'text',
+            'name' => 'ScheduleNote',
+            'rows' => '3',
+            'placeholder' => 'หมายเหตุ',
+            'class' => 'form-control'
+        );
+
+        $time = 30 * 60; //30 minutes
+        $time_start = ceil((time() + $time) / 300) * 300;
+        $temp = 0;
+        $i_TimeDepart[0] = "เลือกเวลา";
+        for ($n = 1; $n < 30; $n++) {
+            $t = date('H:i', strtotime("+$temp minutes", $time_start));
+            $i_TimeDepart[$t] = $t;
+            $temp +=5;
+        }
+        $dropdown = 'class="selecter_3" data-selecter-options = \'{"cover":"true"}\' ';
+        $form_search_add = array(
+            'form' => form_open("schedule/add/$rcode/$vtid/$rid", array('id' => 'form_add_schedule')),
+            'route_name' => form_input($i_route_name),
+            'RID' => form_input($i_RID),
+            'TimeDepart' => form_dropdown('TimeDepart', $i_TimeDepart, set_value('TimeDepart'), $dropdown),
+            'date_thai' => form_input($i_date_thai),
+            'Date' => form_input($i_Date),
+            'ScheduleNote' => form_textarea($i_ScheduleNote),
+        );
+
+        return $form_search_add;
+    }
+
     public function get_post_form_search() {
         $form_data = array(
             'RCode' => $this->input->post('RCode'),
@@ -224,11 +257,28 @@ class m_schedule extends CI_Model {
         return $form_data;
     }
 
+    public function get_post_form_add() {
+        $form_data = array(
+            'RID' => $this->input->post('RID'),
+            'TimeDepart' => $this->input->post('TimeDepart'),
+            'Date' => $this->input->post('Date'),
+            'ScheduleNote' => $this->input->post('ScheduleNote'),
+        );
+        return $form_data;
+    }
+
     public function validation_form_search() {
         $this->form_validation->set_rules('RCode', 'รหัสเส้นทาง', 'trim|xss_clean');
         $this->form_validation->set_rules('VTID', 'ประเภทรถ', 'trim|xss_clean');
         $this->form_validation->set_rules('RSource', 'ต้นทาง', 'trim|xss_clean');
         $this->form_validation->set_rules('RDestination', 'ปลายทาง', 'trim|xss_clean');
+        return TRUE;
+    }
+
+    public function validation_form_add() {
+        $this->form_validation->set_rules('RID', 'รหัสเส้นทาง', 'trim|xss_clean');
+        $this->form_validation->set_rules('TimeDepart', 'เวลา', 'trim|xss_clean|callback_check_dropdown');
+        return TRUE;
     }
 
     public function get_vehicle_types($id = NULL) {

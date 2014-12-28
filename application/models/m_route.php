@@ -160,7 +160,7 @@ class m_route extends CI_Model {
         }
     }
 
-    public function get_route($rcode = NULL, $vtid = NULL) {
+    public function get_route($rcode = NULL, $vtid = NULL, $rid = NULL) {
 
         $this->db->join('vehicles_type', 'vehicles_type.VTID = t_routes.VTID');
 
@@ -171,9 +171,13 @@ class m_route extends CI_Model {
         if ($vtid != NULL) {
             $this->db->where('t_routes.VTID', $vtid);
         }
-        $this->db->group_by(array('RCode', 't_routes.VTID'));
-        $this->db->where('StartPoint', 'S');
-//        $this->db->order_by('StartPoint');
+        if ($rid != NULL) {
+            $this->db->where('t_routes.RID', $rid);
+        } else {
+            $this->db->group_by(array('RCode', 't_routes.VTID'));
+            $this->db->where('StartPoint', 'S');
+        }
+
         $query = $this->db->get('t_routes');
         return $query->result_array();
     }
@@ -192,13 +196,16 @@ class m_route extends CI_Model {
         return $query->result_array();
     }
 
-    public function get_route_detail($rcode = NULL, $vtid = NULL) {
+    public function get_route_detail($rcode = NULL, $vtid = NULL, $rid = NULL) {
         $this->db->join('vehicles_type', 'vehicles_type.VTID = t_routes.VTID');
         if ($rcode != NULL) {
             $this->db->where('RCode', $rcode);
         }
         if ($vtid != NULL) {
             $this->db->where('t_routes.VTID', $vtid);
+        }
+        if ($rid != NULL) {
+            $this->db->where('t_routes.RID', $rid);
         }
 
         $this->db->order_by('StartPoint', 'DESC');
@@ -207,7 +214,7 @@ class m_route extends CI_Model {
     }
 
     public function get_vehicle_types($id = NULL) {
-        if ($id != NULL){
+        if ($id != NULL) {
             $this->db->where('VTID', $id);
         }
         $temp = $this->db->get('vehicles_type');
