@@ -24,7 +24,7 @@ class candidate extends CI_Controller {
             $list = $this->m_candidate->search($input_data);
             $input_data['list'] = $list;
             $data['list'] = $list;
-            $this->m_template->set_Debug($input_data);
+            //$this->m_template->set_Debug($input_data);
         }
 
         $data['form_open'] = form_open('candidate');

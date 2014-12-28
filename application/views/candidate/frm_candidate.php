@@ -86,6 +86,8 @@
                             echo 'ระบบรับสมัครพนักงานใหม่';
                         elseif ($mode == 'edit')
                             echo 'ระบบรับสมัครพนักงานใหม่(แก้ไข)';
+                        elseif ($mode == 'detail')
+                            echo 'ระบบรับสมัครพนักงานใหม่(ตรวจข้อมูล)';
                         ?>
                     </span>
                     </font>
@@ -624,10 +626,12 @@
                                 ?>
                             </tbody>
                         </table>
-                        <div class="col-md-12 text-center">
-                            <button class="btn btn-default btn-sm" type="button" id="btn_expreience">เพิ่มประวัติการทำงาน</button>
-                            <button class="btn btn-danger btn-sm" type="button" id="btnDel_expreience">ลบประวัติการทำงาน</button>
-                        </div>
+                        <?php if ($mode != 'detail') { ?>
+                            <div class="col-md-12 text-center">
+                                <button class="btn btn-default btn-sm" type="button" id="btn_expreience">เพิ่มประวัติการทำงาน</button>
+                                <button class="btn btn-danger btn-sm" type="button" id="btnDel_expreience">ลบประวัติการทำงาน</button>
+                            </div>
+                        <?php } ?>
                     </div>
                 </div>
             </div>
@@ -672,21 +676,33 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-offset-2 col-md-8">
-                                <div class="checkbox">
-                                    <label>
-                                        <input type="checkbox" id="check_agree">                                                
-                                        <p> ข้าพเจ้าขอรับรองว่า ข้อความดังกล่าวทั้งหมดในใบสมัครนี้เป็นความจริงทุกประการ หลังจากบริษัท สหมิตรภาพ(1992) จำกัด 
-                                            จ้างเข้ามาทำงานแล้วปรากฎว่า ข้อความในใบสมัครงานเอกสารที่นำมาเเสดง หรือรายละเอียดที่ให้ไวไม่เป็นความจริง 
-                                            บริษัทฯ มีสิทธิ์ที่จะเลิกจ้างข้าพเจ้าโดยไม่ต้องจ่ายเงินค้าชดเชยหรือค่าเสียหายใดๆ ทั้งสิ้น
-                                        </p>                                                
-                                    </label>
-                                </div>
-                            </div>                             
+                            <?php if ($mode != 'detail') { ?>
+                                <div class="col-md-offset-2 col-md-8">
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" id="check_agree">                                                
+                                            <p> ข้าพเจ้าขอรับรองว่า ข้อความดังกล่าวทั้งหมดในใบสมัครนี้เป็นความจริงทุกประการ หลังจากบริษัท สหมิตรภาพ(1992) จำกัด 
+                                                จ้างเข้ามาทำงานแล้วปรากฎว่า ข้อความในใบสมัครงานเอกสารที่นำมาเเสดง หรือรายละเอียดที่ให้ไวไม่เป็นความจริง 
+                                                บริษัทฯ มีสิทธิ์ที่จะเลิกจ้างข้าพเจ้าโดยไม่ต้องจ่ายเงินค้าชดเชยหรือค่าเสียหายใดๆ ทั้งสิ้น
+                                            </p>                                                
+                                        </label>
+                                    </div>
+                                </div>     
+                            <?php } ?>
                             <div class="col-md-12 text-center">
-                                <button id="btn_prepare_save" class="btn btn-primary" type="button">บันทึก</button>
-                                <button class="btn btn-danger" type="reset">เริ่มใหม่</button>
-                            </div>                          
+                                <?php
+                                if ($mode != 'detail')
+                                    echo '<button id="btn_prepare_save" class="btn btn-primary" type="button">บันทึก</button>';
+
+                                if ($mode == 'add') {
+                                    echo '<button class="btn btn-danger" type="reset">เริ่มใหม่</button>';
+                                } elseif ($mode == 'edit' || $mode == 'detail') {
+                                    echo anchor('candidate', '<span class="btn btn-danger">ย้อนกลับ</span>');
+                                }
+                                ?>
+
+                            </div> 
+
                         </div>
                     </div>
                 </div>

@@ -8,6 +8,12 @@ class m_candidate extends CI_Model {
     function search($data) {
         $this->db->from('candidate AS ca');
         $this->db->join('employee_positions AS ep', 'ep.PID = ca.PID');
+        if ($data['PID'] != 0)
+            $this->db->where('ca.PID', $data['PID']);
+        if ($data['FirstName'] != NULL)
+            $this->db->like('ca.FirstName', $data['FirstName']);
+        if ($data['LastName'] != NULL)
+            $this->db->like('ca.LastName', $data['LastName']);
         $query = $this->db->get();
         return $query->result_array();
     }
