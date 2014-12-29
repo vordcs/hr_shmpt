@@ -19,7 +19,7 @@ class m_schedule_vehicle extends CI_Model {
                     $this->db->insert('t_schedules_day', $data[$i]);
                     $tsid = $data[$i]['TSID'];
                     $rs[$i] = "Date $date INSERT -> TSID = " . $tsid;
-                }  else {
+                } else {
                     $rs[$i] = "Date $date UPDATE -> TSID = " . $tsid;
                 }
             }
@@ -43,9 +43,9 @@ class m_schedule_vehicle extends CI_Model {
         $rs = array();
         $route = $this->get_route_detail();
         $n = 0;
-        $x=0;
+        $x = 0;
         foreach ($route as $r) {
-            
+
             $rid = $r['RID'];
             $vt_name = $r['VTDescription'];
             $schedule_type = $r['ScheduleType'];
@@ -54,8 +54,8 @@ class m_schedule_vehicle extends CI_Model {
             $destination = $r['RDestination'];
             $start_point = $r['StartPoint'];
             $time_duration = $r['Time'];
-            
-             $rs['TEST'][$x] = $schedule_type;
+
+            $rs['TEST'][$x] = $schedule_type;
             $x++;
             if ($schedule_type == '0') {
                 $start_time = $r['StartTime'];
@@ -68,7 +68,7 @@ class m_schedule_vehicle extends CI_Model {
                     if ($tsid != '') {
                         $temp_schedual = array(
                             'TSID' => $tsid,
-                            'RID' => $rid,                            
+                            'RID' => $rid,
                             'TimeDepart' => date('H:i:s', $s_time),
                             'TimeArrive' => date('H:i:s', $e_time),
                             'Date' => $this->m_datetime->getDateToday(),
@@ -81,7 +81,7 @@ class m_schedule_vehicle extends CI_Model {
                 }
             } else {
                 $schedule_manual = $this->get_schedule_master();
-                
+
                 foreach ($schedule_manual as $sm) {
                     if ($rid == $sm['RID']) {
                         $seq_no = $sm['SeqNo'];
@@ -91,7 +91,7 @@ class m_schedule_vehicle extends CI_Model {
                         if ($tsid != '') {
                             $temp_schedual = array(
                                 'TSID' => $tsid,
-                                'RID' => $rid,                               
+                                'RID' => $rid,
                                 'TimeDepart' => date('H:i:s', $s_time),
                                 'TimeArrive' => date('H:i:s', $e_time),
                                 'Date' => $this->m_datetime->getDateToday(),
@@ -108,7 +108,7 @@ class m_schedule_vehicle extends CI_Model {
         return $rs;
     }
 
-    public function vehicles_initicial_station() {
+    public function set_vehicles_initicial_station() {
         $routes = $this->get_route();
         foreach ($routes as $route) {
             $i = 0;
@@ -156,7 +156,7 @@ class m_schedule_vehicle extends CI_Model {
         return $query->result_array();
     }
 
-    public function set_vehicles_to_schedule() {
+    public function run_vehicles_to_schedule() {
         $date = $this->m_datetime->getDateToday();
         $rs = array();
         $routes = $this->get_route();
@@ -204,9 +204,7 @@ class m_schedule_vehicle extends CI_Model {
             $nun_schedule_s = count($schedule_s);
             $nun_schedule_d = count($schedule_d);
 
-//            $rs[$rcode]['S'] = $schedule_s;//"$date, $rid_s" ;
-//            $rs[$rcode]['D'] = $schedule_d ;//"$date, $rid_d";
-//            $rs['schedule_s']=$schedule_s;
+
             //เปรียบเทียบเอาค่ามากที่สุด 
             $max_num_schedule = 0;
             if ($nun_schedule_s > $nun_schedule_d) {
@@ -232,7 +230,7 @@ class m_schedule_vehicle extends CI_Model {
                     $data_vehicles_has_schedules = array(
                         'TSID' => $tsid_s,
                         'VID' => $vid,
-                        'RID' => $rid_s,
+//                        'RID' => $rid_s,
                     );
                     $this->db->insert('vehicles_has_schedules', $data_vehicles_has_schedules);
 
@@ -256,7 +254,7 @@ class m_schedule_vehicle extends CI_Model {
                     $data_vehicles_has_schedules = array(
                         'TSID' => $tsid_d,
                         'VID' => $vid,
-                        'RID' => $rid_d,
+//                        'RID' => $rid_d,
                     );
                     $this->db->insert('vehicles_has_schedules', $data_vehicles_has_schedules);
 
@@ -315,7 +313,7 @@ class m_schedule_vehicle extends CI_Model {
             $this->db->where('vehicles_current_stations.CurrentStatonSeq', $seq);
         }
 
-        $this->db->order_by('CurrentTime,CurrentDate,vehicles.VID', 'asc');
+        $this->db->order_by('CurrentTime,CurrentDate,vehicles.VID', 'ASC');
         $query = $this->db->get('vehicles_current_stations');
 
         if ($query->num_rows() > 0) {
@@ -337,7 +335,7 @@ class m_schedule_vehicle extends CI_Model {
         if ($station_id != NULL) {
             $this->db->where('vehicles_current_stations.CurrentStationID', $station_id);
         }
-        $this->db->order_by('CurrentTime,CurrentDate', 'desc');
+        $this->db->order_by('CurrentTime,CurrentDate', 'ace');
         $query = $this->db->get('vehicles_current_stations');
 
         if ($query->num_rows() > 0) {
@@ -454,6 +452,34 @@ class m_schedule_vehicle extends CI_Model {
         $query = $this->db->get('t_schedules_manual');
 
         return $query->result_array();
+    }
+
+    public function vehicle_current_stations($rcode = NULL, $vtid = NULL, $station_id = NULL, $seq = NULL) {
+        $this->db->join('vehicles', 'vehicles_current_stations.VID = vehicles.VID', 'right');
+        $this->db->join('t_routes_has_vehicles', 'vehicles.VID = t_routes_has_vehicles.VID', 'left');
+
+        if ($rcode != NULL) {
+            $this->db->where('t_routes_has_vehicles.RCode', $rcode);
+        }
+        if ($vtid != NULL) {
+            $this->db->where('vehicles.VTID', $vtid);
+        }
+        if ($station_id != NULL) {
+            $this->db->where('vehicles_current_stations.CurrentStationID', $station_id);
+        }
+
+        if ($seq != NULL) {
+            $this->db->where('vehicles_current_stations.CurrentStatonSeq', $seq);
+        }
+
+       $this->db->order_by('CurrentTime,CurrentDate,vehicles.VID', 'ASC');
+        $query = $this->db->get('vehicles_current_stations');
+
+        if ($query->num_rows() > 0) {
+            $row = $query->row_array();
+            return $query->result_array();
+        }
+        return FALSE;
     }
 
 }

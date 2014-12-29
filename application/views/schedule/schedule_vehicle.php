@@ -11,6 +11,64 @@
             </div>
         </div>
     </div>
+    <div class="row">
+
+        <legend>ตำแหน่งปัจจุบันของรถ</legend>
+        <?php
+        foreach ($routes as $r) {
+            $vtid = $r['VTID'];
+            $vt_name = $r['VTDescription'];
+            $rcode = $r['RCode'];
+            $source = $r['RSource'];
+            $destination = $r['RDestination'];
+            $schedule_type = $r["ScheduleType"];
+            $route_name = "$vt_name " . $rcode . ' ' . ' ' . $source . ' - ' . $destination;
+            ?>
+            <div class="col-md-12">
+                <p><?= $route_name ?></p>
+
+                <table class="table table-bordered table-hover">  
+                    <thead>
+                        <tr>
+                            <th>เบอร์รถ</th>
+                            <th>เวลามาถึง</th>
+                            <th>สถานี</th>
+                            <th>รหัสสถานี</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        if (count($vehicles) > 0) {
+                            foreach ($vehicles as $vehicle) {
+                                $vcode = $vehicle['VCode'];
+                                $in_time = $vehicle['CurrentTime'];
+                                $curent_station_id = $vehicle['CurrentStationID'];
+                                $current_staton_seq = $vehicle['CurrentStatonSeq'];
+                                $curent_station_name = '';
+                                foreach ($stations as $station) {
+                                    $station_name = $station['StationName'];
+                                    if ($rcode == $station['RCode'] && $curent_station_id == $station['SID']) {
+                                        $curent_station_name = $station_name;
+                                    }
+                                }
+                                if ($rcode == $vehicle['RCode'] && $vtid == $vehicle['VTID']) {
+                                    ?>
+                                    <tr>
+                                        <td class="text-center"><?= $vcode ?></td>
+                                        <td class="text-center"><?= $in_time ?></td>
+                                        <td class="text-center"><?= $curent_station_name ?></td>
+                                        <td class="text-center"><?= $curent_station_id ?></td>
+                                    </tr>
+                                    <?php
+                                }
+                            }
+                        }
+                        ?>                   
+                    </tbody>
+                </table>
+            </div>
+        <?php } ?>
+    </div>
     <div class="row">  
         <div class="col-md-12">
             <?php
@@ -62,7 +120,7 @@
                                             $last_seq_station = $s['Seq'];
                                             $pre_string = "";
                                             if ($s['Seq'] == $num_station) {
-                                                $pre_string = "ออกจากสถานีขนส่ง "; //$pre_string, $station_name;
+                                                $pre_string = "ออกจาก  "; //$pre_string, $station_name;
                                             }
                                             $width = 80 / $num_sale_station;
                                             echo "<th style=\"width: $width%\">$pre_string $station_name</th>";
@@ -101,13 +159,13 @@
                                                 }
                                                 $time_depart = date('H:i', $time_depart);
                                                 $now = date('H:i');
-                                                $class='';
+                                                $class = '';
                                                 if ($now > $time_depart) {
-                                                    $class ='success';
+//                                                    $class = 'success';
                                                 }
                                                 echo "";
                                                 ?>
-                                                <td class="text-center <?=$class?>"><?= $time_depart ?></td>   
+                                                <td class="text-center <?= $class ?>"><?= $time_depart ?></td>   
                                                 <?php
                                             }
                                         }

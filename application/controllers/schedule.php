@@ -150,15 +150,14 @@ class schedule extends CI_Controller {
             return TRUE;
         }
     }
+
     public function check_schedule($str) {
-        $con = array(
-            'RID' => $this->input->post('RID'),
-            'TimeDepart' => $this->input->post('TimeDepart'),
-            'Date' => $this->input->post('Date'),
-        );
-        $query = $this->db->get_where('t_schedules_day', $con);
-        if ($query->num_row() > 0) {
-            $this->form_validation->set_message('check_schedule', 'เวลา %s ถูกใช้งาน ');
+        $rid = $this->input->post('RID');
+        $time_depart = $str;//$this->input->post('TimeDepart');
+        $date = $this->input->post('Date');
+
+        if ($this->m_schedule->IsExitSchedule($date, $rid, $time_depart)) {
+            $this->form_validation->set_message('check_schedule', '%s ถูกใช้งานแล้ว');
             return FALSE;
         } else {
             return TRUE;

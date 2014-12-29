@@ -28,6 +28,14 @@
 </div>
 <div class="container">
     <div class="row">
+        <?php if (validation_errors() != NULL) { ?>
+        <div class="row animated pulse">
+            <div class="alert alert-danger alert-dismissable">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                <h4>ผิดพลาด ! <small> ข้อมูลเวลา </small></h4>
+            </div>
+        </div>
+    <?php } ?>
         <div class="col-md-8 col-md-offset-2">
             <div class="col-md-12">
                 <div class="clock" id="clock">
@@ -56,8 +64,9 @@
             <div class="col-md-6">
                 <div class="form-group <?= (form_error('TimeDepart')) ? 'has-error' : '' ?>">  
                     <label for="" class="control-label">เวลา</label>                        
-                    <?= $form['TimeDepart'] ?>
-                </div>  
+                    <?= $form['TimeDepart'] ?> 
+                    <?php echo form_error('TimeDepart', '<font color="error">', '</font>'); ?> 
+                </div>                   
             </div>
             <div class="col-md-6">
                 <div class="form-group <?= (form_error('Date')) ? 'has-error' : '' ?>">    
