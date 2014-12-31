@@ -104,7 +104,9 @@ class schedule extends CI_Controller {
         $data = array(
 //            'form_search' => $this->m_schedule->set_form_search(),
             'page_title' => 'เพิ่มเที่ยวรถ',
-            'page_title_small' => ' ' . $route_name,
+            'page_title_small' => ' ' . $vt_name,
+            'previous_page' => "schedule/view/$rcode/$vtid/$rid",
+            'next_page' => "schedule/view/$rcode/$vtid/$rid",
         );
 
         $form_data = $rs = array();
@@ -120,7 +122,7 @@ class schedule extends CI_Controller {
         }
 
         $data['form'] = $this->m_schedule->set_form_add($rcode, $vtid, $rid);
-
+        $get_vehicle_current_stations = $this->m_schedule->get_vehicle_current_stations($rcode, $vtid,1);
         $data_debug = array(
 //            'vehicles_type' => $data['vehicles_type'],
 //            'route' => $data['route'],
@@ -131,6 +133,7 @@ class schedule extends CI_Controller {
 //            'schedules' => $data['schedules'],
 //            'post' => $this->input->post(),
             'form_data' => $form_data,
+//            'get_vehicle_current_stations' => $get_vehicle_current_stations,
         );
 
 
@@ -153,7 +156,7 @@ class schedule extends CI_Controller {
 
     public function check_schedule($str) {
         $rid = $this->input->post('RID');
-        $time_depart = $str;//$this->input->post('TimeDepart');
+        $time_depart = $str; //$this->input->post('TimeDepart');
         $date = $this->input->post('Date');
 
         if ($this->m_schedule->IsExitSchedule($date, $rid, $time_depart)) {

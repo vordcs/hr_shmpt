@@ -108,7 +108,7 @@ class m_schedule extends CI_Model {
         return $query->result_array();
     }
 
-    public function get_route($rcode = NULL, $vtid = NULL,$rid=NULL) {
+    public function get_route($rcode = NULL, $vtid = NULL, $rid = NULL) {
 
         $this->db->join('vehicles_type', 'vehicles_type.VTID = t_routes.VTID');
 
@@ -189,6 +189,10 @@ class m_schedule extends CI_Model {
         $desination = $route_detail[0]['RDestination'];
         $route_name = $vt_name . ' เส้นทาง ' . $route_detail[0]['RCode'] . ' ' . ' ' . $source . ' - ' . $desination;
 
+        $vid = '';
+        $vcode = '';
+
+
         $i_route_name = array(
             'type' => 'text',
             'name' => 'route_name',
@@ -213,6 +217,20 @@ class m_schedule extends CI_Model {
             'class' => 'form-control'
         );
 
+        $i_VID = array(
+            'type' => 'hidden',
+            'name' => 'VID',
+            'value' => $vid,
+            'placeholder' => 'รหัสรถ',
+            'class' => 'form-control'
+        );
+        $i_VCode = array(
+            'type' => 'text',
+            'name' => 'VCode',
+            'value' => $vcode,
+            'placeholder' => 'เบอร์รถ',
+            'class' => 'form-control'
+        );
         $i_Date = array(
             'type' => 'hidden',
             'name' => 'Date',
@@ -243,6 +261,8 @@ class m_schedule extends CI_Model {
             'form' => form_open("schedule/add/$rcode/$vtid/$rid", array('id' => 'form_add_schedule')),
             'route_name' => form_input($i_route_name),
             'RID' => form_input($i_RID),
+            'VID' => form_input($i_VID),
+            'VCode' => form_input($i_VCode),
             'TimeDepart' => form_dropdown('TimeDepart', $i_TimeDepart, set_value('TimeDepart'), $dropdown),
             'date_thai' => form_input($i_date_thai),
             'Date' => form_input($i_Date),
@@ -267,29 +287,29 @@ class m_schedule extends CI_Model {
         $time_depart = $this->input->post('TimeDepart');
         $date = $this->input->post('Date');
         //ข้อมูลเส้นทาง
-        $route = $this->get_route(NULL, NULL, $rid)[0];        
-        $rcode =$route['RCode'];
-   
+        $route = $this->get_route(NULL, NULL, $rid)[0];
+        $rcode = $route['RCode'];
+
 
         //สร้างรหัสตารางเวลา
         $num_schedule = count($this->get_schedule($date, NULL, NULL, $rid)) + 1;
         $tsid = $this->generate_tsid($date, $rid, $num_schedule);
-        
+
         //ค้นหารถ
 //        $this->get_stations($rcode, $vtid);
         $str = 'ไม่พบ';
-        if($this->IsExitSchedule($date, $rid, $time_depart)){
+        if ($this->IsExitSchedule($date, $rid, $time_depart)) {
             $str = 'มีอยู่จริง';
         }
 
         $form_data = array(
             'TSID' => $tsid,
             'RID' => $rid,
-            'RCode' =>$rcode,
+            'RCode' => $rcode,
             'TimeDepart' => $time_depart,
             'Date' => $date,
             'ScheduleNote' => $this->input->post('ScheduleNote'),
-            'srt'=>$str,
+            'srt' => $str,
         );
         return $form_data;
     }
@@ -338,8 +358,8 @@ class m_schedule extends CI_Model {
     }
 
     public function get_vehicle_current_stations($rcode, $vtid, $station_id = NULL, $seq = NULL) {
-        $this->db->join('vehicles', 'vehicles_current_stations.VID = vehicles.VID', 'left');
-        $this->db->join('t_routes_has_vehicles', 'vehicles.VID = t_routes_has_vehicles.VID', 'left');
+        $this->db->join('vehicles', 'vehicles_current_stations.VID = vehicles.VID ', 'right');
+        $this->db->join('t_routes_has_vehicles', 'vehicles.VID = t_routes_has_vehicles.VID', 'right');
 
         $this->db->where('t_routes_has_vehicles.RCode', $rcode);
         $this->db->where('vehicles.VTID', $vtid);
@@ -360,6 +380,14 @@ class m_schedule extends CI_Model {
             return $row;
         }
         return FALSE;
+    }
+
+    public function shift_schedule($rid = NULL, $time = NULL) {
+        $rs = array();
+        $date = $this->m_datetime->getDateToday();
+        $schedules = $this->get_schedule($date, NULL, NULL, $rid);
+                
+        
     }
 
 }

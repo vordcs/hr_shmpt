@@ -11,13 +11,13 @@ class m_schedule_vehicle extends CI_Model {
         $rs = array();
         if (count($data) > 0) {
             for ($i = 0; $i < count($data); $i++) {
+                $tsid = $data[$i]['TSID'];
                 $rid = $data[$i]['RID'];
                 $date = $data[$i]['Date'];
                 $time_depart = $data[$i]['TimeDepart'];
                 $num_schedule = $this->check_schedule($date, $rid, $time_depart);
                 if ($num_schedule == 0) {
                     $this->db->insert('t_schedules_day', $data[$i]);
-                    $tsid = $data[$i]['TSID'];
                     $rs[$i] = "Date $date INSERT -> TSID = " . $tsid;
                 } else {
                     $rs[$i] = "Date $date UPDATE -> TSID = " . $tsid;
@@ -32,20 +32,24 @@ class m_schedule_vehicle extends CI_Model {
         $this->db->where('RID', $rid);
         $this->db->where('Date', $date);
         $this->db->where('TimeDepart', $time_depart);
-        $query_schedule = $this->db->get("t_schedules_day");
+        $query = $this->db->get("t_schedules_day");
 
-        $rs = $query_schedule->num_row();
+        $rs = $query->num_rows();
 
         return $rs;
     }
 
+    /*
+     * สร้างเวลาเดินรถ 
+     * 
+     */
+
     public function run_schedule() {
         $rs = array();
-        $route = $this->get_route_detail();
+        $routes = $this->get_route_detail();
         $n = 0;
         $x = 0;
-        foreach ($route as $r) {
-
+        foreach ($routes as $r) {
             $rid = $r['RID'];
             $vt_name = $r['VTDescription'];
             $schedule_type = $r['ScheduleType'];
@@ -55,7 +59,6 @@ class m_schedule_vehicle extends CI_Model {
             $start_point = $r['StartPoint'];
             $time_duration = $r['Time'];
 
-            $rs['TEST'][$x] = $schedule_type;
             $x++;
             if ($schedule_type == '0') {
                 $start_time = $r['StartTime'];
@@ -64,7 +67,7 @@ class m_schedule_vehicle extends CI_Model {
                 for ($i = 0; $i < (int) $around; $i++) {
                     $s_time = strtotime($start_time) + $interval * 60 * $i;
                     $e_time = strtotime("+$time_duration minutes", $s_time);
-                    $tsid = $this->gen_TSID($rid, $i + 1);
+                    $tsid = $this->generate_tsid($rid, $i + 1);
                     if ($tsid != '') {
                         $temp_schedual = array(
                             'TSID' => $tsid,
@@ -87,7 +90,7 @@ class m_schedule_vehicle extends CI_Model {
                         $seq_no = $sm['SeqNo'];
                         $s_time = strtotime($sm['Time']);
                         $e_time = strtotime("+$time_duration minutes", $s_time);
-                        $tsid = $this->gen_TSID($rid, $seq_no);
+                        $tsid = $this->generate_tsid($rid, $seq_no);
                         if ($tsid != '') {
                             $temp_schedual = array(
                                 'TSID' => $tsid,
@@ -110,11 +113,16 @@ class m_schedule_vehicle extends CI_Model {
 
     public function set_vehicles_initicial_station() {
         $routes = $this->get_route();
+        $data = array();
         foreach ($routes as $route) {
             $i = 0;
             $rcode = $route['RCode'];
             $vtid = $route['VTID'];
-            $vehicles = $this->get_vehicle($rcode, $vtid);
+            $this->db->join('t_routes_has_vehicles', 'vehicles.VID = t_routes_has_vehicles.VID', 'left');
+            $this->db->where('RCode', $rcode);
+            $this->db->where('VTID', $vtid);
+            $query = $this->db->get('vehicles');
+            $vehicles = $query->result_array();
 //            กำหนดค่า สถานีเริ่มต้นและสถานี้สุดท้ายของเส้นทางในรถแต่ละคัน 
             $stations = $this->get_stations($rcode, $vtid);
             $first_seq = 1;
@@ -138,12 +146,12 @@ class m_schedule_vehicle extends CI_Model {
                     $sid = $end_station_id;
                     $seq = $last_seq;
                 }
-
+                $str_time = "04:00:00";
                 $data[$i] = array(
                     'VID' => $vid,
                     'CurrentStationID' => $sid,
                     'CurrentStatonSeq' => $seq,
-                    'CurrentTime' => $this->m_datetime->getTimeNow(),
+                    'CurrentTime' => date("H:i:s", strtotime($str_time)),
                     'CurrentDate' => $this->m_datetime->getDateToday(),
                 );
                 $this->db->insert('vehicles_current_stations', $data[$i]);
@@ -153,8 +161,117 @@ class m_schedule_vehicle extends CI_Model {
 
         $query = $this->db->get('vehicles_current_stations');
 
+        return $data;
+    }
+
+    /*
+     * 2 ตั้งค่าเวลา
+     */
+
+    public function set_time_initicial_vehicles() {
+        $rs = array();
+        $types = $this->get_vehicle_types();
+        foreach ($types as $type) {
+            $vtid = $type['VTID'];
+            $vt_name = $type['VTDescription'];
+            $routes = $this->get_route(NULL, $vtid);
+            foreach ($routes as $route) {
+                $rcode = $route['RCode'];
+                /*
+                 * ค้นหาสถานีเเรกเเละสถานนีสุดท้ายแต่ละในเส้นทาง
+                 */
+                $stations = $this->get_stations($rcode, $vtid);
+                $first_seq = 1;
+                $last_seq = count($stations);
+                foreach ($stations as $station) {
+                    $sid = $station['SID'];
+                    $seq = $station['Seq'];
+                    if ($seq == $first_seq) {
+                        $start_station_id = $sid;
+                    }
+                    if ($seq == $last_seq) {
+                        $end_station_id = $sid;
+                    }
+                }
+                /*
+                 * ค้นหารถแต่ละค้นที่อยู่ในเเตำแหน่งเเรกแต่ตำแหน่งสุดท้ายของเเต่ละเส้นทาง
+                 * โดยจะจะเเยกออกเป็นสองฝั่ง คือ ฝั่ง ขอนแก่น เเละ ปลายทาง
+                 * start point S:ขอนแก่น,D: มุกดาหาร,กาฬสิน,อำนาจเจริญ 
+                 */
+                $route_detail = $this->get_route_detail($rcode, $vtid);
+                foreach ($route_detail as $rd) {
+                    $rid = $rd['RID'];
+                    $start_point = $rd['StartPoint'];
+                    if ($start_point == 'S') {
+                        $vehicles = $this->check_vehicles_current_point($start_station_id);
+                        $sid = $start_station_id;
+                        $seq = $first_seq;
+                    } else {
+                        $vehicles = $this->check_vehicles_current_point($end_station_id);
+                        $sid = $end_station_id;
+                        $seq = $last_seq;
+                    }
+                    $n = 0;
+                    foreach ($vehicles as $vehicle) {
+                        $vid = $vehicle['VID'];
+                        $str_time = "04:0$n:00";
+                        $data = array(
+                            'CurrentStationID' => $sid,
+                            'CurrentStatonSeq' => $seq,
+                            'CurrentTime' => date("H:i:s", strtotime($str_time)),
+                            'CurrentDate' => $this->m_datetime->getDateToday(),
+                        );
+                        if (count($this->check_vehicles_current_point(NULL, $vid)) > 0) {
+                            $this->db->where('VID', $vid);
+                            $this->db->update('vehicles_current_stations', $data);
+                            $action = "UPDATE";
+                        } else {
+                            $data['VID'] = $vid;
+                            $this->db->insert('vehicles_current_stations', $data);
+                            $action = "INSERT";
+                        }
+
+                        if ($start_point == 'S') {
+                            $rs[$rcode]['S'][$n] = "$action $vid => $str_time";
+                        } else {
+                            $rs[$rcode]['D'][$n] = "$action $vid => $str_time";
+                        }
+                        $n++;
+                    }
+                }
+            }
+        }
+
+        return $rs;
+    }
+
+    function get_vehicle_types($id = NULL) {
+        if ($id != NULL) {
+            $this->db->where('VTID', $id);
+        }
+        $temp = $this->db->get('vehicles_type');
+        return $temp->result_array();
+    }
+
+    /*
+     * check_vehicles_current_point คืนค่า vid โดยเรียงจาก มากไปหาน้อย เพื่อตอบ โจทย์ คิวบ๊วย ออกคิวเเรก ในวันต่อไป 
+     */
+
+    public function check_vehicles_current_point($station_id = NULL, $vid = NULL) {
+        if ($vid != NULL) {
+            $this->db->where('VID', $vid);
+        }
+        if ($station_id != NULL) {
+            $this->db->where('CurrentStationID', $station_id);
+        }
+        $this->db->order_by('CurrentTime', 'DESC');
+        $query = $this->db->get('vehicles_current_stations');
         return $query->result_array();
     }
+
+    /*
+     * จัดรถเข้าแต่ละเที่ยวเวลา  
+     */
 
     public function run_vehicles_to_schedule() {
         $date = $this->m_datetime->getDateToday();
@@ -194,18 +311,13 @@ class m_schedule_vehicle extends CI_Model {
                     }
                 }
             }
-
-            $rs[$rcode]['S'] = $rid_s;
-            $rs[$rcode]['D'] = $rid_d;
-
-
             $schedule_s = $this->get_schedule_by_route($date, $rid_s);
             $schedule_d = $this->get_schedule_by_route($date, $rid_d);
             $nun_schedule_s = count($schedule_s);
             $nun_schedule_d = count($schedule_d);
-
-
-            //เปรียบเทียบเอาค่ามากที่สุด 
+            /*
+             * เปรียบเทียบเอาค่ามากที่สุด               
+             */
             $max_num_schedule = 0;
             if ($nun_schedule_s > $nun_schedule_d) {
                 $max_num_schedule = $nun_schedule_s;
@@ -216,52 +328,50 @@ class m_schedule_vehicle extends CI_Model {
             }
             $n = 0;
             for ($i = 0; $i < $max_num_schedule; $i++) {
+                $tsid_s = $tsid_d = $vid_s = $vid_d = $schedule = $time_depart_s = $time_depart_d = $time_arrive_s = $time_arrive_d = $vehicle_s = $vehicle_d = NULL;
                 if (array_key_exists($i, $schedule_s)) {
                     $schedule = $schedule_s[$i];
                     $tsid_s = $schedule_s[$i]['TSID'];
-                    $time_depart = $schedule['TimeDepart'];
-                    $time_arrive = $schedule['TimeArrive'];
+                    $time_depart_s = $schedule['TimeDepart'];
+                    $time_arrive_s = $schedule['TimeArrive'];
 
-                    $vehicle = $this->get_vehicle_current_stations($rcode, $vtid, $start_station_id, $first_seq);
-                    $vid = $vehicle['VID'];
-                    $vcode = $vehicle['VCode'];
-                    $current_time = $vehicle['CurrentTime'];
+                    $vehicle_s = $this->check_vehicle_current_stations($rcode, $vtid, $start_station_id);
 
-                    $data_vehicles_has_schedules = array(
-                        'TSID' => $tsid_s,
-                        'VID' => $vid,
-//                        'RID' => $rid_s,
-                    );
-                    $this->db->insert('vehicles_has_schedules', $data_vehicles_has_schedules);
-
-                    $this->update_vehicle_curent_stations($vid, $end_station_id, $last_seq, $time_arrive);
-
-                    $rs[$action][$rcode][$n]['S'] = $data_vehicles_has_schedules; //"เวลาออก $time_depart เวลาถึง $time_arrive -> $tsid รถเบอร์ $vcode vid->$vid | -> $current_time <- |$vid, $end_station_id, $last_seq, $time_arrive"; //"S-> $tsid เวลาออก $time_depart | เวลาถึง $time_arrive | รถเบอร์ $vcode | UPDATE $vcode TO last_seq ->$last_seq |";
-//                    $n++;
+                    if (count($vehicle_s) > 0) {
+                        $vid_s = $vehicle_s['VID'];
+                        $vcode_s = $vehicle_s['VCode'];
+//                        $rs['vehicle'][$rcode][$n]['S'] = "->$tsid_s<- $vcode_s | $vid_s || $rcode, $vtid, $start_station_id | UPDATE $vid_s TO last satation -> $end_station_id";
+//                        
+                        $this->insert_vehicle_has_schedule($tsid_s, $vid_s);
+                        $this->update_vehicle_curent_stations($vid_s, $end_station_id, $time_arrive_s, $last_seq);
+//
+                        $rs[$action][$rcode][$n]['S'] = "->$tsid_s<-ออก $time_depart_s เวลาถึง $time_arrive_s -> รถเบอร์ $vcode_s ||| UPDATE $vid_s TO last_seq ->$last_seq | เวลา $time_arrive_s อยู่ S";
+                    } else {
+                        $rs[$action][$rcode][$n]['S'] = "$tsid_s ไม่มีรถ | $rcode, $vtid, $start_station_id";
+                    }
                 }
                 if (array_key_exists($i, $schedule_d)) {
                     $schedule = $schedule_d[$i];
                     $tsid_d = $schedule['TSID'];
-                    $time_depart = $schedule['TimeDepart'];
-                    $time_arrive = $schedule['TimeArrive'];
+                    $time_depart_d = $schedule['TimeDepart'];
+                    $time_arrive_d = $schedule['TimeArrive'];
 
-                    $vehicle = $this->get_vehicle_current_stations($rcode, $vtid, $end_station_id);
-                    $vid = $vehicle['VID'];
-                    $vcode = $vehicle['VCode'];
-                    $current_time = $vehicle['CurrentTime'];
+                    $vehicle_d = $this->check_vehicle_current_stations($rcode, $vtid, $end_station_id);
 
+                    if (count($vehicle_d) > 0) {
+                        $vid_d = $vehicle_d['VID'];
+                        $vcode_d = $vehicle_d['VCode'];
+//                        $rs['vehicle'][$rcode][$n]['D'] = "->$tsid_d<- $vcode_d | $vid_d || $rcode, $vtid, $end_station_id | next time = $time_arrive_d";
 
-                    $data_vehicles_has_schedules = array(
-                        'TSID' => $tsid_d,
-                        'VID' => $vid,
-//                        'RID' => $rid_d,
-                    );
-                    $this->db->insert('vehicles_has_schedules', $data_vehicles_has_schedules);
+                        $this->insert_vehicle_has_schedule($tsid_d, $vid_d);
+                        $this->update_vehicle_curent_stations($vid_d, $start_station_id, $time_arrive_d, $first_seq);
 
-                    $this->update_vehicle_curent_stations($vid, $start_station_id, $first_seq, $time_arrive);
-
-                    $rs[$action][$rcode][$n]['D'] = $data_vehicles_has_schedules; //"เวลาออก $time_depart เวลาถึง $time_arrive -> $tsid รถเบอร์ $vcode vid->$vid | -> $current_time <- |$vid, $end_station_id, $last_seq, $time_arrive"; //"D-> $tsid เวลาออก $time_depart | เวลาถึง $time_arrive |รถเบอร์ $vcode | UPDATE $vcode TO first_seq->$first_seq |";
+                        $rs[$action][$rcode][$n]['D'] = "->$tsid_d<-ออก $time_depart_d เวลาถึง $time_arrive_d -> รถเบอร์ $vcode_d  ||| UPDATE $vid_d TO first_seq->$first_seq | เวลา $time_arrive_d อยู่ D";
+                    } else {
+                        $rs[$action][$rcode][$n]['D'] = "$tsid_s ไม่มีรถ | $rcode, $vtid, $end_station_id";
+                    }
                 }
+
                 $n++;
             }
         }
@@ -269,20 +379,9 @@ class m_schedule_vehicle extends CI_Model {
         return $rs;
     }
 
-    public function get_schedule($date = NULL, $rid = NULL) {
-        $this->db->join('t_routes', ' t_schedules_day.RID=t_routes.RID', 'left');
-        $this->db->join('vehicles_has_schedules', 't_schedules_day.TSID = vehicles_has_schedules.TSID', 'left');
-        $this->db->join('vehicles', 'vehicles_has_schedules.VID = vehicles.VID', 'left');
-        if ($date != NULL) {
-            $this->db->where('Date', $date);
-        }
-        if ($rid != NULL) {
-            $this->db->where('t_routes.RID', $rid);
-        }
-        $this->db->order_by('SeqNo', 'ASC');
-        $query_schedule = $this->db->get("t_schedules_day");
-        return $query_schedule->result_array();
-    }
+    /*
+     * คืนค่า schedule โดยเลือดโดย เส้นทาง 
+     */
 
     public function get_schedule_by_route($date = NULL, $rid = NULL) {
 
@@ -290,85 +389,110 @@ class m_schedule_vehicle extends CI_Model {
         if ($date != NULL) {
             $this->db->where('Date', $date);
         }
-
-        $this->db->where('t_routes.RID', $rid);
-
-        $this->db->order_by('SeqNo', 'ASC');
+        if ($rid != NULL) {
+            $this->db->where('t_routes.RID', $rid);
+        }
+        $this->db->order_by('TimeDepart', 'ASC');
         $query_schedule = $this->db->get("t_schedules_day");
         return $query_schedule->result_array();
     }
 
-    public function get_vehicle_current_stations($rcode, $vtid, $station_id = NULL, $seq = NULL) {
-        $this->db->join('vehicles', 'vehicles_current_stations.VID = vehicles.VID', 'left');
-        $this->db->join('t_routes_has_vehicles', 'vehicles.VID = t_routes_has_vehicles.VID', 'left');
+    /*
+     * ค้าหารถเพื่อ นำไปใส่ แต่ละ schedule
+     */
 
-        $this->db->where('t_routes_has_vehicles.RCode', $rcode);
-        $this->db->where('vehicles.VTID', $vtid);
-
-        if ($station_id != NULL) {
-            $this->db->where('vehicles_current_stations.CurrentStationID', $station_id);
+    public function check_vehicle_current_stations($rcode, $vtid, $station_id = NULL, $seq = NULL) {
+        $vehicles_in_route = $this->get_vehicle($rcode, $vtid);
+        $vid = NULL;
+        foreach ($vehicles_in_route as $vehicle) {
+            $current_station_id = $vehicle['CurrentStationID'];
+            if ($rcode == $vehicle['RCode'] && $vtid == $vehicle['VTID'] && $station_id == $current_station_id) {
+                $vid = $vehicle['VID'];
+                break;
+            }
         }
-
-        if ($seq != NULL) {
-            $this->db->where('vehicles_current_stations.CurrentStatonSeq', $seq);
+        $rs = array();
+        if ($vid != null) {
+            $rs = $this->get_vehicle($rcode, $vtid, $vid)[0];
         }
-
-        $this->db->order_by('CurrentTime,CurrentDate,vehicles.VID', 'ASC');
-        $query = $this->db->get('vehicles_current_stations');
-
-        if ($query->num_rows() > 0) {
-            $row = $query->row_array();
-            return $row;
-        }
-        return FALSE;
+        return $rs;
     }
 
-    public function vehicle_curent_stations($rcode, $vtid, $station_id = NULL, $seq = NULL) {
-        $this->db->join('vehicles', 'vehicles_current_stations.VID = vehicles.VID', 'left');
-        $this->db->join('t_routes_has_vehicles', 'vehicles.VID = t_routes_has_vehicles.VID', 'right');
+    /*
+     * เพิ่มข้อมูลรถในตารางเวลาเดินรถ
+     */
 
-        $this->db->where('t_routes_has_vehicles.RCode', $rcode);
-        $this->db->where('vehicles.VTID', $vtid);
-        if ($seq != NULL) {
-            $this->db->where('vehicles_current_stations.CurrentStatonSeq', $seq);
+    public function insert_vehicle_has_schedule($tsid, $vid) {
+        $data_vehicles_has_schedules = array(
+            'TSID' => $tsid,
+            'VID' => $vid,
+        );
+        if (count($this->is_exit_vehicle_in_schedule($tsid, $vid) == 0)) {
+            $this->db->insert('vehicles_has_schedules', $data_vehicles_has_schedules);
+        } else {
+            $this->db->where('TSID', $tsid);
+            $this->db->update('vehicles_has_schedules', $data_vehicles_has_schedules);
         }
-        if ($station_id != NULL) {
-            $this->db->where('vehicles_current_stations.CurrentStationID', $station_id);
-        }
-        $this->db->order_by('CurrentTime,CurrentDate', 'ace');
-        $query = $this->db->get('vehicles_current_stations');
-
-        if ($query->num_rows() > 0) {
-//            $row = $query->row_array();
-//            return $row;
-            return $query->result_array();
-        }
-        return FALSE;
     }
 
-    public function update_vehicle_curent_stations($vid, $next_station_id, $next_seq, $time_arrive) {
+    /*
+     * อัปเดทตำแหน่งของรถ
+     */
+
+    public function update_vehicle_curent_stations($vid, $next_station_id, $time_arrive, $next_seq = NULL) {
         $data_update = array(
             'CurrentTime' => $time_arrive,
             'CurrentDate' => $this->m_datetime->getDateToday(),
             'CurrentStationID' => $next_station_id,
-            'CurrentStatonSeq' => $next_seq,
             'UpdateDate' => $this->m_datetime->getDatetimeNow(),
         );
+        if ($next_seq != NULL) {
+            $data_update['CurrentStatonSeq'] = $next_seq;
+        }
+
         $this->db->where('VID', $vid);
         $this->db->update('vehicles_current_stations', $data_update);
     }
 
-    public function get_vehicle($rcode = NULL, $vtid = NULL) {
+    /*
+     * ตรวจสอบรถในตารางเดินรถ 
+     */
+
+    public function is_exit_vehicle_in_schedule($tsid, $vid) {
+        $this->db->where('TSID', $tsid);
+        $this->db->where('VID', $vid);
+        $query = $this->db->get('vehicles_has_schedules');
+        $rs = array();
+        if ($query->num_rows() > 0) {
+            $rs = $query->row_array();
+        }
+        return $rs;
+    }
+
+    /*
+     * คืนค่าข้อมูลรถ
+     */
+
+    public function get_vehicle($rcode = NULL, $vtid = NULL, $vid = NULL) {
         $this->db->join('t_routes_has_vehicles', 'vehicles.VID = t_routes_has_vehicles.VID', 'left');
+        $this->db->join('vehicles_current_stations', 'vehicles.VID = vehicles_current_stations.VID', 'left');
         if ($rcode != NULL) {
             $this->db->where('t_routes_has_vehicles.RCode', $rcode);
         }
         if ($vtid != NULL) {
             $this->db->where('vehicles.VTID', $vtid);
         }
+        if ($vid != NULL) {
+            $this->db->where('vehicles.VID', $vid);
+        }
+        $this->db->order_by('CurrentTime,CurrentDate,CurrentStationID,vehicles.VID', 'ASC');
         $query = $this->db->get('vehicles');
         return $query->result_array();
     }
+
+    /*
+     * คืนค้า สถานนี หรือจุดจอดของแต่ละเส้นทาง
+     */
 
     public function get_stations($rcode = null, $vtid = null, $sid = NULL, $seq = NULL) {
         if ($rcode != NULL) {
@@ -391,7 +515,15 @@ class m_schedule_vehicle extends CI_Model {
         return $rs;
     }
 
-    public function gen_TSID($rid, $around) {
+    /*
+     * สร้างรหัสเวลาเดินรถ 
+     * 14 digit
+     * first, 6 digit are year mounth day 
+     * secound,3 digit for RID 
+     * and 3 digit for around(in present)
+     */
+
+    public function generate_tsid($rid, $around) {
         $tsid = '';
         $this->db->where("RID", $rid);
         $this->db->where("SeqNo", $around);
@@ -408,9 +540,12 @@ class m_schedule_vehicle extends CI_Model {
 //        เที่ยวที่
             $tsid .=str_pad($around, 3, '0', STR_PAD_LEFT);
         }
-
         return $tsid;
     }
+
+    /*
+     * คืนค่าเส้นทาง
+     */
 
     public function get_route($rcode = NULL, $vtid = NULL) {
 
@@ -429,6 +564,10 @@ class m_schedule_vehicle extends CI_Model {
         $query = $this->db->get('t_routes');
         return $query->result_array();
     }
+
+    /*
+     * คืนค่าเส้นทางทั้งหมด ทั้งต้นทาง และออกจากปลายทาง
+     */
 
     public function get_route_detail($rcode = NULL, $vtid = NULL) {
         $this->db->join('vehicles_type', 'vehicles_type.VTID = t_routes.VTID');
@@ -454,32 +593,23 @@ class m_schedule_vehicle extends CI_Model {
         return $query->result_array();
     }
 
-    public function vehicle_current_stations($rcode = NULL, $vtid = NULL, $station_id = NULL, $seq = NULL) {
-        $this->db->join('vehicles', 'vehicles_current_stations.VID = vehicles.VID', 'right');
-        $this->db->join('t_routes_has_vehicles', 'vehicles.VID = t_routes_has_vehicles.VID', 'left');
+    /*
+     * for view only
+     */
 
-        if ($rcode != NULL) {
-            $this->db->where('t_routes_has_vehicles.RCode', $rcode);
+    public function get_schedule($date = NULL, $rid = NULL) {
+        $this->db->join('t_routes', ' t_schedules_day.RID=t_routes.RID', 'left');
+        $this->db->join('vehicles_has_schedules', 't_schedules_day.TSID = vehicles_has_schedules.TSID', 'left');
+        $this->db->join('vehicles', 'vehicles_has_schedules.VID = vehicles.VID', 'left');
+        if ($date != NULL) {
+            $this->db->where('Date', $date);
         }
-        if ($vtid != NULL) {
-            $this->db->where('vehicles.VTID', $vtid);
+        if ($rid != NULL) {
+            $this->db->where('t_routes.RID', $rid);
         }
-        if ($station_id != NULL) {
-            $this->db->where('vehicles_current_stations.CurrentStationID', $station_id);
-        }
-
-        if ($seq != NULL) {
-            $this->db->where('vehicles_current_stations.CurrentStatonSeq', $seq);
-        }
-
-       $this->db->order_by('CurrentTime,CurrentDate,vehicles.VID', 'ASC');
-        $query = $this->db->get('vehicles_current_stations');
-
-        if ($query->num_rows() > 0) {
-            $row = $query->row_array();
-            return $query->result_array();
-        }
-        return FALSE;
+        $this->db->order_by('SeqNo', 'ASC');
+        $query_schedule = $this->db->get("t_schedules_day");
+        return $query_schedule->result_array();
     }
 
 }

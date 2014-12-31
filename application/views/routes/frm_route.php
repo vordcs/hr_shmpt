@@ -115,7 +115,7 @@
                             <li class="next">
                                 <?php
                                 if ($next_page != '') {
-                                    echo anchor($next_page, 'ข้าม <span class="fa fa-angle-double-right"></span>');
+                                    echo anchor($next_page, 'ต่อไป <span class="fa fa-angle-double-right"></span>');
                                 }
                                 ?>                                 
                             </li>
