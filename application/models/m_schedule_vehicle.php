@@ -264,7 +264,7 @@ class m_schedule_vehicle extends CI_Model {
         if ($station_id != NULL) {
             $this->db->where('CurrentStationID', $station_id);
         }
-        $this->db->order_by('CurrentTime', 'DESC');
+        $this->db->order_by('CurrentTime', 'asc');
         $query = $this->db->get('vehicles_current_stations');
         return $query->result_array();
     }
@@ -518,8 +518,8 @@ class m_schedule_vehicle extends CI_Model {
     /*
      * สร้างรหัสเวลาเดินรถ 
      * 14 digit
-     * first, 6 digit are year mounth day 
-     * secound,3 digit for RID 
+     * first, 8 digit are year mounth day 
+     * secound,2 digit for RID 
      * and 3 digit for around(in present)
      */
 
@@ -536,7 +536,7 @@ class m_schedule_vehicle extends CI_Model {
             $date = new DateTime();
             $tsid .=$date->format("Ymd");
 //        เส้นทาง
-            $tsid .= $rid;
+            $tsid .= str_pad($rid, 2, '0', STR_PAD_LEFT);
 //        เที่ยวที่
             $tsid .=str_pad($around, 3, '0', STR_PAD_LEFT);
         }

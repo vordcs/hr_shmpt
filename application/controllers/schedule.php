@@ -82,7 +82,7 @@ class schedule extends CI_Controller {
 //            'form_search' => $data['form_search'],
 //            'stations' => $data['stations']
 //            'schedules' => $data['schedules'],
-            'post' => $this->input->post(),
+//            'post' => $this->input->post(),
         );
 
 

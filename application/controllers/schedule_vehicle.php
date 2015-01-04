@@ -39,10 +39,10 @@ class schedule_vehicle extends CI_Controller {
         $vehicles_initicial_station = array();
 //        $vehicles_initicial_station = $this->m_schedule_vehicle->set_vehicles_initicial_station();
         $set_time_initicial_vehicles = array();
-        $set_time_initicial_vehicles = $this->m_schedule_vehicle->set_time_initicial_vehicles();
+//        $set_time_initicial_vehicles = $this->m_schedule_vehicle->set_time_initicial_vehicles();
 
         $run_vehicles_to_schedule = array();
-        $run_vehicles_to_schedule = $this->m_schedule_vehicle->run_vehicles_to_schedule();
+//        $run_vehicles_to_schedule = $this->m_schedule_vehicle->run_vehicles_to_schedule();
 
         $data['schedules'] = $this->m_schedule_vehicle->get_schedule($this->m_datetime->getDateToday());
         $data['vehicles'] = $this->m_schedule_vehicle->get_vehicle();

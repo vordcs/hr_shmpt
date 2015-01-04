@@ -23,7 +23,7 @@ class m_schedule extends CI_Model {
         if ($rid != NULL) {
             $this->db->where('t_schedules_day.RID', $rid);
         }
-        $this->db->order_by('SeqNo', 'asc');
+        $this->db->order_by('TimeDepart,SeqNo', 'asc');
         $query_schedule = $this->db->get("t_schedules_day");
         return $query_schedule->result_array();
     }
