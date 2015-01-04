@@ -2,7 +2,7 @@
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
-class master_data extends CI_Controller {
+class permission extends CI_Controller {
 
     public function __construct() {
         parent::__construct();
@@ -15,7 +15,7 @@ class master_data extends CI_Controller {
 
     public function index() {
         $data = array();
-        $this->m_template->set_Content('hr/master_data', $data);
+        $this->m_template->set_Content('hr/permission', $data);
         $this->m_template->showTemplate();
     }
 }

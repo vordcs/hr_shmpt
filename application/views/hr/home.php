@@ -13,19 +13,11 @@
 
 </script>
 
-<div class="container">
-    <br>
+<div class="container" style="margin-bottom: 20px;">
     <div class="row">
         <div class="col-md-12">
-            <ol class="breadcrumb breadcrumb-arrow">
-                <li><a href="#">Home</a></li>
-                <li><a href="#">Library</a></li>
-                <li class="active"><span>Data</span></li>
-            </ol>
-        </div>
-        <div class="col-md-12">
             <div class="page-header">
-                <h2>ระบบบริหารงานบุคคล <small>Subtext</small></h2>
+                <h2>ระบบบริหารงานบุคคล <small style="color: #777777;">หน้าหลัก</small></h2>
             </div>
         </div>
     </div>
@@ -35,14 +27,14 @@
                 <li class="active"><a href="<?= base_url('hr/home') ?>">หน้าหลัก</a></li>
                 <li><a href="<?= base_url('hr/employee/') ?>">พนักงาน</a></li>
                 <li><a href="<?= base_url('hr/seller/') ?>">พนักงานขายตั๋ว</a></li>
-                <li><a href="<?= base_url('hr/master_data/') ?>">ข้อมูลหลัก</a></li>
-                <li><a href="<?= base_url('hr/work_history/') ?>" >ประวัติการทำงาน</a></li>
-                <li><a href="<?= base_url('hr/role_permission/') ?>" >กำหนดสิทธิ์การเข้าใช้</a></li>
-                <li><a href="<?= base_url('hr/username/') ?>" >ข้อมูลการเข้าใช้ระบบ</a></li>    
+                <li><a href="<?= base_url('hr/permission/') ?>" >กำหนดสิทธิ์การเข้าใช้</a></li>
+                <li><a href="<?= base_url('hr/loguser/') ?>" >ข้อมูลการเข้าใช้ระบบ</a></li>    
             </ul>
         </div>
     </div>
-    <br>
+</div>
+
+<div class="container">
     <div class="row">
         <div class="col-md-4">            
             <div class="panel panel-primary">
