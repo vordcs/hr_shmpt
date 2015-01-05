@@ -44,13 +44,17 @@
                 <div class="panel-body">
                     <div class="list-scholl">
                         <ul class="media-list">
-                            <?php for ($i = 0; $i < 8; $i++) { ?>
+
+                            <?php
+                            foreach ($e_list as $row) {
+                                $date = new DateTime($row['AcceptDate']);
+                                ?>
                                 <li class="media">
                                     <a class="pull-left" href="#"><img class="media-object img-rounded" src="http://placehold.it/100x100"></a>
                                     <div class="media-body">
-                                        <h4 class="media-heading">Media heading</h4>
-                                        <p>12 Apr, 2013 at 12:00</p>
-                                        <p>Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis.</p>
+                                        <h4 class="media-heading"><?= $row['Title'] . $row['FirstName'] . " " . $row['LastName'] ?></h4>
+                                        <p>วันที่อนุมัติ <?= $date->format('j F Y') ?></p>
+                                        <p>ตำแหน่งงาน <?= $row['PositionName'] ?></p>
                                     </div>
                                 </li>
                             <?php } ?>
@@ -66,25 +70,34 @@
                     <table class="table table-bordered">
                         <thead>
                             <tr>
-                                <th style="width: 10%"></th>
+                                <th style="width: 10%">ลำดับ</th>
                                 <th style="width: 30%">ชื่อ-นามสกุล</th>
                                 <th style="width: 20%">ตำแหน่งงาน</th>
                                 <th style="width: 25%">วันที่สมัคร</th>
                                 <th style="width: 15%">สถานะ</th>
+                                <th style="width: 10%"></th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php
-                            $date = date('j F Y');
-                            for ($i = 1; $i <= 30; $i++) {
+                            if ($c_list != NULL) {
+                                $i = 1;
+                                foreach ($c_list as $row) {
+                                    $date = new DateTime($row['RegisterDate']);
+                                    ?>
+                                    <tr>
+                                        <td class="text-center"><?= $i++ ?></td>
+                                        <td><?= $row['Title'] . $row['FirstName'] . " " . $row['LastName'] ?></td>
+                                        <td><?= $row['PositionName'] ?></td>
+                                        <td><?= $date->format('j F Y') ?></td>
+                                        <td><?= ($row['CandidateStatus'] == '0') ? '<strong class="color-orange">รอการอนุมัติ</strong>' : '<strong class="color-green">รับแล้ว</strong>'; ?></td>
+                                        <td class="text-center"><?= anchor('hr/home/detail/' . $row['CID'], '<i class="fa fa-search"></i>') ?></td>
+                                    </tr>
+                                    <?php
+                                }
+                            } else {
                                 ?>
-                                <tr>
-                                    <td class="text-center"><a><i class="fa fa-file-text"></i></a></td>
-                                    <td>&nbsp;<?= $i ?>  Mark Otto</td>
-                                    <td></td>
-                                    <td><?= $date ?></td>
-                                    <td>@mdo</td>
-                                </tr>
+                                <tr><td colspan="5" class="text-center">ไม่พบข้อมูลผู้สมัครงานที่ยังไม่ได้รับอนุมัติ</td></tr>
                             <?php } ?>
                         </tbody>
                     </table>

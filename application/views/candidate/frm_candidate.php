@@ -1,10 +1,18 @@
 <script>
     jQuery(document).ready(function ($) {
         $("#mainmenu ul li").removeAttr('class');
-        $("#btnCandidate").addClass("active");
+<?php
+if ($mode != 'employee_detail')
+    echo'$("#btnCandidate").addClass("active");';
+else
+    echo '$("#btnHR").addClass("active");';
+?>
         $('.datepicker').datepicker({
             language: 'th-th',
             format: 'yyyy-m-d'
+        });
+        $("#btn_prepare_accept").click(function () {
+            $('#modal_accept').modal();
         });
         $("#btn_prepare_save").click(function () {
             if ($('#check_agree').is(':checked'))
@@ -62,21 +70,30 @@
 <div class="container" style="margin-top: 60px;">
     <div class="row">
         <div class="col-md-12">
-            <ul class="breadcrumb">
-                <li>
-                    <?= anchor('candidate', 'ผู้สมัครงาน') ?>
-                </li>
-                <li class="active">
-                    <?php
-                    if ($mode == 'add')
-                        echo 'เพิ่มผู้สมัครงาน';
-                    elseif ($mode == 'edit')
-                        echo 'แก้ไขผู้สมัครงาน';
-                    elseif ($mode == 'detail')
-                        echo 'ข้อมูลผู้สมัครงาน';
-                    ?>
-                    &nbsp;</li>
-            </ul>
+            <?php if ($mode != 'employee_detail') { ?>
+                <ul class="breadcrumb">
+                    <li>
+                        <?= anchor('candidate', 'ผู้สมัครงาน') ?>
+                    </li>
+                    <li class="active">
+                        <?php
+                        if ($mode == 'add')
+                            echo 'เพิ่มผู้สมัครงาน';
+                        elseif ($mode == 'edit')
+                            echo 'แก้ไขผู้สมัครงาน';
+                        elseif ($mode == 'detail')
+                            echo 'ข้อมูลผู้สมัครงาน';
+                        ?>
+                        &nbsp;</li>
+                </ul>
+            <?php }else { ?>
+                <ul class="breadcrumb">
+                    <li>
+                        <?= anchor('hr/home', 'ระบบบริหารงานบุคคล') ?>
+                    </li>
+                    <li class="active">ข้อมูลผู้สมัครงาน</li>
+                </ul>
+            <?php } ?>
             <div class="page-header">
                 <h1>สมัครงาน
                     <font color="#777777">
@@ -88,6 +105,8 @@
                             echo 'ระบบรับสมัครพนักงานใหม่(แก้ไข)';
                         elseif ($mode == 'detail')
                             echo 'ระบบรับสมัครพนักงานใหม่(ตรวจข้อมูล)';
+                        elseif ($mode == 'employee_detail')
+                            echo 'ระบบอนุมัติการรับสมัครพนักงานใหม่(ตรวจข้อมูล)';
                         ?>
                     </span>
                     </font>
@@ -626,12 +645,18 @@
                                 ?>
                             </tbody>
                         </table>
-                        <?php if ($mode != 'detail') { ?>
-                            <div class="col-md-12 text-center">
-                                <button class="btn btn-default btn-sm" type="button" id="btn_expreience">เพิ่มประวัติการทำงาน</button>
-                                <button class="btn btn-danger btn-sm" type="button" id="btnDel_expreience">ลบประวัติการทำงาน</button>
-                            </div>
-                        <?php } ?>
+                        <?php
+                        if ($mode != 'employee_detail') {
+                            if ($mode != 'detail') {
+                                ?>
+                                <div class="col-md-12 text-center">
+                                    <button class="btn btn-default btn-sm" type="button" id="btn_expreience">เพิ่มประวัติการทำงาน</button>
+                                    <button class="btn btn-danger btn-sm" type="button" id="btnDel_expreience">ลบประวัติการทำงาน</button>
+                                </div>
+                                <?php
+                            }
+                        }
+                        ?>
                     </div>
                 </div>
             </div>
@@ -676,27 +701,38 @@
                                 </div>
                             </div>
 
-                            <?php if ($mode != 'detail') { ?>
-                                <div class="col-md-offset-2 col-md-8">
-                                    <div class="checkbox">
-                                        <label>
-                                            <input type="checkbox" id="check_agree">                                                
-                                            <p> ข้าพเจ้าขอรับรองว่า ข้อความดังกล่าวทั้งหมดในใบสมัครนี้เป็นความจริงทุกประการ หลังจากบริษัท สหมิตรภาพ(1992) จำกัด 
-                                                จ้างเข้ามาทำงานแล้วปรากฎว่า ข้อความในใบสมัครงานเอกสารที่นำมาเเสดง หรือรายละเอียดที่ให้ไวไม่เป็นความจริง 
-                                                บริษัทฯ มีสิทธิ์ที่จะเลิกจ้างข้าพเจ้าโดยไม่ต้องจ่ายเงินค้าชดเชยหรือค่าเสียหายใดๆ ทั้งสิ้น
-                                            </p>                                                
-                                        </label>
-                                    </div>
-                                </div>     
-                            <?php } ?>
+                            <?php
+                            if ($mode != 'employee_detail') {
+                                if ($mode != 'detail') {
+                                    ?>
+                                    <div class="col-md-offset-2 col-md-8">
+                                        <div class="checkbox">
+                                            <label>
+                                                <input type="checkbox" id="check_agree">                                                
+                                                <p> ข้าพเจ้าขอรับรองว่า ข้อความดังกล่าวทั้งหมดในใบสมัครนี้เป็นความจริงทุกประการ หลังจากบริษัท สหมิตรภาพ(1992) จำกัด 
+                                                    จ้างเข้ามาทำงานแล้วปรากฎว่า ข้อความในใบสมัครงานเอกสารที่นำมาเเสดง หรือรายละเอียดที่ให้ไวไม่เป็นความจริง 
+                                                    บริษัทฯ มีสิทธิ์ที่จะเลิกจ้างข้าพเจ้าโดยไม่ต้องจ่ายเงินค้าชดเชยหรือค่าเสียหายใดๆ ทั้งสิ้น
+                                                </p>                                                
+                                            </label>
+                                        </div>
+                                    </div>     
+                                    <?php
+                                }
+                            }
+                            ?>
                             <div class="col-md-12 text-center">
                                 <?php
-                                if ($mode != 'detail')
-                                    echo '<button id="btn_prepare_save" class="btn btn-primary" type="button">บันทึก</button>';
+                                if ($mode != 'employee_detail') {
+                                    if ($mode != 'detail')
+                                        echo '<button id="btn_prepare_save" class="btn btn-primary" type="button">บันทึก</button>';
 
-                                if ($mode == 'add') {
-                                    echo '<button class="btn btn-danger" type="reset">เริ่มใหม่</button>';
-                                } elseif ($mode == 'edit' || $mode == 'detail') {
+                                    if ($mode == 'add') {
+                                        echo '<button class="btn btn-danger" type="reset">เริ่มใหม่</button>';
+                                    } elseif ($mode == 'edit' || $mode == 'detail') {
+                                        echo anchor('candidate', '<span class="btn btn-danger">ย้อนกลับ</span>');
+                                    }
+                                } else {
+                                    echo '<button id="btn_prepare_accept" class="btn btn-primary" type="button">อนุมัติการสมัคร</button> ';
                                     echo anchor('candidate', '<span class="btn btn-danger">ย้อนกลับ</span>');
                                 }
                                 ?>
@@ -732,5 +768,26 @@
         </div>
     </div>
 
+    <?php if ($mode == 'employee_detail') { ?>
+        <!-- Modal accept -->
+        <div class="modal fade" id="modal_accept" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        <h4 class="modal-title" id="myModalLabel">ยืนยันอนุมัติการสมัครงาน</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p> กรุณาตรวจสอบข้อมูลให้ถูกต้องก่อนการ ยืนยัน
+                        </p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">ปิด</button>
+                        <?= anchor('hr/home/accept/' . $c_data['CID'], 'ยืนยัน', array('class' => 'btn btn-primary')) ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <?php } ?>
 </div>
 

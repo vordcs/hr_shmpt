@@ -41,17 +41,33 @@ class m_login extends CI_Model {
 
     function login($data) {
         //Intial data
-        $flag = FALSE;
         $session = array(
             'name' => 'Admin',
-            'login' => FALSE
+            'login' => FALSE,
+            'permittion' => ''
         );
 
         if ($data['user'] == 'admin' && $data['pass'] == 'admin') {
             $session['login'] = TRUE;
-            $flag = TRUE;
             $this->session->set_userdata($session);
             return TRUE;
+        } else {
+            $temp = $this->check_user($data['user'], $data['pass']);
+            if ($temp != FALSE) {
+                $session['name'] = $temp[0]['UserName'];
+                $session['login'] = TRUE;
+                $session['permittion'] = 'ALL';
+                return TRUE;
+            } else {
+                return FALSE;
+            }
+        }
+    }
+
+    function check_user($user, $pass) {
+        $query = $this->db->get_where('username', array('UserName' => $id, 'Password' => md5($pass), 'IsNormal' => 1));
+        if ($query->num_rows() == 1) {
+            return $query->result_array();
         } else {
             return FALSE;
         }
