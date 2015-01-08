@@ -23,14 +23,12 @@ class schedule_vehicle extends CI_Controller {
         );
         $rs = $data['gen_schedule'] = $get_vehicle_curent_stations = array();
 
-
 //        
 //        $this->db->truncate('t_schedules_day');
 //        $this->db->truncate('vehicles_has_schedules');
 //        $this->db->truncate('vehicles_current_stations');
 //        
 //      สร้างตารางเวลาเดินรถเดินรถ
-//        $this->db->truncate('t_schedules_day'); 
         $data['gen_schedule'] = $this->m_schedule_vehicle->run_schedule();
         $rs = $this->m_schedule_vehicle->insert_schedule($data['gen_schedule']);        
 //        
@@ -39,10 +37,10 @@ class schedule_vehicle extends CI_Controller {
         $vehicles_initicial_station = array();
 //        $vehicles_initicial_station = $this->m_schedule_vehicle->set_vehicles_initicial_station();
         $set_time_initicial_vehicles = array();
-//        $set_time_initicial_vehicles = $this->m_schedule_vehicle->set_time_initicial_vehicles();
+        $set_time_initicial_vehicles = $this->m_schedule_vehicle->set_time_initicial_vehicles();
 
         $run_vehicles_to_schedule = array();
-//        $run_vehicles_to_schedule = $this->m_schedule_vehicle->run_vehicles_to_schedule();
+        $run_vehicles_to_schedule = $this->m_schedule_vehicle->run_vehicles_to_schedule();
 
         $data['schedules'] = $this->m_schedule_vehicle->get_schedule($this->m_datetime->getDateToday());
         $data['vehicles'] = $this->m_schedule_vehicle->get_vehicle();

@@ -137,9 +137,10 @@ class m_schedule_vehicle extends CI_Model {
                     $end_station_id = $sid;
                 }
             }
+            $num_vehicle = count($vehicles);
             foreach ($vehicles as $vehicle) {
                 $vid = $vehicle['VID'];
-                if ($i <= 5) {
+                if ($i < ($num_vehicle/2)) {
                     $sid = $start_station_id;
                     $seq = $first_seq;
                 } else {
@@ -214,11 +215,11 @@ class m_schedule_vehicle extends CI_Model {
                     $n = 0;
                     foreach ($vehicles as $vehicle) {
                         $vid = $vehicle['VID'];
-                        $str_time = "04:0$n:00";
+                        $str_time = "04:00:00";
                         $data = array(
                             'CurrentStationID' => $sid,
                             'CurrentStatonSeq' => $seq,
-                            'CurrentTime' => date("H:i:s", strtotime($str_time)),
+                            'CurrentTime' => date("H:i:s", strtotime("+$n minutes", strtotime($str_time))),
                             'CurrentDate' => $this->m_datetime->getDateToday(),
                         );
                         if (count($this->check_vehicles_current_point(NULL, $vid)) > 0) {
