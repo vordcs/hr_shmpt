@@ -48,7 +48,7 @@ class m_employee extends CI_Model {
         unset($data['MotherAge']);
         unset($data['MotherOccupation']);
 
-        if (count($data['experience']) > 0) {
+        if (isset($data['experience']) && count($data['experience']) > 0) {
             $ExSeqNo = array();
             $ExDateForm = array();
             $ExDateTo = array();
@@ -75,8 +75,8 @@ class m_employee extends CI_Model {
                 'ReasonOfResign' => $ReasonOfResign,
             );
         }
-        
-        if (count($data['education']) > 0) {
+
+        if (isset($data['education']) && count($data['education']) > 0) {
             $EDSeqNo = array();
             $EDMajor = array();
             $EDDateFrom = array();
@@ -96,6 +96,33 @@ class m_employee extends CI_Model {
                 'EDDateFrom' => $EDDateFrom,
                 'EDDateTo' => $EDDateTo,
                 'InstitutionName' => $InstitutionName,
+            );
+        }
+
+        if (isset($data['family']) && count($data['family']) > 0) {
+            unset($data['family']['CID']);
+            unset($data['family']['FID']);
+        }
+        if (isset($data['family_detail']) && count($data['family_detail']) > 0) {
+            $SonTitle = array();
+            $SonFirstName = array();
+            $SonLastName = array();
+            $SonOccupation = array();
+            $SonAge = array();
+
+            foreach ($data['family_detail'] as $row) {
+                array_push($SonTitle, $row['SonTitle']);
+                array_push($SonFirstName, $row['SonFirstName']);
+                array_push($SonLastName, $row['SonLastName']);
+                array_push($SonOccupation, $row['SonOccupation']);
+                array_push($SonAge, $row['SonAge']);
+            }
+            $data['family_detail'] = array(
+                'SonTitle' => $SonTitle,
+                'SonFirstName' => $SonFirstName,
+                'SonLastName' => $SonLastName,
+                'SonOccupation' => $SonOccupation,
+                'SonAge' => $SonAge,
             );
         }
 
@@ -151,9 +178,17 @@ class m_employee extends CI_Model {
 
         if ($data['experience']['ExCompanyName'][0] != NULL && !$this->insert_experience($data['experience'], $EID))
             return FALSE;
-        
+
         if ($data['education']['InstitutionName'][0] != NULL && !$this->insert_education($data['education'], $EID))
             return FALSE;
+
+        if ($data['family']['SpouseFirstName'] != NULL) {
+            $FID = $this->insert_family($data['family'], $EID);
+            if ($FID == FALSE)
+                return FALSE;
+            if (!$this->insert_family_detail($data['family_detail'], $FID))
+                return FALSE;
+        }
 
         return $EID;
     }
@@ -258,7 +293,7 @@ class m_employee extends CI_Model {
         else
             return FALSE;
     }
-    
+
     function insert_education($data, $EID) {
         $pre_data = array();
         for ($i = 0; $i < count($data['InstitutionName']); $i++) {
@@ -270,6 +305,48 @@ class m_employee extends CI_Model {
             $pre_data[$i]['EDDateTo'] = $data['EDDateTo'][$i];
         }
         if ($this->db->insert_batch('employee_education', $pre_data))
+            return TRUE;
+        else
+            return FALSE;
+    }
+
+    function insert_family($data, $EID) {
+        $this->db->order_by("FID", "desc");
+        $this->db->limit(2);
+        $query = $this->db->get('employee_family');
+        $temp = $query->result_array();
+        $last_fid = 'FSHMPT0000';
+        foreach ($temp as $row) {
+            $last_fid = $row['FID'];
+            break;
+        }
+        $num = substr($last_fid, 6);
+        $num+=1;
+        $num = str_pad($num, 4, '0', STR_PAD_LEFT);
+        $last_fid = 'FSHMPT' . $num;
+
+        $data['EID'] = $EID;
+        $data['FID'] = $last_fid;
+        $data = $this->set_create_date($data);
+        if ($this->db->insert('employee_family', $data))
+            return $last_fid;
+        else
+            return FALSE;
+    }
+
+    function insert_family_detail($data, $FID) {
+        $pre_data = array();
+        for ($i = 0; $i < count($data['SonTitle']); $i++) {
+            $pre_data[$i]['FID'] = $FID;
+            $pre_data[$i]['FDSeqNo'] = $i;
+            $pre_data[$i]['SonTitle'] = $data['SonTitle'][$i];
+            $pre_data[$i]['SonFirstName'] = $data['SonFirstName'][$i];
+            $pre_data[$i]['SonLastName'] = $data['SonLastName'][$i];
+            $pre_data[$i]['SonOccupation'] = $data['SonOccupation'][$i];
+            $pre_data[$i]['SonAge'] = $data['SonAge'][$i];
+            $pre_data[$i] = $this->set_create_date($pre_data[$i]);
+        }
+        if ($this->db->insert_batch('employee_family_detail', $pre_data))
             return TRUE;
         else
             return FALSE;
