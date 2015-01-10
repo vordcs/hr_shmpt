@@ -35,83 +35,156 @@
                     <h3 class="panel-title"><i class="fa fa-search"></i>&nbsp;&nbsp;ค้นหาพนักงาน</h3>
                 </div>
                 <div class="panel-body">
-                    <div class="col-sm-offset-2 col-sm-8">
-                        <form id="frm_search_employ" class="form-horizontal" role="form">
-                            <div class="form-group">                                                    
-                                <label for="" class="col-sm-3 control-label">ตำแหน่งงาน</label>
-                                <div class="col-sm-5">
-                                    <select name="selecter_basic" class="form-control">
-                                        <option value="">เลือกตำแหน่งงาน</option>                                                          
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group">                                                  
-                                <label for="" class="col-sm-3 control-label">รหัสพนักงาน</label>
-                                <div class="col-sm-5">
-                                    <input type="text" class="form-control" id="" placeholder="">
-                                </div>     
-                            </div>
-                            <div class="form-group"> 
-                                <label for="" class="col-sm-3 control-label">รหัสบัตรประชาชน</label>
-                                <div class="col-sm-6">
-                                    <input type="text" class="form-control" id="" placeholder="">
-                                    <span class="help-block">ตัวอย่าง xxxxxxxxxxxxxxx</span>
-                                </div>
-                            </div>
+                    <?= $form_open; ?>
+                    <div class="row">
+                        <div class="col-md-3">
                             <div class="form-group">
-                                <div class="col-sm-offset-3 col-sm-9">
-                                    <button type="submit" class="btn btn-default"><i class="fa fa-search"></i>&nbsp;ค้นหา</button>
-                                </div>
+                                <label class="control-label" for="exampleInputEmail1">รหัสพนักงาน</label>
+                                <?= $form_input['EID'] ?>
                             </div>
-                        </form>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label class="control-label" for="exampleInputEmail1">ชื่อ</label>
+                                <?= $form_input['FirstName'] ?>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label class="control-label" for="exampleInputEmail1">นามสกุล</label>
+                                <?= $form_input['LastName'] ?>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label class="control-label" for="exampleInputEmail1">ตำแหน่ง</label>
+                                <?= $form_input['PID'] ?>
+                            </div>
+                        </div>
                     </div>
+                    <div class="row">
+                        <div class="col-md-12 text-center">
+                            <button type="submit" class="btn btn-primary"><span class="fa fa-search"></span>ค้นหา</button>
+                            <?= anchor('hr/employee', '<span class="fa fa-refresh">เริ่มค้นหาใหม่</span>', array('class' => 'btn btn-default')) ?>
+                        </div>
+                    </div>
+                    <?= $form_close; ?>
                 </div>
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-sm-12">
-            <h5>พนักงานทั้งหมด</h5>
-            <table class="table table-hover table-bordered" style="width: 100%">
-                <thead>
-                <th style="width: 13%" >รหัสพนักงาน</th>
-                <th style="width: 20%">ชื่อ-สกุล</th>                                          
-                <th style="width: 12%">รหัสบัตรประชาชน</th>
-                <th style="width: 25%">ที่อยู่</th>
-                <th style="width: 20%">รายละเอียด</th>
-                <th style="width: 10%"></th>
-                </thead>
-                <tbody>
-                    <?php for ($i = 0; $i < 5; $i++) {
+
+    <!--แสดงตอนค้นหา-->
+    <?php if (isset($list)) { ?>
+        <div class="row">
+            <div class="col-sm-12">
+                <h5>ผลการค้นหา</h5>
+                <table class="table table-hover table-bordered" style="width: 100%">
+                    <thead>
+                    <th style="width: 13%" >รหัสพนักงาน</th>
+                    <th style="width: 20%">ชื่อ-สกุล</th>                                          
+                    <th style="width: 12%">รหัสบัตรประชาชน</th>
+                    <th style="width: 25%">ที่อยู่</th>
+                    <th style="width: 20%">รายละเอียด</th>
+                    <th style="width: 10%"></th>
+                    </thead>
+                    <tbody>
+                        <?php if (isset($list) && $list == NULL) { ?>
+                            <tr><td class="text-center" colspan="6">ไม่พบข้อมูลพนักงานที่ค้นหา</td></tr>
+                        <?php } else { ?>
+                            <?php
+                            $temp = NULL;
+                            foreach ($list as $row) {
+                                if ($temp != $row['PID']) {
+                                    $temp = $row['PID'];
+                                    ?>
+                                    <tr class="info">
+                                        <td colspan="6"><h5>ตำแหน่งงานที่ <?= $row['PositionName'] ?></h5></td>
+                                    </tr>
+                                <?php } ?>
+                                <tr>
+                                    <td class="text-center"><?= $row['EID'] ?></td>
+                                    <td><?= $row['Title'] . $row['FirstName'] . ' ' . $row['LastName'] ?></td>
+                                    <td class="text-center"><?= $row['PersonalID'] ?></td>
+                                    <td>
+                                        <?= '<strong>บ้านเลขที่</strong> ' . $row['CurrentHouseNumber'] . ' <strong>หมู่ที่</strong> ' . $row['CurrentMu'] ?>
+                                        <?= '<br/><strong>หมู่บ้าน</strong> ' . $row['CurrentVillage'] . ' <strong>ถนน</strong> ' . $row['CurrentStreet'] ?>
+                                        <?= '<br/><strong>ตำบล</strong> ' . $row['CurrentSubDistrict'] . ' <strong>อำเภอ</strong> ' . $row['CurrentDistrict'] ?>
+                                        <?= '<br/><strong>จังหวัด</strong> ' . $row['CurrentProvince'] . ' <strong>รหัสไปรษณีย์</strong> ' . $row['CurrentZipCode'] ?>
+                                    </td>
+                                    <td>
+                                        <?= '<strong>มือถือ</strong> ' . $row['MobilePhone'] ?>
+                                    </td>
+                                    <td class="text-center">
+                                        <?= anchor('hr/employee/detail/' . $row['EID'], '<i class="fa fa-search"></i>', array('class' => 'btn btn-primary btn-sm')) ?>
+                                        <?= anchor('hr/employee/edit/' . $row['EID'], '<i class="fa fa-pencil"></i>', array('class' => 'btn btn-warning btn-sm')) ?>
+                                    </td>
+                                </tr>
+                                <?php
+                            }
+                        }
                         ?>
-                        <tr class="info">
-                            <td colspan="6"><h5>ตำแหน่งงานที่ <?= $i ?></h5></td>
-                        </tr>
-                        <?php for ($j = 0; $j < 3; $j++) { ?>
-                            <tr>
-                                <td class="text-center">XXXXXXXXX<?= $j ?></td>
-                                <td>นายฐากูร บุญสาร</td>
-                                <td class="text-center">xxxxxxxxxxxxx</td>
-                                <td>
-
-                                    xxxxxxxxxxxxxxxxxxcxxxxx
-                                    xxxxxxxxxxxxxxxxxxxxxxxx
-                                    xxxxxxxxxxxxxxxxxxxxxxxx
-                                    xxxxxxxxxxxxxxxxxxxxxxxx
-
-                                </td>
-                                <td> พนักงานขับรถเบอร์ สาย</td>
-                                <td class="text-center">
-                                    <a href="<?= base_url('employee/edit') ?>" class="btn btn-info btn-xs" ><i class="fa fa-pencil"></i> </a>
-                                    <a class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></a>
-                                </td>
-                            </tr>
-                        <?php } ?>
-                    <?php } ?>
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
+    <?php } ?>
+
+    <!--แสดงทั้งหมด ตอนยังไม่ได้ทำการค้นหา-->
+    <?php if (isset($list_all)) { ?>
+        <div class="row">
+            <div class="col-sm-12">
+                <h5>พนักงานทั้งหมด</h5>
+                <table class="table table-hover table-bordered" style="width: 100%">
+                    <thead>
+                    <th style="width: 13%" >รหัสพนักงาน</th>
+                    <th style="width: 20%">ชื่อ-สกุล</th>                                          
+                    <th style="width: 12%">รหัสบัตรประชาชน</th>
+                    <th style="width: 25%">ที่อยู่</th>
+                    <th style="width: 20%">รายละเอียด</th>
+                    <th style="width: 10%"></th>
+                    </thead>
+                    <tbody>   
+                        <?php if (isset($list_all) && $list_all == NULL) { ?>
+                            <tr><td class="text-center" colspan="6">ไม่พบข้อมูลพนักงานที่ค้นหา</td></tr>
+                        <?php } else { ?>
+                            <?php
+                            $temp = NULL;
+                            foreach ($list_all as $row) {
+                                if ($temp != $row['PID']) {
+                                    $temp = $row['PID'];
+                                    ?>
+                                    <tr class="info">
+                                        <td colspan="6"><h5>ตำแหน่งงานที่ <?= $row['PositionName'] ?></h5></td>
+                                    </tr>
+                                <?php } ?>
+                                <tr>
+                                    <td class="text-center"><?= $row['EID'] ?></td>
+                                    <td><?= $row['Title'] . $row['FirstName'] . ' ' . $row['LastName'] ?></td>
+                                    <td class="text-center"><?= $row['PersonalID'] ?></td>
+                                    <td>
+                                        <?= '<strong>บ้านเลขที่</strong> ' . $row['CurrentHouseNumber'] . ' <strong>หมู่ที่</strong> ' . $row['CurrentMu'] ?>
+                                        <?= '<br/><strong>หมู่บ้าน</strong> ' . $row['CurrentVillage'] . ' <strong>ถนน</strong> ' . $row['CurrentStreet'] ?>
+                                        <?= '<br/><strong>ตำบล</strong> ' . $row['CurrentSubDistrict'] . ' <strong>อำเภอ</strong> ' . $row['CurrentDistrict'] ?>
+                                        <?= '<br/><strong>จังหวัด</strong> ' . $row['CurrentProvince'] . ' <strong>รหัสไปรษณีย์</strong> ' . $row['CurrentZipCode'] ?>
+                                    </td>
+                                    <td>
+                                        <?= '<strong>มือถือ</strong> ' . $row['MobilePhone'] ?>
+                                    </td>
+                                    <td class="text-center">
+                                        <?= anchor('hr/employee/detail/' . $row['EID'], '<i class="fa fa-search"></i>', array('class' => 'btn btn-primary btn-sm')) ?>
+                                        <?= anchor('hr/employee/edit/' . $row['EID'], '<i class="fa fa-pencil"></i>', array('class' => 'btn btn-warning btn-sm')) ?>
+                                    </td>
+                                </tr>
+                                <?php
+                            }
+                        }
+                        ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    <?php } ?>
 
 </div>
 <hr>

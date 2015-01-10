@@ -44,7 +44,7 @@ class m_login extends CI_Model {
         $session = array(
             'name' => 'Admin',
             'login' => FALSE,
-            'permittion' => ''
+            'permittion' => 'ALL'
         );
 
         if ($data['user'] == 'admin' && $data['pass'] == 'admin') {
@@ -56,7 +56,8 @@ class m_login extends CI_Model {
             if ($temp != FALSE) {
                 $session['name'] = $temp[0]['UserName'];
                 $session['login'] = TRUE;
-                $session['permittion'] = 'ALL';
+                $session['permittion'] = $temp[0]['PermissionDetails'];
+                $this->session->set_userdata($session);
                 return TRUE;
             } else {
                 return FALSE;
@@ -65,7 +66,13 @@ class m_login extends CI_Model {
     }
 
     function check_user($user, $pass) {
-        $query = $this->db->get_where('username', array('UserName' => $id, 'Password' => md5($pass), 'IsNormal' => 1));
+        $this->db->from('username un');
+        $this->db->join('employees AS ep', 'ep.EID = un.UserName', 'left');
+        $this->db->join('employee_role_permission AS er', 'er.RoleID = ep.RoleID', 'left');
+        $this->db->where('un.UserName', $user);
+        $this->db->where('un.Password', md5($pass));
+        $this->db->where('un.IsNormal', 1);
+        $query = $this->db->get();
         if ($query->num_rows() == 1) {
             return $query->result_array();
         } else {

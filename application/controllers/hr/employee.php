@@ -1,10 +1,5 @@
 <?php
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
@@ -14,6 +9,7 @@ class employee extends CI_Controller {
         parent::__construct();
         $this->load->model('m_template');
         $this->load->model('hr/m_employee');
+        $this->load->model('m_candidate');
         $this->load->library('form_validation');
 
         //Initial language
@@ -21,32 +17,112 @@ class employee extends CI_Controller {
     }
 
     public function index() {
+        $data = array();
 
-//        $temp = $this->m_employee->check_candidate_by_status();
+        if ($this->m_employee->set_validation_search() && $this->form_validation->run()) {
+            $input_data = $this->m_employee->get_post_search();
+            $list = $this->m_employee->search($input_data);
+            $input_data['list'] = $list;
+            $data['list'] = $list;
+            //$this->m_template->set_Debug($input_data);
+        } else {
+            if (($this->input->server('REQUEST_METHOD') === 'POST') == FALSE) {
+                $data['list_all'] = $this->m_employee->search_all();
+            }
+        }
 
-        $data = array(
-        );
+        $data['form_open'] = form_open('hr/employee');
+        $data['form_input'] = $this->m_employee->set_form_search();
+        $data['form_close'] = form_close();
 
-//        $this->m_template->set_Debug($temp);
         $this->m_template->set_Content('hr/employees', $data);
         $this->m_template->showTemplate();
     }
 
-    public function view($eid) {
-        $data = array(
-            'page_title' => 'งานบุคคล ',
-            'page_title_small' => '',
-        );
-        $this->m_template->set_Content('hr/detail_employee', $data);
+    public function detail($EID) {
+        if ($EID == NUll || !$this->m_employee->check_employee($EID))
+            redirect('hr/employee');
+
+        $data = array();
+        $e_data = $this->m_employee->check_employee_detail($EID);
+
+        $data['e_data'] = $e_data;
+        $data['form_input'] = $this->m_candidate->set_form($e_data, TRUE);
+
+        $data['mode'] = 'employee_detail';
+        $data['form_open'] = form_open('hr/employee/detail/' . $EID, 'id="frm_main" class="form-horizontal"');
+        $data['form_close'] = form_close();
+
+//        $this->m_template->set_Debug($data);
+        $this->m_template->set_Content('candidate/frm_candidate', $data);
         $this->m_template->showTemplate();
     }
 
-    public function edit($eid = NULL) {
-        $data = array(
-            'page_title' => 'งานบุคคล ',
-            'page_title_small' => '',
-        );
-        $this->m_template->set_Content('hr/frm_employee', $data);
+    public function edit($EID) {
+        if ($EID == NUll || !$this->m_employee->check_employee($EID))
+            redirect('hr/employee');
+
+        $data = array();
+        $e_data = $this->m_employee->check_employee_detail($EID);
+
+        if ($this->m_candidate->set_validation() && $this->form_validation->run()) {
+            $input_data['EID'] = $EID;
+            $input_data += $this->m_candidate->get_post();
+            $input_data['emergency']['ECID'] = $e_data['ECID'];
+
+            $input_data['debug'] = $this->m_employee->update_all_data($input_data);
+            $data['form_input'] = $this->m_candidate->set_form();
+            $this->m_template->set_Debug($input_data);
+
+            //Alert success and redirect to candidate
+            $alert['alert_message'] = "แก้ไขข้อมูลพนักงานแล้ว";
+            $alert['alert_mode'] = "success";
+            $this->session->set_flashdata('alert', $alert);
+            redirect('hr/employee');
+        } else {
+            if ($this->input->server('REQUEST_METHOD') === 'POST') {
+                //Alert success and redirect to candidate
+                $alert['alert_message'] = "กรุณากรอกข้อมูลที่สำคัญให้ครบถ้วน";
+                $alert['alert_mode'] = "danger";
+                $this->m_template->set_RealAlert($alert);
+            }
+
+            $data['e_data'] = $e_data;
+            $data['form_input'] = $this->m_candidate->set_form($e_data, FALSE);
+        }
+
+        $data['mode'] = 'employee_edit';
+        $data['form_open'] = form_open('hr/employee/edit/' . $EID, 'id="frm_main" class="form-horizontal"');
+        $data['form_close'] = form_close();
+
+//        $this->m_template->set_Debug($data);
+        $this->m_template->set_Content('candidate/frm_candidate', $data);
+        $this->m_template->showTemplate();
+    }
+
+    /*
+     * ฟังก์ชั่น เลิกจ้าง เป็นหน้าที่จะส่งค่า EID มาเพื่อทำการเลิกจ้าง
+     */
+
+    public function layof($EID = NULL) {
+        if ($CID == NULL || $CID == " " || !$this->m_candidate->check_candidate($CID))
+            redirect('hr/home');
+
+        $data = array();
+        $temp = $this->m_candidate->check_candidate_detail($CID);
+        $data['c_data'] = $this->m_employee->prepare_data_from_candidate($temp);
+        $data['result'] = $this->m_employee->insert_employee_from_candidate($data['c_data'], $temp['CID']);
+
+        if ($data['result'] != FALSE) {
+            //Alert success and redirect to candidate
+            $alert['alert_message'] = "อนุมัติข้อมูลผู้สมัครงานแล้ว";
+            $alert['alert_mode'] = "success";
+            $this->session->set_flashdata('alert', $alert);
+            redirect('hr/home');
+        }
+
+
+        $this->m_template->set_Debug($data);
         $this->m_template->showTemplate();
     }
 

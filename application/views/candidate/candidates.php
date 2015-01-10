@@ -52,8 +52,8 @@
                     </div>
                     <div class="row">
                         <div class="col-md-12 text-center">
-                            <button type="submit" class="btn btn-lg btn-primary"><span class="fa fa-search"></span>ค้นหา</button>
-                            <?= anchor('candidate', '<span class="fa fa-refresh">เริ่มค้นหาใหม่</span>', array('class' => 'btn btn-lg btn-default')) ?>
+                            <button type="submit" class="btn btn-primary"><span class="fa fa-search"></span>ค้นหา</button>
+                            <?= anchor('candidate', '<span class="fa fa-refresh">เริ่มค้นหาใหม่</span>', array('class' => 'btn btn-default')) ?>
                         </div>
                     </div>
                 </div>

@@ -2,10 +2,10 @@
     jQuery(document).ready(function ($) {
         $("#mainmenu ul li").removeAttr('class');
 <?php
-if ($mode != 'employee_detail')
-    echo'$("#btnCandidate").addClass("active");';
-else
+if ($mode == 'employee_accept' || $mode == 'employee_detail' || $mode == 'employee_edit')
     echo '$("#btnHR").addClass("active");';
+else
+    echo'$("#btnCandidate").addClass("active");';
 ?>
         $('.datepicker').datepicker({
             language: 'th-th',
@@ -13,6 +13,9 @@ else
         });
         $("#btn_prepare_accept").click(function () {
             $('#modal_accept').modal();
+        });
+        $("#btn_prepare_layoff").click(function () {
+            $('#modal_layof').modal();
         });
         $("#btn_prepare_save").click(function () {
             if ($('#check_agree').is(':checked'))
@@ -70,7 +73,24 @@ else
 <div class="container" style="margin-top: 60px;">
     <div class="row">
         <div class="col-md-12">
-            <?php if ($mode != 'employee_detail') { ?>
+            <?php if ($mode == 'employee_accept') { ?>
+                <ul class="breadcrumb">
+                    <li>
+                        <?= anchor('hr/home', 'ระบบบริหารงานบุคคล') ?>
+                    </li>
+                    <li class="active">ข้อมูลผู้สมัครงาน</li>
+                </ul>
+            <?php } else if ($mode == 'employee_detail' || $mode == 'employee_edit') { ?>
+                <ul class="breadcrumb">
+                    <li>
+                        <?= anchor('hr/home', 'ระบบบริหารงานบุคคล') ?>
+                    </li>
+                    <li>
+                        <?= anchor('hr/employee', 'พนักงาน') ?>
+                    </li>
+                    <li class="active">ข้อมูลพนักงาน</li>
+                </ul>
+            <?php } else { ?>
                 <ul class="breadcrumb">
                     <li>
                         <?= anchor('candidate', 'ผู้สมัครงาน') ?>
@@ -86,16 +106,15 @@ else
                         ?>
                         &nbsp;</li>
                 </ul>
-            <?php }else { ?>
-                <ul class="breadcrumb">
-                    <li>
-                        <?= anchor('hr/home', 'ระบบบริหารงานบุคคล') ?>
-                    </li>
-                    <li class="active">ข้อมูลผู้สมัครงาน</li>
-                </ul>
+
             <?php } ?>
             <div class="page-header">
-                <h1>สมัครงาน
+                <h1><?php
+                    if ($mode == 'employee_detail' || $mode == 'employee_edit')
+                        echo 'พนักงาน';
+                    else
+                        echo 'สมัครงาน';
+                    ?>
                     <font color="#777777">
                     <span style="font-size: 23px; line-height: 23.399999618530273px;">
                         <?php
@@ -105,8 +124,12 @@ else
                             echo 'ระบบรับสมัครพนักงานใหม่(แก้ไข)';
                         elseif ($mode == 'detail')
                             echo 'ระบบรับสมัครพนักงานใหม่(ตรวจข้อมูล)';
-                        elseif ($mode == 'employee_detail')
+                        elseif ($mode == 'employee_accept')
                             echo 'ระบบอนุมัติการรับสมัครพนักงานใหม่(ตรวจข้อมูล)';
+                        elseif ($mode == 'employee_detail')
+                            echo 'ระบบบริหารงานบุคคล(ตรวจข้อมูล)';
+                        elseif ($mode == 'employee_edit')
+                            echo 'ระบบบริหารงานบุคคล(แก้ไขข้อมูล)';
                         ?>
                     </span>
                     </font>
@@ -646,7 +669,9 @@ else
                             </tbody>
                         </table>
                         <?php
-                        if ($mode != 'employee_detail') {
+                        if ($mode == 'employee_accept' || $mode == 'employee_detail') {
+                            
+                        } else {
                             if ($mode != 'detail') {
                                 ?>
                                 <div class="col-md-12 text-center">
@@ -702,7 +727,9 @@ else
                             </div>
 
                             <?php
-                            if ($mode != 'employee_detail') {
+                            if ($mode == 'employee_accept' || $mode == 'employee_detail') {
+                                
+                            } else {
                                 if ($mode != 'detail') {
                                     ?>
                                     <div class="col-md-offset-2 col-md-8">
@@ -722,18 +749,23 @@ else
                             ?>
                             <div class="col-md-12 text-center">
                                 <?php
-                                if ($mode != 'employee_detail') {
+                                if ($mode == 'employee_accept') {
+                                    echo '<button id="btn_prepare_accept" class="btn btn-primary" type="button">อนุมัติการสมัคร</button> ';
+                                    echo anchor('hr/home', '<span class="btn btn-danger">ย้อนกลับ</span>');
+                                } else if ($mode == 'employee_detail') {
+                                    echo '<button id="btn_prepare_layoff" class="btn btn-primary" type="button">เลิกจ้าง</button> ';
+                                    echo anchor('hr/employee', '<span class="btn btn-danger">ย้อนกลับ</span>');
+                                } else if ($mode == 'employee_edit') {
+                                    echo '<button id="btn_prepare_save" class="btn btn-primary" type="button">บันทึก</button> ';
+                                    echo anchor('hr/employee', '<span class="btn btn-danger">ย้อนกลับ</span>');
+                                } else {
                                     if ($mode != 'detail')
-                                        echo '<button id="btn_prepare_save" class="btn btn-primary" type="button">บันทึก</button>';
-
+                                        echo '<button id="btn_prepare_save" class="btn btn-primary" type="button">บันทึก</button> ';
                                     if ($mode == 'add') {
-                                        echo '<button class="btn btn-danger" type="reset">เริ่มใหม่</button>';
+                                        echo '<button class="btn btn-danger" type="reset">เริ่มใหม่</button> ';
                                     } elseif ($mode == 'edit' || $mode == 'detail') {
                                         echo anchor('candidate', '<span class="btn btn-danger">ย้อนกลับ</span>');
                                     }
-                                } else {
-                                    echo '<button id="btn_prepare_accept" class="btn btn-primary" type="button">อนุมัติการสมัคร</button> ';
-                                    echo anchor('candidate', '<span class="btn btn-danger">ย้อนกลับ</span>');
                                 }
                                 ?>
 
@@ -754,7 +786,12 @@ else
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                    <h4 class="modal-title" id="myModalLabel">ยืนยันการเพิ่มข้อมูล</h4>
+                    <h4 class="modal-title" id="myModalLabel">ยืนยันการ<?php
+                        if ($mode == 'employee_edit')
+                            echo 'แก้ไข';
+                        else
+                            echo'เพิ่ม'
+                            ?>ข้อมูล</h4>
                 </div>
                 <div class="modal-body">
                     <p> กรุณาตรวจสอบข้อมูลให้ถูกต้องก่อนการ ยืนยัน
@@ -768,7 +805,7 @@ else
         </div>
     </div>
 
-    <?php if ($mode == 'employee_detail') { ?>
+    <?php if ($mode == 'employee_accept') { ?>
         <!-- Modal accept -->
         <div class="modal fade" id="modal_accept" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
             <div class="modal-dialog">
@@ -784,6 +821,27 @@ else
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">ปิด</button>
                         <?= anchor('hr/home/accept/' . $c_data['CID'], 'ยืนยัน', array('class' => 'btn btn-primary')) ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <?php } ?>
+    <?php if ($mode == 'employee_detail') { ?>
+        <!-- Modal layof -->
+        <div class="modal fade" id="modal_layof" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        <h4 class="modal-title" id="myModalLabel">ยืนยันการเลิกจ้าง</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p> กรุณาตรวจสอบข้อมูลให้ถูกต้องก่อนการ ยืนยัน
+                        </p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">ปิด</button>
+                        <?= anchor('hr/employee/layof/' . $e_data['EID'], 'ยืนยัน', array('class' => 'btn btn-primary')) ?>
                     </div>
                 </div>
             </div>

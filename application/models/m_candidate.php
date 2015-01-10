@@ -286,14 +286,14 @@ class m_candidate extends CI_Model {
 
         if ($data['education']['InstitutionName'][0] != NULL && !$this->update_education($data['education'], $CID))
             return FALSE;
-//
-//        if ($data['family']['SpouseFirstName'] != NULL) {
-//            $FID = $this->insert_family($data['family'], $CID);
-//            if ($FID == FALSE)
-//                return FALSE;
-//            if (!$this->insert_family_detail($data['family_detail'], $FID))
-//                return FALSE;
-//        }
+
+        if ($data['family']['SpouseFirstName'] != NULL) {
+            $FID = $this->update_family($data['family'], $CID);
+            if ($FID == FALSE)
+                return FALSE;
+            if (!$this->update_family_detail($data['family_detail'], $FID[0]['FID']))
+                return FALSE;
+        }
 
         return $CID;
     }
@@ -365,6 +365,45 @@ class m_candidate extends CI_Model {
             return FALSE;
     }
 
+    function update_family_detail($data, $FID) {
+        $pre_data = array();
+        $count = 0;
+        for ($i = 0; $i < count($data['SonFirstName']); $i++) {
+            $pre_data[$i]['FID'] = $FID;
+            $pre_data[$i]['FDSeqNo'] = $i;
+            $pre_data[$i]['SonTitle'] = $data['SonTitle'][$i];
+            $pre_data[$i]['SonFirstName'] = $data['SonFirstName'][$i];
+            $pre_data[$i]['SonLastName'] = $data['SonLastName'][$i];
+            $pre_data[$i]['SonOccupation'] = $data['SonOccupation'][$i];
+            $pre_data[$i]['SonAge'] = $data['SonAge'][$i];
+            $query = $this->db->get_where('candidate_family_detail', array('FID' => $FID, 'FDSeqNo' => $i));
+            if ($query->num_rows() == 0) {
+                if ($this->db->insert('candidate_family_detail', $pre_data[$i]))
+                    $count++;
+            } else {
+                $this->db->where('FID', $FID);
+                $this->db->where('FDSeqNo', $i);
+                if ($this->db->update('candidate_family_detail', $pre_data[$i]))
+                    $count++;
+            }
+        }
+        if (count($pre_data) == $count)
+            return TRUE;
+        else
+            return FALSE;
+    }
+
+    function update_family($data, $CID) {
+        $data = $this->set_update_date($data);
+        $this->db->where('CID', $CID);
+        $this->db->update('candidate_family', $data);
+        if ($this->db->affected_rows() == 1) {
+            $query = $this->db->get_where('candidate_family', array('CID' => $CID));
+            return $query->result_array();
+        } else
+            return FALSE;
+    }
+
     function update_education($data, $CID) {
         $pre_data = array();
         $count = 0;
@@ -388,31 +427,6 @@ class m_candidate extends CI_Model {
         }
         if (count($pre_data) == $count)
             return TRUE;
-        else
-            return FALSE;
-    }
-
-    function update_family($data, $CID) {
-        $this->db->order_by("FID", "desc");
-        $this->db->limit(2);
-        $query = $this->db->get('candidate_family');
-        $temp = $query->result_array();
-        $last_fid = 'FSHMPT0000';
-        foreach ($temp as $row) {
-            $last_fid = $row['FID'];
-            break;
-        }
-        $num = substr($last_fid, 6);
-        $num+=1;
-        $num = str_pad($num, 4, '0', STR_PAD_LEFT);
-        $last_fid = 'FSHMPT' . $num;
-
-
-        $data['CID'] = $CID;
-        $data['FID'] = $last_fid;
-        $data = $this->set_create_date($data);
-        if ($this->db->insert('candidate_family', $data))
-            return $last_fid;
         else
             return FALSE;
     }

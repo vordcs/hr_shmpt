@@ -43,22 +43,25 @@
                 </div>
                 <div class="panel-body">
                     <div class="list-scholl">
-                        <ul class="media-list">
-
-                            <?php
-                            foreach ($e_list as $row) {
-                                $date = new DateTime($row['AcceptDate']);
-                                ?>
-                                <li class="media">
-                                    <a class="pull-left" href="#"><img class="media-object img-rounded" src="http://placehold.it/100x100"></a>
-                                    <div class="media-body">
-                                        <h4 class="media-heading"><?= $row['Title'] . $row['FirstName'] . " " . $row['LastName'] ?></h4>
-                                        <p>วันที่อนุมัติ <?= $date->format('j F Y') ?></p>
-                                        <p>ตำแหน่งงาน <?= $row['PositionName'] ?></p>
-                                    </div>
-                                </li>
-                            <?php } ?>
-                        </ul>
+                        <?php if (count($e_list) > 0) { ?>
+                            <ul class="media-list">
+                                <?php
+                                foreach ($e_list as $row) {
+                                    $date = new DateTime($row['AcceptDate']);
+                                    ?>
+                                    <li class="media">
+                                        <a class="pull-left" href="#"><img class="media-object img-rounded" src="http://placehold.it/100x100"></a>
+                                        <div class="media-body">
+                                            <h4 class="media-heading"><?= $row['Title'] . $row['FirstName'] . " " . $row['LastName'] ?></h4>
+                                            <p>วันที่อนุมัติ <?= $date->format('j F Y') ?></p>
+                                            <p>ตำแหน่งงาน <?= $row['PositionName'] ?></p>
+                                        </div>
+                                    </li>
+                                <?php } ?>
+                            </ul>  
+                        <?php } else { ?>
+                            ไม่พบข้อมูลพนักงานใหม่
+                        <?php } ?>
                     </div>
                 </div>
             </div>
