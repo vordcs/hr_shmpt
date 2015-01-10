@@ -88,7 +88,7 @@ class m_employee extends CI_Model {
         $query = $this->db->get();
         return $query->result_array();
     }
-    
+
     function search_all() {
         $this->db->from('employees AS em');
         $this->db->join('employee_positions AS ep', 'ep.PID = em.PID');
@@ -502,6 +502,19 @@ class m_employee extends CI_Model {
             'FirstName' => $this->input->post('FirstName'),
             'LastName' => $this->input->post('LastName'));
         return $f_data;
+    }
+
+    function update_emplyee_layof($EID) {
+        $data = array();
+        $data['StatusID'] = 0;
+
+        $data = $this->set_update_date($data);
+        $this->db->where('EID', $EID);
+        $this->db->update('employees', $data);
+        if ($this->db->affected_rows() == 1)
+            return TRUE;
+        else
+            return FALSE;
     }
 
     function update_all_data($data) {

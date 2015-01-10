@@ -105,22 +105,19 @@ class employee extends CI_Controller {
      */
 
     public function layof($EID = NULL) {
-        if ($CID == NULL || $CID == " " || !$this->m_candidate->check_candidate($CID))
-            redirect('hr/home');
+        if ($EID == NULL || $EID == " " || !$this->m_employee->check_employee($EID))
+            redirect('hr/employee');
 
         $data = array();
-        $temp = $this->m_candidate->check_candidate_detail($CID);
-        $data['c_data'] = $this->m_employee->prepare_data_from_candidate($temp);
-        $data['result'] = $this->m_employee->insert_employee_from_candidate($data['c_data'], $temp['CID']);
+        $data['result'] = $this->m_employee->update_emplyee_layof($EID);
 
         if ($data['result'] != FALSE) {
             //Alert success and redirect to candidate
-            $alert['alert_message'] = "อนุมัติข้อมูลผู้สมัครงานแล้ว";
+            $alert['alert_message'] = "เลิกจ้างพนักงานแล้ว";
             $alert['alert_mode'] = "success";
             $this->session->set_flashdata('alert', $alert);
             redirect('hr/home');
         }
-
 
         $this->m_template->set_Debug($data);
         $this->m_template->showTemplate();
