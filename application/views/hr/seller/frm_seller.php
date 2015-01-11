@@ -51,10 +51,8 @@
                 <li><a href="<?= base_url('hr/home') ?>">หน้าหลัก</a></li>
                 <li><a href="<?= base_url('hr/employee/') ?>">พนักงาน</a></li>
                 <li class="active"><a href="<?= base_url('hr/seller/') ?>">พนักงานขายตั๋ว</a></li>
-                <li><a href="<?= base_url('hr/master_data/') ?>">ข้อมูลหลัก</a></li>
-                <li><a href="<?= base_url('hr/work_history/') ?>" >ประวัติการทำงาน</a></li>
-                <li><a href="<?= base_url('hr/role_permission/') ?>" >กำหนดสิทธิ์การเข้าใช้</a></li>
-                <li><a href="<?= base_url('hr/username/') ?>" >ข้อมูลการเข้าใช้ระบบ</a></li>    
+                <li><a href="<?= base_url('hr/permission/') ?>" >กำหนดสิทธิ์การเข้าใช้</a></li>
+                <li><a href="<?= base_url('hr/loguser/') ?>" >ข้อมูลการเข้าใช้ระบบ</a></li>    
             </ul>
         </div>
     </div>
@@ -82,11 +80,11 @@
                              alt="User Pic">
                     </div>
                     <div class="col-md-11">
-                        <strong>Cyruxx</strong><br>
-                        <span class="text-muted">User level: Administrator</span>
+                        <strong><?= $employee['Title'] . $employee['FirstName'] . ' ' . $employee['LastName'] ?></strong><br>
+                        <span class="text-muted">ระดับสิทธิ์การใช้งาน : <?= $employee['RoleLevel'] ?></span>
                         <button class="btn btn-primary pull-right" type="button" data-toggle="collapse" data-target="#emp_info" aria-expanded="false" aria-controls="collapseExample">
                             ข้อมูลพนักงาน
-                        </button>                
+                        </button>
                     </div>
                 </div>
             </div> 
@@ -103,24 +101,20 @@
                              alt="User Pic">
                     </div>
                     <div class="col-md-6">
-                        <strong>Cyruxx</strong><br>
+                        <strong><?= $employee['Title'] . $employee['FirstName'] . ' ' . $employee['LastName'] ?></strong><br>
                         <table class="table table-condensed table-responsive table-user-information">
                             <tbody>
                                 <tr>
-                                    <td>User level:</td>
-                                    <td>Administrator</td>
+                                    <td>ระดับสิทธิ์การใช้งาน</td>
+                                    <td><?= $employee['RoleLevel'] ?></td>
                                 </tr>
                                 <tr>
-                                    <td>Registered since:</td>
-                                    <td>11/12/2013</td>
+                                    <td>รหัสประชาชน</td>
+                                    <td><?= $employee['PersonalID'] ?></td>
                                 </tr>
                                 <tr>
-                                    <td>Topics</td>
-                                    <td>15</td>
-                                </tr>
-                                <tr>
-                                    <td>Warnings</td>
-                                    <td>0</td>
+                                    <td>อายุ</td>
+                                    <td><?= $employee['Age'] ?></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -128,16 +122,10 @@
                 </div>
                 <div class="panel-footer">
                     <i class="fa fa-phone"></i>&nbsp;&nbsp;
-                    <span class="">0811464646464</span>
+                    <span class=""><?= $employee['MobilePhone'] ?></span>
                     <span class="pull-right">
-                        <button class="btn btn-danger" type="button"
-                                data-toggle="tooltip"
-                                data-original-title="Remove this user"><i class="fa fa-eye"></i>
-                        </button>
-                        <button class="btn btn-warning" type="button"
-                                data-toggle="tooltip"
-                                data-original-title="Edit this user"><i class="fa fa-edit"></i>
-                        </button>                        
+                        <?= anchor('hr/employee/detail/' . $employee['EID'], '<i class="fa fa-search"></i>', array('class' => 'btn btn-primary btn-sm')) ?>
+                        <?= anchor('hr/employee/edit/' . $employee['EID'], '<i class="fa fa-pencil"></i>', array('class' => 'btn btn-warning btn-sm')) ?>
                     </span>
                 </div>
             </div>

@@ -88,7 +88,7 @@
                         <?php
                         foreach ($epmployees_seller as $emp) {
                             $EID = $emp['EID'];
-                            $name = $emp['FirstName'];
+                            $name = $emp['Title'] . $emp['FirstName'] . ' ' . $emp['LastName'];
                             $row_spam = 3;
                             $num_sale = 0;
                             foreach ($sellers as $s) {

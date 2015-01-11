@@ -116,8 +116,12 @@
                                         <?= '<strong>มือถือ</strong> ' . $row['MobilePhone'] ?>
                                     </td>
                                     <td class="text-center">
-                                        <?= anchor('hr/employee/detail/' . $row['EID'], '<i class="fa fa-search"></i>', array('class' => 'btn btn-primary btn-sm')) ?>
-                                        <?= anchor('hr/employee/edit/' . $row['EID'], '<i class="fa fa-pencil"></i>', array('class' => 'btn btn-warning btn-sm')) ?>
+                                        <?php if ($row['StatusID'] == 0) { ?>
+                                            <span class="label label-danger">ลาออก</span>
+                                        <?php } else { ?>
+                                            <?= anchor('hr/employee/detail/' . $row['EID'], '<i class="fa fa-search"></i>', array('class' => 'btn btn-primary btn-sm')) ?>
+                                            <?= anchor('hr/employee/edit/' . $row['EID'], '<i class="fa fa-pencil"></i>', array('class' => 'btn btn-warning btn-sm')) ?>
+                                        <?php } ?>
                                     </td>
                                 </tr>
                                 <?php
@@ -172,8 +176,12 @@
                                         <?= '<strong>มือถือ</strong> ' . $row['MobilePhone'] ?>
                                     </td>
                                     <td class="text-center">
-                                        <?= anchor('hr/employee/detail/' . $row['EID'], '<i class="fa fa-search"></i>', array('class' => 'btn btn-primary btn-sm')) ?>
-                                        <?= anchor('hr/employee/edit/' . $row['EID'], '<i class="fa fa-pencil"></i>', array('class' => 'btn btn-warning btn-sm')) ?>
+                                        <?php if ($row['StatusID'] == 0) { ?>
+                                            <span class="label label-danger">ลาออก</span>
+                                        <?php } else { ?>
+                                            <?= anchor('hr/employee/detail/' . $row['EID'], '<i class="fa fa-search"></i>', array('class' => 'btn btn-primary btn-sm')) ?>
+                                            <?= anchor('hr/employee/edit/' . $row['EID'], '<i class="fa fa-pencil"></i>', array('class' => 'btn btn-warning btn-sm')) ?>
+                                        <?php } ?>
                                     </td>
                                 </tr>
                                 <?php

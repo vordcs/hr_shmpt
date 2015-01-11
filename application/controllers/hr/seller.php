@@ -48,16 +48,17 @@ class seller extends CI_Controller {
             $data['epmployees_seller'] = $this->m_seller->get_seller($rcode);
             $data['sellers'] = $this->m_seller->get_seller($rcode);
         } else {
-            $data['epmployees_seller'] = $this->m_seller->get_seller();
-            $data['sellers'] = $this->m_seller->get_seller();
+            $data['epmployees_seller'] = $this->m_seller->get_employee_by_PID();
+            $data['sellers'] = $this->m_seller->get_employee_by_PID();
         }
         $data_debug = array(
 //            'form' => $data['form'],
 //            'routes' => $data['routes'],
 //            'stations' => $data['stations'],
 //            'sellers' => $data['sellers'],
+//            'temp' => $temp,
 //            'epmployees_seller' => $data['epmployees_seller'],
-//            
+//              'emp_4' => $this->m_seller->get_employee_by_PID(),
 //            'form_data' => $form_data,
 //            'rs' => $rs,
         );
@@ -106,6 +107,7 @@ class seller extends CI_Controller {
             redirect('hr/seller/');
         }
 
+        $data['employee'] = $this->m_seller->get_employee_by_EID($eid)[0];
         $data['form'] = $form;
         $data['routes'] = $routes;
         $data['stations'] = $station;
@@ -114,6 +116,7 @@ class seller extends CI_Controller {
 //            'stations' => $data['stations'],
 //            'form' => $data['form'],
 //            'form_data' => $form_data,
+//            'employee' => $data['employee'],
 //            'rs' => $rs,
         );
 

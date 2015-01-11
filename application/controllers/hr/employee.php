@@ -24,7 +24,6 @@ class employee extends CI_Controller {
             $list = $this->m_employee->search($input_data);
             $input_data['list'] = $list;
             $data['list'] = $list;
-            //$this->m_template->set_Debug($input_data);
         } else {
             if (($this->input->server('REQUEST_METHOD') === 'POST') == FALSE) {
                 $data['list_all'] = $this->m_employee->search_all();
@@ -35,6 +34,7 @@ class employee extends CI_Controller {
         $data['form_input'] = $this->m_employee->set_form_search();
         $data['form_close'] = form_close();
 
+        //$this->m_template->set_Debug($data);
         $this->m_template->set_Content('hr/employees', $data);
         $this->m_template->showTemplate();
     }

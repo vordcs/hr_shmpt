@@ -10,6 +10,35 @@ if (!defined('BASEPATH'))
 
 class m_seller extends CI_Model {
 
+    public function get_employee_by_EID($EID) {
+        $this->db->select('*,em.EID as EID');
+        $this->db->from('employees AS em');
+        $this->db->join('employee_positions AS ep', 'ep.PID = em.PID');
+        $this->db->join('employee_work_status AS es', 'es.StatusID = em.StatusID');
+        $this->db->join('employee_role_permission AS erp', 'erp.RoleID = em.RoleID');
+        $this->db->join('sellers AS se', 'se.EID = em.EID', 'left');
+        $this->db->join('t_stations AS ts', 'se.SID = ts.SID', 'left');
+        $this->db->join('t_routes AS tr', 'se.RCode = tr.RCode', 'left');
+        $this->db->where('em.EID', $EID);
+        $query = $this->db->get();
+        return $query->result_array();
+    }
+
+    public function get_employee_by_PID($PID = '4') {
+        $this->db->select('*,em.EID as EID');
+        $this->db->from('employees AS em');
+        $this->db->join('employee_positions AS ep', 'ep.PID = em.PID');
+        $this->db->join('employee_work_status AS es', 'es.StatusID = em.StatusID');
+        $this->db->join('employee_role_permission AS erp', 'erp.RoleID = em.RoleID');
+        $this->db->join('sellers AS se', 'se.EID = em.EID', 'left');
+        $this->db->join('t_stations AS ts', 'se.SID = ts.SID', 'left');
+        $this->db->join('t_routes AS tr', 'se.RCode = tr.RCode', 'left');
+        $this->db->where('em.PID', $PID);
+        $this->db->group_by('em.EID');
+        $query = $this->db->get();
+        return $query->result_array();
+    }
+
     public function get_seller($rcode = NUll, $vtid = NULL, $sid = NULL, $eid = NULL) {
         $this->db->join('employees', 'sellers.EID = employees.EID', 'left');
         $this->db->join('t_stations', 'sellers.SID = t_stations.SID', 'left');
@@ -80,14 +109,14 @@ class m_seller extends CI_Model {
             $i_VTID[$value['VTID']] = $value['VTDescription'];
         }
         //ข้อมูลเส้นทาง        
-        $i_RCode[0] = 'เส้นทางทั้งหมด';
+        $i_RCode[0] = 'พนักงานขายตั๋วทั้งหมด';
         foreach ($this->get_route() as $value) {
             $i_RCode[$value['RCode']] = $value['RCode'] . ' ' . $value['RSource'] . ' - ' . $value['RDestination'];
         }
         $dropdown = 'class="selecter_3" data-selecter-options = \'{"cover":"true"}\' ';
         $form_search = array(
             'form' => form_open('hr/seller', array('class' => 'form-horizontal', 'id' => 'form_search_seller')),
-            'RCode' => form_dropdown('RCode', $i_RCode, set_value('RCode'), $dropdown.' id="RCode"'),
+            'RCode' => form_dropdown('RCode', $i_RCode, set_value('RCode'), $dropdown . ' id="RCode"'),
             'VTID' => form_dropdown('VTID', $i_VTID, set_value('VTID'), $dropdown),
         );
         return $form_search;
