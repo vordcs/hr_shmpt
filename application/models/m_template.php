@@ -45,8 +45,16 @@ Class m_template extends CI_Model {
 
     function check_permission() {
         $sess = $this->session->userdata('login');
+        $permit = $this->session->userdata('permittion');
         if ($sess == NULL || $sess == FALSE) {
             redirect('login');
+        }
+        if (strpos($permit, $this->permission) !== false) {
+            return TRUE;
+        } elseif ($this->permission == 'ALL') {
+            return TRUE;
+        } else {
+            return FALSE;
         }
         return TRUE;
     }
@@ -76,9 +84,6 @@ Class m_template extends CI_Model {
             $this->lang->load($path, $site_lang); //Load message
         }
 
-        //Check login
-        $this->check_permission();
-
         //Load version for Cache CSS and JS
         $data['version'] = $this->version;
 
@@ -96,15 +101,26 @@ Class m_template extends CI_Model {
         $data['u_name'] = $user['u_name'];
         $data['form_login'] = form_open('logout', array('class' => 'navbar-form pull-right', 'style' => 'height: 40px;'));
 
+        //Check login and permission
+//        if ($this->check_permission() == FALSE) {
+//            //Alert success and redirect to candidate
+//            $alert['alert_message'] = "ระดับสิทธิ์ของคุณไม่สามารถใช้งานระบบในส่วนนี้ได้";
+//            $alert['alert_mode'] = "danger";
+//            $this->set_RealAlert($alert);
+//        }
+
         $data['title'] = $this->title;
         $data['debug'] = $this->debud_data;
         $data['alert'] = $this->check_Alert();
         $data['real_alert'] = $this->check_RealAlert();
 
         $this->load->view('theme_header', $data);
-        if ($this->view_name != NULL) {
+        if ($this->check_permission() && $this->view_name != NULL) {
             $this->load->view($this->view_name, $this->set_data);
+        } else {
+            $this->load->view('permission_deny');
         }
+
         $this->load->view('theme_footer');
     }
 
