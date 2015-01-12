@@ -140,7 +140,7 @@ class m_schedule_vehicle extends CI_Model {
             $num_vehicle = count($vehicles);
             foreach ($vehicles as $vehicle) {
                 $vid = $vehicle['VID'];
-                if ($i < ($num_vehicle/2)) {
+                if ($i < ($num_vehicle / 2)) {
                     $sid = $start_station_id;
                     $seq = $first_seq;
                 } else {
@@ -599,6 +599,7 @@ class m_schedule_vehicle extends CI_Model {
      */
 
     public function get_schedule($date = NULL, $rid = NULL) {
+        $this->db->select('*,t_schedules_day.RID as RID');
         $this->db->join('t_routes', ' t_schedules_day.RID=t_routes.RID', 'left');
         $this->db->join('vehicles_has_schedules', 't_schedules_day.TSID = vehicles_has_schedules.TSID', 'left');
         $this->db->join('vehicles', 'vehicles_has_schedules.VID = vehicles.VID', 'left');
@@ -608,7 +609,7 @@ class m_schedule_vehicle extends CI_Model {
         if ($rid != NULL) {
             $this->db->where('t_routes.RID', $rid);
         }
-        $this->db->order_by('SeqNo', 'ASC');
+        $this->db->order_by('TimeDepart', 'ASC');
         $query_schedule = $this->db->get("t_schedules_day");
         return $query_schedule->result_array();
     }

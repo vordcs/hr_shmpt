@@ -8,9 +8,13 @@
             format: 'yyyy-m-d'
         });
     });
-    function remove_schedule(schedule_id) {
+    function remove_schedule(schedule_id, start_point) {
         var elem = document.getElementById(schedule_id);
         elem.remove();
+        var input = $("<input>")
+                .attr("type", "hidden")
+                .attr("name", "REMOVE_TSID_" + start_point + "[]").val(schedule_id);
+        $('#form_main').append($(input));
     }
 
 </script>
@@ -123,11 +127,12 @@
         </div>
     </div>
     <div class="row">
+        <?= $form_open ?>
         <?php
         foreach ($route_detail as $rd) {
             $rid = $rd['RID'];
             $rcode = $rd['RCode'];
-            $vtid=$rd['VTID'];
+            $vtid = $rd['VTID'];
             $source = $rd['RSource'];
             $destination = $rd['RDestination'];
             $start_point = $rd['StartPoint'];
@@ -143,11 +148,11 @@
                             <?php
                             $add = array(
                                 'type' => "button",
-                                'class' => "btn btn-info pull-right",                                
+                                'class' => "btn btn-info pull-right",
                             );
-                            echo anchor("schedule/add/$rcode/$vtid/$rid","<i class=\"fa fa-plus\"></i>&nbsp;&nbsp; ไป $destination ",$add);
+                            echo anchor("schedule/add/$rcode/$vtid/$rid", "<i class=\"fa fa-plus\"></i>&nbsp;&nbsp; ไป $destination ", $add);
                             ?>
-                            
+
                         </div>
 
                         <div class="col-md6 col-xs-6">
@@ -174,7 +179,8 @@
                                     if ($rid == $schedule['RID']) {
                                         ?>   
                                         <li class="disabled <?= $class_li ?>" id="<?= $tsid ?>">
-                                            <button class="btn btn-danger btn-xs pull-left <?= $class_btn ?>" onclick="remove_schedule('<?= $tsid ?>')">
+                                            <input type="hidden" name="TSID_<?= $start_point ?>[]" value="<?= $tsid ?>" />
+                                            <button class="btn btn-danger btn-xs pull-left <?= $class_btn ?>" onclick="remove_schedule('<?= $tsid ?>', '<?= $start_point ?>')">
                                                 <span class="fa fa-times"></span>
                                             </button>
                                             <strong>
@@ -206,10 +212,13 @@
                                             $class_li = '';
                                         } else {
                                             //do something
-//                                            $class_li = 'disabled';
+                                            $class_li = 'disabled';
                                         }
                                         ?>
-                                        <li class="<?= $class_li ?>" id=""><?= $vcode ?></li>
+                                        <li class="<?= $class_li ?>" id="">
+                                            <input type="hidden" name="VID_<?= $start_point ?>[]" value="<?= $vcode ?>" />
+                                            <?= $vcode ?>
+                                        </li>
                                         <?php
                                     }
                                 }
@@ -221,7 +230,14 @@
                 </div> 
             </div>
         <?php } ?>
-    </div>  
+    </div>
+    <div class="row">
+        <div class="col-md-12 text-center panel panel-default" style="padding: 20px;">
+            <button class="btn badge-primary" type="submit">บันทึก</button>
+            <?= anchor('schedule', '<span class="btn btn-danger">ย้อนกลับ</span>') ?>
+        </div>
+    </div>
+    <?= $form_close ?>
 </div>
 <?php echo js('jquery.sortable.js?v=' . $version); ?>
 <script>

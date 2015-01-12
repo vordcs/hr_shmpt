@@ -70,6 +70,7 @@
         <?php } ?>
     </div>
     <div class="row">  
+        <legend>ตารางเวลาเดินรถ</legend>
         <div class="col-md-12">
             <?php
             foreach ($route_detail as $rd) {
