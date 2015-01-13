@@ -126,8 +126,12 @@ Class m_datetime extends CI_Model {
         }
     }
 
-    public function getMonthThai($i) {
-        return $this->month_th[$i];
+    public function getMonthThai($i = NULL) {
+        if ($i == NULL) {
+            return $this->month_th;
+        } else {
+            return $this->month_th[$i];
+        }
     }
 
     public function DateThai($strDate) {

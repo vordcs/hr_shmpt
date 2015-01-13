@@ -124,4 +124,54 @@ Class m_template extends CI_Model {
         $this->load->view('theme_footer');
     }
 
+    function showReportTemplate() {
+        //--- Load language --//
+        $site_lang = $this->session->userdata('site_lang');
+        if (!$site_lang) {
+            $site_lang = 'thai'; //Default set language to Thai
+        }
+        foreach ($this->lang_value as $path) {
+            $this->lang->load($path, $site_lang); //Load message
+        }
+
+        //Load version for Cache CSS and JS
+        $data['version'] = $this->version;
+
+        //--- Redirect to current page ---//
+        $data['page'] = $this->uri->segment(1);
+
+        //--- Alert System ---//
+        $data['alert'] = $this->session->userdata('alert');
+        $this->session->unset_userdata('alert');
+
+//        กำหนดข้อมูลเริ่มต้นในการทดสอบโปรแกรม
+        $this->set_user();
+
+        $user = $this->session->userdata('user');
+        $data['u_name'] = $user['u_name'];
+        $data['form_login'] = form_open('logout', array('class' => 'navbar-form pull-right', 'style' => 'height: 40px;'));
+
+        //Check login and permission
+//        if ($this->check_permission() == FALSE) {
+//            //Alert success and redirect to candidate
+//            $alert['alert_message'] = "ระดับสิทธิ์ของคุณไม่สามารถใช้งานระบบในส่วนนี้ได้";
+//            $alert['alert_mode'] = "danger";
+//            $this->set_RealAlert($alert);
+//        }
+
+        $data['title'] = $this->title;
+        $data['debug'] = $this->debud_data;
+        $data['alert'] = $this->check_Alert();
+        $data['real_alert'] = $this->check_RealAlert();
+
+        $this->load->view('theme_header_report', $data);
+        if ($this->check_permission() && $this->view_name != NULL) {
+            $this->load->view($this->view_name, $this->set_data);
+        } else {
+            $this->load->view('permission_deny');
+        }
+
+        $this->load->view('theme_footer');
+    }
+
 }

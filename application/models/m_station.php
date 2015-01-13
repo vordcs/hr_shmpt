@@ -171,7 +171,7 @@ class m_station extends CI_Model {
         return $rs;
     }
 
-    public function get_stations_sale_ticket($rcode, $vtid) {
+    public function get_stations_sale_ticket($rcode = NULL, $vtid = NULL) {
         if ($rcode != NULL) {
             $this->db->where('RCode', $rcode);
         }
