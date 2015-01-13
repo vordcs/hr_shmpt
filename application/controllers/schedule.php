@@ -52,7 +52,55 @@ class schedule extends CI_Controller {
 
     public function view($rcode, $vtid) {
 
-//        REMOVE_TSID_S
+        /*
+         * ตรวจสอบการเปลี่ยนแปลงจากค่า POST และนำมาตรวจสอบการเปลี่ยนแปลง
+         */
+        if ($this->input->server('REQUEST_METHOD') === 'POST') {
+            $post = $this->input->post();
+            $TSID_S = $post['TSID_S'];
+            $VID_S = $post['VID_S'];
+            $TSID_D = $post['TSID_D'];
+            $VID_D = $post['VID_D'];
+            $REMOVE_TSID_S = isset($post['REMOVE_TSID_S']) ? $post['REMOVE_TSID_S'] : NULL;
+            $REMOVE_TSID_D = isset($post['REMOVE_TSID_D']) ? $post['REMOVE_TSID_D'] : NULL;
+
+            /*
+             * เรียงข้อมูลใหม่ของ S เตรียมไว้อัพเดท
+             */
+            $new_vehicles_has_schedules_S = array();
+            $vehicles_update_S = array();
+            if ($REMOVE_TSID_S != NULL) {
+                for ($i = 0; $i < count($VID_S); $i++) {
+                    if (isset($TSID_S[$i])) {
+                        $new_vehicles_has_schedules_S[$i]['TSID'] = $TSID_S[$i];
+                        $new_vehicles_has_schedules_S[$i]['VID'] = $VID_S[$i];
+                    } else {
+                        $vehicles_update_S[$i - count($TSID_S)] = $VID_S[$i];
+                    }
+                }
+            }
+            $sort['Schedule_S'] = $new_vehicles_has_schedules_S;
+            $sort['Update_S'] = $vehicles_update_S;
+
+            /*
+             * เรียงข้อมูลใหม่ของ D เตรียมไว้อัพเดท
+             */
+            $new_vehicles_has_schedules_D = array();
+            $vehicles_update_D = array();
+            if ($REMOVE_TSID_D != NULL) {
+                for ($i = 0; $i < count($VID_D); $i++) {
+                    if (isset($TSID_D[$i])) {
+                        $new_vehicles_has_schedules_D[$i]['TSID'] = $TSID_D[$i];
+                        $new_vehicles_has_schedules_D[$i]['VID'] = $VID_D[$i];
+                    } else {
+                        $vehicles_update_D[$i - count($TSID_D)] = $VID_D[$i];
+                    }
+                }
+            }
+            $sort['Schedule_D'] = $new_vehicles_has_schedules_D;
+            $sort['Update_D'] = $vehicles_update_D;
+        }
+
 
         $route_detail = $this->m_route->get_route($rcode, $vtid);
         $vt_name = $route_detail[0]['VTDescription'];
@@ -87,7 +135,9 @@ class schedule extends CI_Controller {
 //            'form_search' => $data['form_search'],
 //            'stations' => $data['stations']
 //            'schedules' => $data['schedules'],
-            'post' => $this->input->post(),
+            'check' => isset($post) ? $post : '',
+//            'post' => $this->input->post(),
+            'sort' => isset($sort) ? $sort : '',
         );
 
 
