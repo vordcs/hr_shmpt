@@ -177,6 +177,7 @@ class m_route extends CI_Model {
             $this->db->group_by(array('RCode', 't_routes.VTID'));
             $this->db->where('StartPoint', 'S');
         }
+        $this->db->order_by('StartPoint', 'desc');
 
         $query = $this->db->get('t_routes');
         return $query->result_array();

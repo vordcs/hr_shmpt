@@ -52,6 +52,13 @@ class schedule extends CI_Controller {
 
     public function view($rcode, $vtid) {
 
+        $route_detail = $this->m_route->get_route($rcode, $vtid);
+        $vt_name = $route_detail[0]['VTDescription'];
+        $source = $route_detail[0]['RSource'];
+        $desination = $route_detail[0]['RDestination'];
+
+        $route_name = $vt_name . ' เส้นทาง ' . $route_detail[0]['RCode'] . ' ' . ' ' . $source . ' - ' . $desination;
+
         /*
          * ตรวจสอบการเปลี่ยนแปลงจากค่า POST และนำมาตรวจสอบการเปลี่ยนแปลง
          */
@@ -63,22 +70,46 @@ class schedule extends CI_Controller {
             $VID_D = $post['VID_D'];
             $REMOVE_TSID_S = isset($post['REMOVE_TSID_S']) ? $post['REMOVE_TSID_S'] : NULL;
             $REMOVE_TSID_D = isset($post['REMOVE_TSID_D']) ? $post['REMOVE_TSID_D'] : NULL;
+            $temp_route_detail = $this->m_route->get_route_detail($rcode, $vtid);
 
             /*
              * เรียงข้อมูลใหม่ของ S เตรียมไว้อัพเดท
              */
             $new_vehicles_has_schedules_S = array();
             $vehicles_update_S = array();
+            $ROUTE_DETAIL_S = $temp_route_detail[0];
+            $RID_S = $ROUTE_DETAIL_S['RID'];
             if ($REMOVE_TSID_S != NULL) {
                 for ($i = 0; $i < count($VID_S); $i++) {
                     if (isset($TSID_S[$i])) {
                         $new_vehicles_has_schedules_S[$i]['TSID'] = $TSID_S[$i];
                         $new_vehicles_has_schedules_S[$i]['VID'] = $VID_S[$i];
                     } else {
-                        $vehicles_update_S[$i - count($TSID_S)] = $VID_S[$i];
+                        array_unshift($vehicles_update_S, $VID_S[$i]);
+                    }
+                }
+
+                //อัพเดทตาราง t_schedules_day เพื่อบอกว่ายกเลิกรอบนั้นๆ และลบ TSID ออกจาก vehicles_has_schedules
+                for ($i = 0; $i < count($REMOVE_TSID_S); $i++) {
+                    $temp_TSID = $REMOVE_TSID_S[$i];
+                    $this->m_schedule->update_t_schedules_day_status($temp_TSID, $RID_S, '0');
+                    $this->m_schedule->delete_vehicles_has_schedules($temp_TSID, $vehicles_update_S[$i]);
+
+                    //ตรวจสอบสถานีสุดท้าย ตัวนี้จะเป็นถ้าเริ่ม S ต้องไปเอาตัวแรก ถ้าเป็น D ต้องไปเอาตัวสุดท้าย
+                    $StartPoint = $ROUTE_DETAIL_S['StartPoint'];
+                    if ($StartPoint == 'S') {
+                        $temp = $this->m_schedule->get_stations($ROUTE_DETAIL_S['RCode'], $ROUTE_DETAIL_S['VTID'])[0];
+                        $next_station_id = $temp['SID'];
+                        $temp = $this->m_schedule->get_first_vehicles_current_stations($temp['SID']);
+
+                        $duration = $ROUTE_DETAIL_S['Time'];
+                        $new_last_time = date('H:i', strtotime("-$duration minutes", strtotime($temp['CurrentTime'])));
+                        $this->m_schedule->update_vehicle_curent_stations($vehicles_update_S[$i], $next_station_id, $new_last_time);
                     }
                 }
             }
+            $sort['ROUTE_DETAIL_S'] = $ROUTE_DETAIL_S;
+            $sort['RID_S'] = $RID_S;
             $sort['Schedule_S'] = $new_vehicles_has_schedules_S;
             $sort['Update_S'] = $vehicles_update_S;
 
@@ -87,27 +118,48 @@ class schedule extends CI_Controller {
              */
             $new_vehicles_has_schedules_D = array();
             $vehicles_update_D = array();
+            $ROUTE_DETAIL_D = $temp_route_detail[1];
+            $RID_D = $ROUTE_DETAIL_D['RID'];
             if ($REMOVE_TSID_D != NULL) {
                 for ($i = 0; $i < count($VID_D); $i++) {
                     if (isset($TSID_D[$i])) {
                         $new_vehicles_has_schedules_D[$i]['TSID'] = $TSID_D[$i];
                         $new_vehicles_has_schedules_D[$i]['VID'] = $VID_D[$i];
                     } else {
-                        $vehicles_update_D[$i - count($TSID_D)] = $VID_D[$i];
+                        array_unshift($vehicles_update_D, $VID_D[$i]);
+                    }
+                }
+
+                //อัพเดทตาราง t_schedules_day เพื่อบอกว่ายกเลิกรอบนั้นๆ และลบ TSID ออกจาก vehicles_has_schedules
+                for ($i = 0; $i < count($REMOVE_TSID_D); $i++) {
+                    $temp_TSID = $REMOVE_TSID_D[$i];
+                    $this->m_schedule->update_t_schedules_day_status($temp_TSID, $RID_D, '0');
+                    $this->m_schedule->delete_vehicles_has_schedules($temp_TSID, $vehicles_update_D[$i]);
+
+                    //ตรวจสอบสถานีสุดท้าย ตัวนี้จะเป็นถ้าเริ่ม S ต้องไปเอาตัวแรก ถ้าเป็น D ต้องไปเอาตัวสุดท้าย
+                    $StartPoint = $ROUTE_DETAIL_D['StartPoint'];
+                    if ($StartPoint == 'D') {
+                        $temp = end($this->m_schedule->get_stations($ROUTE_DETAIL_D['RCode'], $ROUTE_DETAIL_D['VTID']));
+                        $next_station_id = $temp['SID'];
+                        $temp = $this->m_schedule->get_first_vehicles_current_stations($temp['SID']);
+
+                        $duration = $ROUTE_DETAIL_D['Time'];
+                        $new_last_time = date('H:i', strtotime("-$duration minutes", strtotime($temp['CurrentTime'])));
+                        $this->m_schedule->update_vehicle_curent_stations($vehicles_update_S[$i], $next_station_id, $new_last_time);
                     }
                 }
             }
+            $sort['ROUTE_DETAIL_D'] = $ROUTE_DETAIL_D;
+            $sort['RID_D'] = $RID_D;
             $sort['Schedule_D'] = $new_vehicles_has_schedules_D;
             $sort['Update_D'] = $vehicles_update_D;
+
+            //Alert success and redirect to candidate
+            $alert['alert_message'] = "เปลี่ยนแปลงข้อมูลตารางของ " . $route_name . " สำเร็จแล้ว";
+            $alert['alert_mode'] = "success";
+            $this->session->set_flashdata('alert', $alert);
+            redirect('schedule/view/' . $rcode . '/' . $vtid);
         }
-
-
-        $route_detail = $this->m_route->get_route($rcode, $vtid);
-        $vt_name = $route_detail[0]['VTDescription'];
-        $source = $route_detail[0]['RSource'];
-        $desination = $route_detail[0]['RDestination'];
-
-        $route_name = $vt_name . ' เส้นทาง ' . $route_detail[0]['RCode'] . ' ' . ' ' . $source . ' - ' . $desination;
 
         $data = array(
 //            'form_search' => $this->m_schedule->set_form_search(),
@@ -135,9 +187,9 @@ class schedule extends CI_Controller {
 //            'form_search' => $data['form_search'],
 //            'stations' => $data['stations']
 //            'schedules' => $data['schedules'],
-            'check' => isset($post) ? $post : '',
+//            'check' => isset($post) ? $post : '',
 //            'post' => $this->input->post(),
-            'sort' => isset($sort) ? $sort : '',
+//            'sort' => isset($sort) ? $sort : '',
         );
 
 
@@ -230,18 +282,16 @@ class schedule extends CI_Controller {
 
                         // อัพเดทตาราง vehicles_has_schedules ที่ได้จากการ sort
                         $this->m_schedule->update_vehicles_has_schedules_with_new_data($temp1);
-
-                        //Alert success and redirect to candidate
-                        $alert['alert_message'] = "เพิ่มรอบ " . $vt_name . " เวลา " . $form_data['TimeDepart'] . " ของเส้นทาง " . $route_name . " สำเร็จแล้ว";
-                        $alert['alert_mode'] = "success";
-                        $this->session->set_flashdata('alert', $alert);
-                        redirect('schedule/view/' . $rcode . '/' . $vtid);
                     }
                 }
             }
 
 
-
+            //Alert success and redirect to candidate
+            $alert['alert_message'] = "เพิ่มรอบ " . $vt_name . " เวลา " . $form_data['TimeDepart'] . " ของเส้นทาง " . $route_name . " สำเร็จแล้ว";
+            $alert['alert_mode'] = "success";
+            $this->session->set_flashdata('alert', $alert);
+            redirect('schedule/view/' . $rcode . '/' . $vtid);
 //            $rs = $this->m_seller->insert_seller($form_data);
 //
 //            $alert['alert_message'] = "เพิ่มข้อมูลสำเร็จ";

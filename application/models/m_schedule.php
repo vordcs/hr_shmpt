@@ -24,6 +24,9 @@ class m_schedule extends CI_Model {
         if ($rid != NULL) {
             $this->db->where('t_schedules_day.RID', $rid);
         }
+
+        $this->db->where('t_schedules_day.ScheduleStatus', '1');
+
         $this->db->order_by('TimeDepart,SeqNo', 'asc');
         $query_schedule = $this->db->get("t_schedules_day");
         return $query_schedule->result_array();
@@ -296,8 +299,7 @@ class m_schedule extends CI_Model {
 
 
         //สร้างรหัสตารางเวลา
-        $num_schedule = count($this->get_schedule($date, NULL, NULL, $rid)) + 1;
-        $tsid = $this->generate_tsid($date, $rid, $num_schedule);
+        $tsid = $this->generate_tsid($date, $rid);
 
         //ค้นหารถ
 //        $this->get_stations($rcode, $vtid);
@@ -340,23 +342,17 @@ class m_schedule extends CI_Model {
         return $temp->result_array();
     }
 
-    public function generate_tsid($date, $rid, $seq) {
+    public function generate_tsid($date, $rid) {
         $tsid = '';
-        $this->db->where("RID", $rid);
-        $this->db->where("SeqNo", $seq);
-        $this->db->where('Date', $date);
-        $query = $this->db->get('t_schedules_day');
-        $schedual = $query->result_array();
-
-        if (count($schedual) <= 0) {
+        $query = $this->db->get_where('t_schedules_day', array('RID' => $rid, 'Date' => $date));
+        $seq = $query->num_rows() + 1;
 //        วันที่
-            $d = new DateTime();
-            $tsid .=$d->format("Ymd");
+        $d = new DateTime();
+        $tsid .=$d->format("Ymd");
 //        เส้นทาง
-            $tsid .= str_pad($rid, 2, '0', STR_PAD_LEFT);
+        $tsid .= str_pad($rid, 2, '0', STR_PAD_LEFT);
 //        เที่ยวที่
-            $tsid .=str_pad($seq, 3, '0', STR_PAD_LEFT);
-        }
+        $tsid .=str_pad($seq, 3, '0', STR_PAD_LEFT);
 
         return $tsid;
     }
@@ -461,22 +457,52 @@ class m_schedule extends CI_Model {
         $pre_data = array();
         $count = 0;
         for ($i = 0; $i < count($data); $i++) {
-            $pre_data[$i]['VID'] = $data[$i]['VID'];
-            $pre_data[$i]['TSID'] = $data[$i]['TSID'];
-            $query = $this->db->get_where('vehicles_has_schedules', array('TSID' => $data[$i]['TSID']));
-            if ($query->num_rows() == 0) {
-                if ($this->db->insert('vehicles_has_schedules', $pre_data[$i]))
-                    $count++;
-            } else {
-                $this->db->where('TSID', $data[$i]['TSID']);
-                if ($this->db->update('vehicles_has_schedules', $pre_data[$i]))
-                    $count++;
+            if ($data[$i]['VID'] != NULL) {
+                $pre_data[$i]['VID'] = $data[$i]['VID'];
+                $pre_data[$i]['TSID'] = $data[$i]['TSID'];
+                $query = $this->db->get_where('vehicles_has_schedules', array('TSID' => $data[$i]['TSID']));
+                if ($query->num_rows() == 0) {
+                    if ($this->db->insert('vehicles_has_schedules', $pre_data[$i]))
+                        $count++;
+                } else {
+                    $this->db->where('TSID', $data[$i]['TSID']);
+                    if ($this->db->update('vehicles_has_schedules', $pre_data[$i]))
+                        $count++;
+                }
             }
         }
         if (count($pre_data) == $count)
             return TRUE;
         else
             return FALSE;
+    }
+
+    function update_t_schedules_day_status($TSID, $RID, $ScheduleStatus = 2) {
+        $pre_data['ScheduleStatus'] = $ScheduleStatus;
+        $this->db->where('TSID', $TSID);
+        $this->db->where('RID', $RID);
+        if ($this->db->update('t_schedules_day', $pre_data)) {
+            return TRUE;
+        } else {
+            return FALSE;
+        }
+    }
+
+    function delete_vehicles_has_schedules($TSID, $VID) {
+        if ($this->db->delete('vehicles_has_schedules', array('TSID' => $TSID, 'VID' => $VID))) {
+            return TRUE;
+        } else {
+            return FALSE;
+        }
+    }
+
+    function get_first_vehicles_current_stations($CurrentStationID) {
+        $this->db->from('vehicles_current_stations');
+        $this->db->where('CurrentStationID', $CurrentStationID);
+        $this->db->order_by('CurrentTime', 'asc');
+        $query_schedule = $this->db->get();
+        $temp = $query_schedule->result_array();
+        return $temp[0];
     }
 
 }

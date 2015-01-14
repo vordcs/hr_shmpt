@@ -216,7 +216,7 @@
                                         }
                                         ?>
                                         <li class="<?= $class_li ?>" id="">
-                                            <input type="hidden" name="VID_<?= $start_point ?>[]" value="<?= $vcode ?>" />
+                                            <input type="hidden" name="VID_<?= $start_point ?>[]" value="<?= $vid ?>" />
                                             <?= $vcode ?>
                                         </li>
                                         <?php

@@ -24,13 +24,13 @@ class schedule_vehicle extends CI_Controller {
         $rs = $data['gen_schedule'] = $get_vehicle_curent_stations = array();
 
 //        
-//        $this->db->truncate('t_schedules_day');
-//        $this->db->truncate('vehicles_has_schedules');
+        $this->db->truncate('t_schedules_day');
+        $this->db->truncate('vehicles_has_schedules');
         $this->db->truncate('vehicles_current_stations');
 //        
 //      สร้างตารางเวลาเดินรถเดินรถ
         $data['gen_schedule'] = $this->m_schedule_vehicle->run_schedule();
-        $rs = $this->m_schedule_vehicle->insert_schedule($data['gen_schedule']);        
+        $rs = $this->m_schedule_vehicle->insert_schedule($data['gen_schedule']);
 //        
 //        
 //        กำหนดจุดเริ่มต้นให้กับรถแต่ละคัน
@@ -57,7 +57,6 @@ class schedule_vehicle extends CI_Controller {
 //            'vehicles_initicial_station' => $vehicles_initicial_station,
 //            'set_time_initicial_vehicles'=>$set_time_initicial_vehicles,
 //            'run_vehicles_to_schedule' => $run_vehicles_to_schedule,
-            
         );
 
         $this->m_template->set_Debug($data_debug);
