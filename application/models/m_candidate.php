@@ -93,13 +93,17 @@ class m_candidate extends CI_Model {
         $data['BirthDate'] = $this->change_format_date($data['BirthDate']);
         $data['AvaliableStartDate'] = $this->change_format_date($data['AvaliableStartDate']);
         $data['AvaliableStartDate'] = $this->change_format_date($data['AvaliableStartDate']);
-        for ($i = 0; $i < count($data['education']); $i++) {
-            $data['education'][$i]['EDDateFrom'] = $this->change_format_date($data['education'][$i]['EDDateFrom']);
-            $data['education'][$i]['EDDateTo'] = $this->change_format_date($data['education'][$i]['EDDateTo']);
+        if (isset($data['education'])) {
+            for ($i = 0; $i < count($data['education']); $i++) {
+                $data['education'][$i]['EDDateFrom'] = $this->change_format_date($data['education'][$i]['EDDateFrom']);
+                $data['education'][$i]['EDDateTo'] = $this->change_format_date($data['education'][$i]['EDDateTo']);
+            }
         }
-        for ($i = 0; $i < count($data['experience']); $i++) {
-            $data['experience'][$i]['ExDateForm'] = $this->change_format_date($data['experience'][$i]['ExDateForm']);
-            $data['experience'][$i]['ExDateTo'] = $this->change_format_date($data['experience'][$i]['ExDateTo']);
+        if (isset($data['experience'])) {
+            for ($i = 0; $i < count($data['experience']); $i++) {
+                $data['experience'][$i]['ExDateForm'] = $this->change_format_date($data['experience'][$i]['ExDateForm']);
+                $data['experience'][$i]['ExDateTo'] = $this->change_format_date($data['experience'][$i]['ExDateTo']);
+            }
         }
 
         return $data;

@@ -42,6 +42,7 @@ class m_login extends CI_Model {
     function login($data) {
         //Intial data
         $session = array(
+            'username' => 'Admin',
             'name' => 'Admin',
             'login' => FALSE,
             'permittion' => 'ALL'
@@ -54,7 +55,8 @@ class m_login extends CI_Model {
         } else {
             $temp = $this->check_user($data['user'], $data['pass']);
             if ($temp != FALSE) {
-                $session['name'] = $temp[0]['UserName'];
+                $session['username'] = $temp[0]['UserName'];
+                $session['name'] = $temp[0]['Title'] . $temp[0]['FirstName'] . ' ' . $temp[0]['LastName'];
                 $session['login'] = TRUE;
                 $session['permittion'] = $temp[0]['PermissionDetails'];
                 $this->session->set_userdata($session);

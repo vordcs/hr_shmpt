@@ -97,8 +97,6 @@ Class m_template extends CI_Model {
 //        กำหนดข้อมูลเริ่มต้นในการทดสอบโปรแกรม
         $this->set_user();
 
-        $user = $this->session->userdata('user');
-        $data['u_name'] = $user['u_name'];
         $data['form_login'] = form_open('logout', array('class' => 'navbar-form pull-right', 'style' => 'height: 40px;'));
 
         //Check login and permission
@@ -109,6 +107,7 @@ Class m_template extends CI_Model {
 //            $this->set_RealAlert($alert);
 //        }
 
+        $data['username'] = $this->session->userdata('username');
         $data['title'] = $this->title;
         $data['debug'] = $this->debud_data;
         $data['alert'] = $this->check_Alert();
