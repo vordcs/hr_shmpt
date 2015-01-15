@@ -39,6 +39,8 @@ class m_vehicle extends CI_Model {
         $this->db->join('vehicles_registration', 'vehicles.RegID = vehicles_registration.RegID');
         $this->db->join('vehicles_insurance_act', 'vehicles.ActID = vehicles_insurance_act.ActID');
         $this->db->join('t_routes_has_vehicles', 'vehicles.VID = t_routes_has_vehicles.VID');
+        $this->db->join('vehicles_driver', 'vehicles_driver.VID = vehicles.VID', 'left');
+        $this->db->join('employees', 'employees.EID = vehicles_driver.EID', 'left');
         $query = $this->db->get('vehicles');
         return $query->result_array();
     }
