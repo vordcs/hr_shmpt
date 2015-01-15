@@ -6,16 +6,20 @@ if (!defined('BASEPATH'))
 class m_vehicle extends CI_Model {
 
     function get_vehicle($vid = NULL) {
+        $this->db->select('*,vehicles.VID as VID');
+        $this->db->from('vehicles');
         $this->db->join('vehicles_type', 'vehicles.VTID = vehicles_type.VTID');
         $this->db->join('vehicles_registration', 'vehicles.RegID =vehicles_registration.RegID');
         $this->db->join('vehicles_insurance_act', 'vehicles.ActID = vehicles_insurance_act.ActID');
-
-       $this->db->join('t_routes_has_vehicles', 'vehicles.VID = t_routes_has_vehicles.VID');
+        $this->db->join('t_routes_has_vehicles', 'vehicles.VID = t_routes_has_vehicles.VID');
+        $this->db->join('vehicles_driver', 'vehicles_driver.VID = vehicles.VID', 'left');
+        $this->db->join('employees', 'employees.EID = vehicles_driver.EID', 'left');
 
         if ($vid != NULL) {
             $this->db->where('vehicles.VID', $vid);
         }
-        $query = $this->db->get('vehicles');
+        $this->db->order_by('vehicles.VID', 'ASC');
+        $query = $this->db->get();
         return $query->result_array();
     }
 
@@ -23,11 +27,11 @@ class m_vehicle extends CI_Model {
         $vcode = $this->input->post('VCode');
         $number_plate = $this->input->post('NumberPlate');
 
-        if ($vcode != NULL){
+        if ($vcode != NULL) {
             $this->db->where('Vcode', $vcode);
         }
 
-        if ($number_plate != NULL){
+        if ($number_plate != NULL) {
             $this->db->where('NumberPlate', $number_plate);
         }
 
@@ -89,6 +93,11 @@ class m_vehicle extends CI_Model {
         );
         $this->db->insert('t_routes_has_vehicles', $data_v_r);
 
+//        insert vehicles_driver
+        $data['data_driver']['VID'] = $v_id;
+        $this->db->insert('vehicles_driver', $data['data_driver']);
+        $vdid = $this->db->insert_id();
+
         return $v_id;
     }
 
@@ -118,9 +127,25 @@ class m_vehicle extends CI_Model {
             'VID' => $vid,
         );
         $this->db->where('VID', $vid);
-        $this->db->update('routes_has_vehicles', $data_v_r);
+        $this->db->update('t_routes_has_vehicles', $data_v_r);
+
+        //update vehicles_driver
+        $this->db->where('VID', $vid);
+        $this->db->update('vehicles_driver', $data['data_driver']);
 
 //        return $vid;
+    }
+
+    function delete_vehicle($VID, $RCode, $RegID, $ActID) {
+        $flagVR = $this->db->delete('vehicles_registration', array('RegID' => $RegID));
+        $flagVIA = $this->db->delete('vehicles_insurance_act', array('ActID' => $ActID));
+        $flagV = $this->db->delete('vehicles', array('VID' => $VID));
+        $flagRV = $this->db->delete('t_routes_has_vehicles', array('RCode' => $RCode, 'VID' => $VID));
+        $flagVD = $this->db->delete('vehicles_driver', array('VID' => $VID));
+        if ($flagVR && $flagVIA && $flagV && $flagRV && $flagVD)
+            return TRUE;
+        else
+            return FALSE;
     }
 
     function set_form_add($rcode, $vtid) {
@@ -152,7 +177,13 @@ class m_vehicle extends CI_Model {
             'type' => 'number',
             'placeholder' => '0',
             'class' => 'form-control');
-        $i_VStatus = array('ปกติ');
+        $i_VStatus = array('1' => 'ปกติพร้อมบริการ', '0' => 'ไม่ปกติไม่พร้อมบริการ');
+        $i_VehicleNote = array(
+            'name' => 'VehicleNote',
+            'value' => set_value('VehicleNote'),
+            'placeholder' => '',
+            'rows' => '3',
+            'class' => 'form-control');
 
         //ข้อมูลทะเบียน
         $i_DateRegistered = array(
@@ -206,6 +237,24 @@ class m_vehicle extends CI_Model {
             'placeholder' => '',
             'class' => 'form-control');
 
+        // พนักงานขับรถ
+        $i_EID = array(
+            'name' => 'EID',
+            'id' => 'EID',
+            'value' => set_value('EID'),
+            'type' => 'hidden',
+            'class' => 'form-control');
+        $i_Driverlicense = array(
+            'name' => 'Driverlicense',
+            'value' => set_value('Driverlicense'),
+            'placeholder' => 'รหัสใบอนุญาติ',
+            'class' => 'form-control');
+        $i_ExpireDate = array(
+            'name' => 'ExpireDate',
+            'value' => set_value('ExpireDate'),
+            'placeholder' => 'วันหยุดอายุ',
+            'class' => 'form-control datepicker');
+
         $dropdown = 'class="selecter_3" data-selecter-options = \'{"cover":"true"}\' ';
 
         $form_add = array(
@@ -217,6 +266,7 @@ class m_vehicle extends CI_Model {
             'VType' => form_dropdown('VType', $i_VType, set_value('VType'), $dropdown),
             'VSeat' => form_input($i_VSeat),
             'VStatus' => form_dropdown('VStatus', $i_VStatus, set_value('VStatus'), $dropdown),
+            'VehicleNote' => form_textarea($i_VehicleNote),
             'DateRegistered' => form_input($i_DateRegistered),
             'DateExpire' => form_input($i_DateExpire),
             'VRNote' => form_textarea($i_VRNote),
@@ -225,7 +275,10 @@ class m_vehicle extends CI_Model {
             'PolicyStart' => form_input($i_PolicyStart),
             'PolicyEnd' => form_input($i_PolicyEnd),
             'PolicyNumber' => form_input($i_PolicyNumber),
-            'ActNote' => form_textarea($i_ActNote)
+            'ActNote' => form_textarea($i_ActNote),
+            'EID' => form_input($i_EID),
+            'Driverlicense' => form_input($i_Driverlicense),
+            'ExpireDate' => form_input($i_ExpireDate),
         );
         return $form_add;
     }
@@ -270,7 +323,13 @@ class m_vehicle extends CI_Model {
             'type' => 'number',
             'placeholder' => '0',
             'class' => 'form-control');
-        $i_VStatus = array('ปกติ', 'ซ่อมบำรุง');
+        $i_VStatus = array('1' => 'ปกติพร้อมบริการ', '0' => 'ไม่ปกติไม่พร้อมบริการ');
+        $i_VehicleNote = array(
+            'name' => 'VehicleNote',
+            'value' => (set_value('VehicleNote') == NULL) ? $data ['VehicleNote'] : set_value('VehicleNote'),
+            'placeholder' => '',
+            'rows' => '3',
+            'class' => 'form-control');
 
         //ข้อมูลทะเบียน
         $date_registered = $this->m_datetime->setDBDateToTH($data ['DateRegistered']);
@@ -330,6 +389,25 @@ class m_vehicle extends CI_Model {
             'placeholder' => '',
             'class' => 'form-control');
 
+        // พนักงานขับรถ
+        $i_EID = array(
+            'name' => 'EID',
+            'id' => 'EID',
+            'value' => (set_value('EID') == NULL) ? $data ['EID'] : set_value('EID'),
+            'type' => 'hidden',
+            'class' => 'form-control');
+        $i_Driverlicense = array(
+            'name' => 'Driverlicense',
+            'value' => (set_value('Driverlicense') == NULL) ? $data ['Driverlicense'] : set_value('Driverlicense'),
+            'placeholder' => 'รหัสใบอนุญาติ',
+            'class' => 'form-control');
+        $date_ExpireDate = $this->m_datetime->setDBDateToTH($data ['ExpireDate']);
+        $i_ExpireDate = array(
+            'name' => 'ExpireDate',
+            'value' => (set_value('ExpireDate') == NULL) ? $date_ExpireDate : set_value('ExpireDate'),
+            'placeholder' => 'วันหยุดอายุ',
+            'class' => 'form-control datepicker');
+
         $dropdown = 'class="selecter_3" data-selecter-options = \'{"cover":"true"}\' ';
         $form_edit = array(
             'form' => form_open_multipart('vehicle/edit/' . $rcode . '/' . $vtid . '/' . $data['VID'], array('class' => 'form-horizontal', 'id' => 'form_vehicle')),
@@ -341,6 +419,7 @@ class m_vehicle extends CI_Model {
             'VBrand' => form_input($i_VBrand),
             'VSeat' => form_input($i_VSeat),
             'VStatus' => form_dropdown('VStatus', $i_VStatus, set_value('VStatus'), $dropdown),
+            'VehicleNote' => form_textarea($i_VehicleNote),
             'DateRegistered' => form_input($i_DateRegistered),
             'DateExpire' => form_input($i_DateExpire),
             'VRNote' => form_textarea($i_VRNote),
@@ -349,7 +428,10 @@ class m_vehicle extends CI_Model {
             'PolicyStart' => form_input($i_PolicyStart),
             'PolicyEnd' => form_input($i_PolicyEnd),
             'PolicyNumber' => form_input($i_PolicyNumber),
-            'ActNote' => form_textarea($i_ActNote)
+            'ActNote' => form_textarea($i_ActNote),
+            'EID' => form_input($i_EID),
+            'Driverlicense' => form_input($i_Driverlicense),
+            'ExpireDate' => form_input($i_ExpireDate),
         );
 
 //        'product_type_id' => form_dropdown('product_type_id', $i_type, (set_value('product_type_id') == NULL) ? $data ['product_type_id'] : set_value('product_type_id'), 'class="form-control"'),
@@ -396,12 +478,13 @@ class m_vehicle extends CI_Model {
 
     function validation_form_add() {
 ////       ข้อมูลรถ
-//        $this->form_validation->set_rules('NumberPlate', 'ทะเบียนรถ', 'trim|required|xss_clean|callback_check_numberplate');
+        $this->form_validation->set_rules('NumberPlate', 'ทะเบียนรถ', 'trim|required|xss_clean|callback_check_numberplate');
         $this->form_validation->set_rules('VCode', 'เบอร์รถ', 'trim|required|callback_check_vcode');
         $this->form_validation->set_rules('VColor', 'สีรถ', 'trim|required|xss_clean');
         $this->form_validation->set_rules('VBrand', 'ยี่ห้อรถ', 'trim|required|xss_clean');
         $this->form_validation->set_rules('VSeat', 'จำนวนที่นั่ง', 'trim|required|xss_clean');
-        $this->form_validation->set_rules('RegNote', 'หมายเหตุ', 'trim|xss_clean');
+        $this->form_validation->set_rules('VStatus', 'สถานะ', 'trim|required|xss_clean');
+        $this->form_validation->set_rules('VehicleNote', 'หมายเหตุ', 'trim|xss_clean');
 ///      ข้อมูลทะเบียน
         $this->form_validation->set_rules('DateRegistered', 'วันที่ต่อทะเบียน', 'trim|required|xss_clean');
         $this->form_validation->set_rules('DateExpire', 'วันหมดอายุ', 'trim|required|xss_clean');
@@ -413,6 +496,10 @@ class m_vehicle extends CI_Model {
         $this->form_validation->set_rules('PolicyEnd', 'วันที่สิ้นสุดกรมธรรม์', 'trim|required|xss_clean');
         $this->form_validation->set_rules('PolicyNumber', 'เลขที่กรมธรรม์', 'trim|required|xss_clean');
         $this->form_validation->set_rules('ActNote', 'หมายเหตุ', 'trim|xss_clean');
+        //พนักงานขับรถ
+        $this->form_validation->set_rules('EID', 'รหัสพนักงาน', 'trim|required|xss_clean');
+        $this->form_validation->set_rules('Driverlicense', 'ใบขับขี่', 'trim|required|xss_clean');
+        $this->form_validation->set_rules('ExpireDate', 'วันหมดอายุ', 'trim|required|xss_clean');
         return TRUE;
     }
 
@@ -440,6 +527,10 @@ class m_vehicle extends CI_Model {
         $this->form_validation->set_rules('PolicyEnd', 'วันที่สิ้นสุดกรมธรรม์', 'trim|required|xss_clean');
         $this->form_validation->set_rules('PolicyNumber', 'เลขที่กรมธรรม์', 'trim|required|xss_clean');
         $this->form_validation->set_rules('ActNote', 'หมายเหตุ', 'trim|xss_clean');
+        //พนักงานขับรถ
+        $this->form_validation->set_rules('EID', 'รหัสพนักงาน', 'trim|required|xss_clean');
+        $this->form_validation->set_rules('Driverlicense', 'ใบขับขี่', 'trim|required|xss_clean');
+        $this->form_validation->set_rules('ExpireDate', 'วันหมดอายุ', 'trim|required|xss_clean');
         return TRUE;
     }
 
@@ -452,7 +543,9 @@ class m_vehicle extends CI_Model {
             'VColor' => $this->input->post('VColor'),
             'VBrand' => $this->input->post('VBrand'),
             'VSeat' => $this->input->post('VSeat'),
-            'CreateBy' => '',
+            'VStatus' => $this->input->post('VStatus'),
+            'VehicleNote' => $this->input->post('VehicleNote'),
+            'CreateBy' => $this->session->userdata('username'),
             'CreateDate' => $this->m_datetime->getDatetimeNow(),
         );
 //      ข้อมูลทะเบียน        
@@ -460,7 +553,7 @@ class m_vehicle extends CI_Model {
             'DateRegistered' => $this->m_datetime->setTHDateToDB($this->input->post('DateRegistered')),
             'DateExpire' => $this->m_datetime->setTHDateToDB($this->input->post('DateExpire')),
             'VRNote' => $this->input->post('VRNote'),
-            'CreateBy' => '',
+            'CreateBy' => $this->session->userdata('username'),
             'CreateDate' => $this->m_datetime->getDatetimeNow(),
         );
 //       ประกันและพรบ    
@@ -471,8 +564,14 @@ class m_vehicle extends CI_Model {
             'PolicyEnd' => $this->m_datetime->setTHDateToDB($this->input->post('PolicyEnd')),
             'PolicyNumber' => $this->input->post('PolicyNumber'),
             'ActNote' => $this->input->post('ActNote'),
-            'CreateBy' => '',
+            'CreateBy' => $this->session->userdata('username'),
             'CreateDate' => $this->m_datetime->getDatetimeNow(),
+        );
+        // พนักงานขับรถ
+        $data_driver = array(
+            'EID' => $this->input->post('EID'),
+            'Driverlicense' => $this->input->post('Driverlicense'),
+            'ExpireDate' => $this->m_datetime->setTHDateToDB($this->input->post('ExpireDate')),
         );
 
         $form_data = array(
@@ -480,6 +579,7 @@ class m_vehicle extends CI_Model {
             'data_vehicle' => $data_vehicle,
             'data_registered' => $data_registered,
             'data_act' => $data_act,
+            'data_driver' => $data_driver,
         );
 
         return $form_data;
@@ -519,14 +619,58 @@ class m_vehicle extends CI_Model {
             'PolicyNumber' => $this->input->post('PolicyNumber'),
             'ActNote' => $this->input->post('ActNote'),
         );
+        // พนักงานขับรถ
+        $data_driver = array(
+            'EID' => $this->input->post('EID'),
+            'Driverlicense' => $this->input->post('Driverlicense'),
+            'ExpireDate' => $this->m_datetime->setTHDateToDB($this->input->post('ExpireDate')),
+        );
         $form_data = array(
             'VID' => $vid,
             'RCode' => $this->input->post('RCode'),
             'data_vehicle' => $data_vehicle,
             'data_registered' => $data_registered,
             'data_act' => $data_act,
+            'data_driver' => $data_driver,
         );
         return $form_data;
+    }
+
+    function get_free_driver_list($vid = NULL) {
+        $query = $this->db->get_where('employees', array('PID' => '1'));
+        $temp = $query->result_array();
+        $own = NULL;
+        for ($i = 0; $i < count($temp); $i++) {
+            $EID = $temp[$i]['EID'];
+            $query2 = $this->db->get_where('vehicles_driver', array('EID' => $EID));
+            if ($query2->num_rows() > 0) {
+                $temp2 = $query2->result_array();
+                if ($temp2[0]['VID'] == $vid && $vid != NULL) {
+                    $own = $temp[$i];
+                }
+                unset($temp[$i]);
+            }
+        }
+        if ($own != NULL)
+            array_unshift($temp, $own);
+
+        return $temp;
+    }
+
+    function get_employee_driver($vid) {
+        $this->db->from('vehicles_driver');
+        $this->db->join('employees', 'employees.EID = vehicles_driver.EID');
+        $this->db->where('vehicles_driver.VID', $vid);
+        $query = $this->db->get();
+        return $query->result_array();
+    }
+
+    function check_vehicle($VID) {
+        $this->db->from('vehicles as ve');
+        $this->db->join('t_routes_has_vehicles as rv', 'rv.VID = ve.VID');
+        $this->db->where('ve.VID', $VID);
+        $query = $this->db->get();
+        return $query->result_array();
     }
 
 }

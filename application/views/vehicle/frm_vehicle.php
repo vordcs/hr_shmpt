@@ -13,7 +13,13 @@
             language: 'th-th',
             format: 'yyyy-m-d'
         });
+
+
     });
+    function driver_info(pic, name, eid) {
+        $("#driver_name").html('ชื่อ ' + name);
+        $('#EID').val(eid);
+    }
 </script>
 <div class="container">    
     <div class="row animated fadeInDown">
@@ -120,6 +126,12 @@
                                 <?php echo $form['VStatus']; ?>                                        
                             </div>
                         </div>
+                        <div class="form-group <?= (form_error('VehicleNote')) ? 'has-error' : '' ?>">
+                            <label for="" class="col-sm-4 control-label">หมายเหตุ</label>
+                            <div class="col-sm-5">
+                                <?php echo $form['VehicleNote']; ?>                                        
+                            </div>
+                        </div>
                     </div>                         
 
                 </div>
@@ -135,29 +147,50 @@
                         <div class="text-center thumbnail">
                             <img src="http://placehold.it/200x200" class="img-responsive">
                             <div class="caption">
-                                <h4>ชื่อพนักงานขับรถ</h4> 
+                                <?php
+                                if (set_value('EID') != NULL || isset($EID)) {
+                                    $d_ename = NULL;
+                                    foreach ($employee_list as $row) {
+                                        if ($row['EID'] == set_value('EID') || $row['EID'] == $EID) {
+                                            $d_ename = $row['Title'] . $row['FirstName'] . ' ' . $row['LastName'];
+                                        }
+                                    }
+                                }
+                                ?>
+                                <h4 id="driver_name">ชื่อ <?= (isset($d_ename) ? $d_ename : 'พนักงานขับรถ') ?></h4>
+                                <?php echo $form['EID']; ?>  
                                 <p>
                                     ใบอนุญาติขับขี่รถ เลขที่                                            
                                 </p>
+                                <div class="form-group <?= (form_error('Driverlicense')) ? 'has-error' : '' ?>">
+                                    <div class="col-sm-8 col-sm-offset-2">
+                                        <?php echo $form['Driverlicense']; ?>                                        
+                                    </div>
+                                </div>                               
                                 <p>
-                                    <b>ท.2 ขก.00614/34 </b>
+                                    หมดอายุ
                                 </p>
-                                <p>
-                                    หมดอายุ 18/08/57
-                                </p>
+                                <div class="form-group <?= (form_error('ExpireDate')) ? 'has-error' : '' ?>">
+                                    <div class="col-sm-8 col-sm-offset-2">
+                                        <?php echo $form['ExpireDate']; ?>                                        
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-6" >
                         <h5>รายชื่อพนักงานขับรถ</h5>
+                        <?= (form_error('EID')) ? '<span class="label label-danger">กรุณาเลือกพนักงาน</span>' : '' ?>
                         <div id="list-driver"> 
                             <div class="list-group">
                                 <?php
-                                for ($x = 0; $x <= 30; $x++) {
+                                foreach ($employee_list as $row) {
+                                    $e_name = $row['Title'] . $row['FirstName'] . ' ' . $row['LastName'];
+                                    $e_id = $row['EID'];
                                     ?>                                        
-                                    <a href="#" class="list-group-item">
-                                        <h5 class="list-group-item-heading">นาย aaaaaa กกกกกกกก</h5>
-                                        <p class="list-group-item-text">...</p>
+                                    <a onclick="javascript:driver_info('test', '<?= $e_name ?>', '<?= $e_id ?>');" class="list-group-item">
+                                        <h5 class="list-group-item-heading"><?= $row['Title'] . $row['FirstName'] . ' ' . $row['LastName'] ?></h5>
+                                        <p class="list-group-item-text">เบอร์โทรศัพท์ <?= ($row['MobilePhone'] != NULL) ? $row['MobilePhone'] : '-' ?></p>
                                     </a>                                        
                                 <?php } ?>
                             </div>

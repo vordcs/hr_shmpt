@@ -76,7 +76,7 @@ class vehicle extends CI_Controller {
 //            'vehicles' => $data['vehicles'],
         );
 
-        $this->m_template->set_Debug($data_debug);
+//        $this->m_template->set_Debug($data);
         $this->m_template->set_Title('จัดการรถโดยสาร');
         $this->m_template->set_Content('vehicle/vehicles', $data);
         $this->m_template->showTemplate();
@@ -98,6 +98,10 @@ class vehicle extends CI_Controller {
             $form_data = $this->m_vehicle->get_post_form_add($rcode, $vtid);
 //            $this->m_template->set_Debug($form_data);
             $this->m_vehicle->insert_vehicle($form_data);
+            //Alert success and redirect to candidate
+            $alert['alert_message'] = 'เพิ่มข้อมูล ' . $type_name . ' เส้นทาง ' . $route_name . ' สำเร็จแล้ว';
+            $alert['alert_mode'] = "success";
+            $this->session->set_flashdata('alert', $alert);
             redirect('vehicle/');
         }
 
@@ -108,43 +112,52 @@ class vehicle extends CI_Controller {
             'page_title_small' => '',
             'RCode' => $route[0]['RCode'],
             'form' => $this->m_vehicle->set_form_add($rcode, $vtid),
+            'employee_list' => $this->m_vehicle->get_free_driver_list(),
         );
 //Load form add
-//        $this->m_template->set_Debug($data);
+//        $this->m_template->set_Debug($data['employee_list']);
         $this->m_template->set_Title('เพิ่มรถโดยสาร');
         $this->m_template->set_Content('vehicle/frm_vehicle', $data);
         $this->m_template->showTemplate();
     }
 
     public function edit($rcode, $vtid, $vid) {
+        $route = $this->m_vehicle->get_route($rcode, $vtid);
+        $route_name = $route[0]['RCode'] . ' ' . $route[0]['RSource'] . ' - ' . $route[0]['RDestination'];
+        $type_name = $route[0]['VTDescription'];
 
         if ($this->m_vehicle->validation_form_edit() && $this->form_validation->run() == TRUE) {
             $form_data = $this->m_vehicle->get_post_form_edit($vid);
 //            $this->m_template->set_Debug($form_data);
 //Update data
             $this->m_vehicle->update_vehicle($form_data);
+            //Alert success and redirect to candidate
+            $alert['alert_message'] = 'แก้ไขข้อมูล ' . $type_name . ' เส้นทาง ' . $route_name . ' สำเร็จแล้ว';
+            $alert['alert_mode'] = "success";
+            $this->session->set_flashdata('alert', $alert);
             redirect('vehicle/');
         }
-
-        $route = $this->m_vehicle->get_route($rcode, $vtid);
-        $route_name = $route[0]['RCode'] . ' ' . $route[0]['RSource'] . ' - ' . $route[0]['RDestination'];
-        $type_name = $route[0]['VTDescription'];
 
 //      get detail and sent to load form
         $detail = $this->m_vehicle->get_vehicle($vid);
         if ($detail[0] != NULL) {
+            $detail_driver = $this->m_vehicle->get_employee_driver($vid);
+            $detail[0]+=$detail_driver[0];
+            $detail[0]['RCode'] = $route[0]['RCode'];
             $data = array(
                 'VID' => $vid,
                 'page_title' => 'แก้ไขข้อมูล ' . $type_name . ' เส้นทาง ' . $route_name,
                 'page_title_small' => '',
                 'RCode' => $route[0]['RCode'],
                 'form' => $this->m_vehicle->set_form_edit($rcode, $vtid, $detail[0]),
+                'employee_list' => $this->m_vehicle->get_free_driver_list($vid),
+                'EID' => $detail[0]['EID'],
             );
         } else {
-            redirect('vehecle');
+            redirect('vehicle');
         }
 
-//        $this->m_template->set_Debug($detail);
+//        $this->m_template->set_Debug($data['form']);
         $this->m_template->set_Title('แก้ไขข้อมูลรถโดยสาร');
         $this->m_template->set_Content('vehicle/frm_vehicle', $data);
         $this->m_template->showTemplate();
@@ -189,6 +202,36 @@ class vehicle extends CI_Controller {
         } else {
             return TRUE;
         }
+    }
+
+    public function delete($VID) {
+        $temp = $this->m_vehicle->check_vehicle($VID);
+        if ($temp == NULL)
+            redirect('vehicle');
+
+        $RCode = $temp[0]['RCode'];
+        $RegID = $temp[0]['RegID'];
+        $ActID = $temp[0]['ActID'];
+
+        $result = $this->m_vehicle->delete_vehicle($VID, $RCode, $RegID, $ActID);
+        if ($result) {
+            //Alert success and redirect to candidate
+            $alert['alert_message'] = 'ลบข้อมูลรถ ' . $temp['VCode'] . ' สำเร็จแล้ว';
+            $alert['alert_mode'] = "success";
+            $this->session->set_flashdata('alert', $alert);
+            redirect('vehicle/');
+        } else {
+            //Alert success and redirect to candidate
+            $alert['alert_message'] = 'ลบข้อมูลรถ ' . $temp['VCode'] . ' ไม่สำเร็จแล้ว';
+            $alert['alert_mode'] = "danger";
+            $this->session->set_flashdata('alert', $alert);
+            redirect('vehicle/');
+        }
+
+//        $this->m_template->set_Debug($this->m_vehicle->check_vehicle($VID));
+//        $this->m_template->set_Title('ลบข้อมูลรถโดยสาร');
+//        $this->m_template->set_Content('vehicle/frm_vehicle', $data);
+//        $this->m_template->showTemplate();
     }
 
 }

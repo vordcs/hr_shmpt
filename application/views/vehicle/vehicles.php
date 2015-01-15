@@ -3,6 +3,9 @@
         $("#mainmenu ul li").removeAttr('class');
         $("#btnVehicle").addClass("active");
     });
+    function remove_vehicle(VID) {
+        alert(VID);
+    }
 </script>
 <?php
 
@@ -181,6 +184,8 @@ function DateDiff($strDate1, $strDate2) {
                                                     <?php
                                                     foreach ($vehicles as $v) {
                                                         $vid = $v['VID'];
+                                                        $driver_name = $v['Title'] . $v['FirstName'] . ' ' . $v['LastName'];
+                                                        $mobile = ($v['MobilePhone'] != NULL) ? 'เบอร์โทร ' . $v['MobilePhone'] : '';
                                                         if ($vtid == $v['VTID'] && $rcode == $v['RCode']) {
                                                             $date_expire = "-";
                                                             $policy_end = "-";
@@ -194,7 +199,7 @@ function DateDiff($strDate1, $strDate2) {
                                                             <tr>
                                                                 <td class="text-center"><?= $v['VCode']; ?></td>
                                                                 <td class="text-center"><?= $v['NumberPlate']; ?></td>
-                                                                <td></td>
+                                                                <td><?= $driver_name . '<br/>' . $mobile ?></td>
                                                                 <td class="text-center"><?php echo $date_expire; ?></td>
                                                                 <td class="text-center"><?php echo $policy_end; ?></td>
                                                                 <td class="text-center">
@@ -206,9 +211,21 @@ function DateDiff($strDate1, $strDate2) {
                                                                         'data-placement' => "top",
                                                                         'title' => "แก้ไขข้อมูล",
                                                                     );
-                                                                    echo anchor('vehicle/edit/' . $rcode . '/' . $vtid . '/' . $vid, '<i class="fa fa-pencil"></i>', $edit);
-                                                                    ?>                                                        
-                                                                    <a class="btn btn-danger btn-sm" draggable="true"><i class="fa fa-trash-o"></i></a>
+                                                                    echo anchor('vehicle/edit/' . $rcode . '/' . $vtid . '/' . $vid, '<i class="fa fa-pencil"></i>', $edit) . ' ';
+
+                                                                    $delete = array(
+                                                                        'type' => "button",
+                                                                        'class' => "btn  btn-danger btn-sm",
+                                                                        'data-id' => "2",
+                                                                        'data-title' => "ลบรถ" . $v['VCode'] . " หรือไม่",
+                                                                        'data-sub_title' => "ดำเนินการลบ ",
+                                                                        'data-info' => " รถ " . $v['VCode'],
+                                                                        'data-toggle' => "modal",
+                                                                        'data-target' => "#confirm",
+                                                                        'data-href' => "vehicle/delete/$vid",
+                                                                    );
+                                                                    echo anchor('#', '<i class="fa fa-trash-o"></i>', $delete);
+                                                                    ?>
                                                                 </td>
                                                             </tr>  
                                                             <?php
