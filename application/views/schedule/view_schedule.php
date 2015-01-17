@@ -167,19 +167,20 @@
                                     $time = $schedule['TimeDepart'];
                                     $time_depart = date('H:i', strtotime($time));
                                     if ($time_depart > $time_now) {
-
                                         $class_li = 'highlight';
                                         $class_btn = '';
+                                        $flag_use = 'name="TSID_' . $start_point . '[]"' . ' value="' . $tsid . '"';
                                     } else {
                                         //do something
                                         $class_li = '';
                                         $class_btn = 'hidden';
+                                        $flag_use = 'name="DIS_TSID_' . $start_point . '[]"' . ' value="' . $tsid . '"';
                                     }
 
                                     if ($rid == $schedule['RID']) {
                                         ?>   
                                         <li class="disabled <?= $class_li ?>" id="<?= $tsid ?>">
-                                            <input type="hidden" name="TSID_<?= $start_point ?>[]" value="<?= $tsid ?>" />
+                                            <input type="hidden" <?= $flag_use ?> />
                                             <button class="btn btn-danger btn-xs pull-left <?= $class_btn ?>" onclick="remove_schedule('<?= $tsid ?>', '<?= $start_point ?>')">
                                                 <span class="fa fa-times"></span>
                                             </button>
@@ -210,13 +211,15 @@
 
                                         if ($time_depart > $time_now) {
                                             $class_li = '';
+                                            $flag_use = 'name="VID_' . $start_point . '[]"' . ' value="' . $vid . '"';
                                         } else {
                                             //do something
                                             $class_li = 'disabled';
+                                            $flag_use = 'name="DIS_VID_' . $start_point . '[]"' . ' value="' . $vid . '"';
                                         }
                                         ?>
                                         <li class="<?= $class_li ?>" id="">
-                                            <input type="hidden" name="VID_<?= $start_point ?>[]" value="<?= $vid ?>" />
+                                            <input type="hidden" <?= $flag_use ?> />
                                             <?= $vcode ?>
                                         </li>
                                         <?php

@@ -402,6 +402,7 @@ class m_schedule extends CI_Model {
         $this->db->join('vehicles_has_schedules as vhs', ' vhs.TSID = tsd.TSID', 'left');
         $this->db->where('tsd.RID', $RID);
         $this->db->where('tsd.Date', $DATE);
+        $this->db->where('tsd.ScheduleStatus', '1');
         $this->db->order_by('tsd.TimeDepart', 'asc');
         $query_schedule = $this->db->get();
         return $query_schedule->result_array();
@@ -433,17 +434,47 @@ class m_schedule extends CI_Model {
         return $temp2;
     }
 
+    public function get_list_destination_vehicle($RCode, $VTID, $RID) {
+        $StartPoint = $this->get_route_detail($RCode, $VTID, $RID)[0]['StartPoint'];
+        if ($StartPoint == 'S') {
+            $temp = end($this->get_stations($RCode, $VTID));
+            $SID = $temp['SID'];
+        } else {
+            $temp = $this->get_stations($RCode, $VTID)[0];
+            $SID = $temp['SID'];
+        }
+        $this->db->from('vehicles_current_stations as vcs');
+        $this->db->join('t_routes_has_vehicles as trhv', ' trhv.VID = vcs.VID', 'left');
+        $this->db->join('vehicles as vh', ' vh.VID = vcs.VID', 'left');
+        $this->db->where('trhv.RCode', $RCode);
+        $this->db->where('vh.VTID', $VTID);
+        $this->db->where('vcs.CurrentStationID', $SID);
+        $this->db->order_by('vcs.CurrentTime', 'asc');
+        $query_schedule = $this->db->get();
+        $temp2 = $query_schedule->result_array();
+
+        return $temp2;
+    }
+
     /*
      * อัพเดทตำแหน่งของรถ
      */
 
-    public function update_vehicle_curent_stations($vid, $next_station_id, $time_arrive) {
-        $data_update = array(
-            'CurrentTime' => $time_arrive,
-            'CurrentDate' => $this->m_datetime->getDateToday(),
-            'CurrentStationID' => $next_station_id,
-            'UpdateDate' => $this->m_datetime->getDatetimeNow(),
-        );
+    public function update_vehicle_curent_stations($vid, $next_station_id = NULL, $time_arrive) {
+        if ($next_station_id == NULL) {
+            $data_update = array(
+                'CurrentTime' => $time_arrive,
+                'CurrentDate' => $this->m_datetime->getDateToday(),
+                'UpdateDate' => $this->m_datetime->getDatetimeNow(),
+            );
+        } else {
+            $data_update = array(
+                'CurrentTime' => $time_arrive,
+                'CurrentDate' => $this->m_datetime->getDateToday(),
+                'CurrentStationID' => $next_station_id,
+                'UpdateDate' => $this->m_datetime->getDatetimeNow(),
+            );
+        }
 
         $this->db->where('VID', $vid);
         $this->db->update('vehicles_current_stations', $data_update);
@@ -496,13 +527,12 @@ class m_schedule extends CI_Model {
         }
     }
 
-    function get_first_vehicles_current_stations($CurrentStationID) {
-        $this->db->from('vehicles_current_stations');
-        $this->db->where('CurrentStationID', $CurrentStationID);
-        $this->db->order_by('CurrentTime', 'asc');
-        $query_schedule = $this->db->get();
-        $temp = $query_schedule->result_array();
-        return $temp[0];
-    }
-
+//    function get_first_vehicles_current_stations($CurrentStationID) {
+//        $this->db->from('vehicles_current_stations');
+//        $this->db->where('CurrentStationID', $CurrentStationID);
+//        $this->db->order_by('CurrentTime', 'asc');
+//        $query_schedule = $this->db->get();
+//        $temp = $query_schedule->result_array();
+//        return $temp[0];
+//    }
 }
