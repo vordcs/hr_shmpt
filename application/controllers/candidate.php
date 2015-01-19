@@ -32,6 +32,7 @@ class candidate extends CI_Controller {
         $data['form_close'] = form_close();
 
         //$this->m_template->set_Debug($input_data);
+        $this->m_template->set_Permission('CAI');
         $this->m_template->set_Content('candidate/candidates', $data);
         $this->m_template->showTemplate();
     }
@@ -67,6 +68,7 @@ class candidate extends CI_Controller {
         $data['form_close'] = form_close();
 
         //$this->m_template->set_Debug($temp);
+        $this->m_template->set_Permission('CAA');
         $this->m_template->set_Content('candidate/frm_candidate', $data);
         $this->m_template->showTemplate();
     }
@@ -109,6 +111,7 @@ class candidate extends CI_Controller {
         $data['form_close'] = form_close();
 
 //        $this->m_template->set_Debug($c_data);
+        $this->m_template->set_Permission('CAE');
         $this->m_template->set_Content('candidate/frm_candidate', $data);
         $this->m_template->showTemplate();
     }
@@ -128,6 +131,7 @@ class candidate extends CI_Controller {
         $data['form_close'] = form_close();
 
 //        $this->m_template->set_Debug($c_data);
+        $this->m_template->set_Permission('CAD');
         $this->m_template->set_Content('candidate/frm_candidate', $data);
         $this->m_template->showTemplate();
     }

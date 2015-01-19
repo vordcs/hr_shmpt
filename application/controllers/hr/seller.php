@@ -66,7 +66,7 @@ class seller extends CI_Controller {
 
         $this->m_template->set_Debug($data_debug);
         $this->m_template->set_Title('พนักงานขายตั๋ว');
-
+        $this->m_template->set_Permission('HSI');
         $this->m_template->set_Content('hr/seller/seller', $data);
         $this->m_template->showTemplate();
     }
@@ -123,6 +123,7 @@ class seller extends CI_Controller {
 
         $this->m_template->set_Debug($data_debug);
         $this->m_template->set_Title('พนักงานขายตั๋ว');
+        $this->m_template->set_Permission('HSA');
         $this->m_template->set_Content('hr/seller/frm_seller', $data);
         $this->m_template->showTemplate();
     }

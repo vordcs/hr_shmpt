@@ -29,6 +29,8 @@ class Home extends CI_Controller {
             'schedule' => $query_schedule->result_array(),
             'result' => $this->run_schedule(),
         );
+
+        //$this->m_template->set_Debug($this->session->userdata('permittion'));
         //$this->m_template->set_Permission('SSL');
         $this->m_template->set_Content('home/main', $data);
         $this->m_template->showTemplate();

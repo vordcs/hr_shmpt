@@ -75,6 +75,7 @@ class route extends CI_Controller {
 
         $this->m_template->set_Title('การจัดการเส้นทาง');
 //        $this->m_template->set_Debug($data_debug);
+        $this->m_template->set_Permission('ROI');
         $this->m_template->set_Content('routes/routes', $data);
         $this->m_template->showTemplate();
     }
@@ -106,6 +107,7 @@ class route extends CI_Controller {
 
         $this->m_template->set_Title('เพิ่มเส้นทาง');
 //        $this->m_template->set_Debug($data);
+        $this->m_template->set_Permission('ROA');
         $this->m_template->set_Content('routes/frm_route', $data);
         $this->m_template->showTemplate();
     }
@@ -139,6 +141,7 @@ class route extends CI_Controller {
 
         $this->m_template->set_Title('แก้ไขข้อมูลเส้นทาง');
 //        $this->m_template->set_Debug($detail[0]);
+        $this->m_template->set_Permission('ROE');
         $this->m_template->set_Content('routes/frm_route', $data);
         $this->m_template->showTemplate();
     }
@@ -175,6 +178,7 @@ class route extends CI_Controller {
 
         $this->m_template->set_Title('ข้อมูล');
 //        $this->m_template->set_Debug($data_debug);
+        $this->m_template->set_Permission('ROV');
         $this->m_template->set_Content('routes/view_route', $data);
         $this->m_template->showTemplate();
     }

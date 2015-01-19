@@ -91,6 +91,7 @@ class cost extends CI_Controller {
 
         $this->m_template->set_Title('ค่าใช้จ่าย');
         $this->m_template->set_Debug($data_debug);
+        $this->m_template->set_Permission('COI');
         $this->m_template->set_Content('cost/cost', $data);
         $this->m_template->showTemplate();
     }
@@ -151,6 +152,7 @@ class cost extends CI_Controller {
 
         $this->m_template->set_Title("ค่าใช้จ่าย $route_name");
         $this->m_template->set_Debug($data_debug);
+        $this->m_template->set_Permission('COV');
         $this->m_template->set_Content('cost/view_cost', $data);
         $this->m_template->showTemplate();
     }
@@ -177,6 +179,7 @@ class cost extends CI_Controller {
         );
 
 //        $this->m_template->set_Debug($data_debug);
+        $this->m_template->set_Permission('COA');
         $this->m_template->set_Content('cost/frm_cost', $data);
         $this->m_template->showTemplate();
     }

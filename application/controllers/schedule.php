@@ -46,6 +46,7 @@ class schedule extends CI_Controller {
 
         $this->m_template->set_Debug($data_debug);
         $this->m_template->set_Title("ตารางเวลาเดินรถ");
+        $this->m_template->set_Permission('SCI');
         $this->m_template->set_Content('schedule/schedule', $data);
         $this->m_template->showTemplate();
     }
@@ -303,6 +304,7 @@ class schedule extends CI_Controller {
 
         $this->m_template->set_Debug($data_debug);
         $this->m_template->set_Title("ตารางเวลาเดิน $route_name");
+        $this->m_template->set_Permission('SCV');
         $this->m_template->set_Content('schedule/view_schedule', $data);
         $this->m_template->showTemplate();
     }
@@ -437,6 +439,7 @@ class schedule extends CI_Controller {
 
         $this->m_template->set_Debug($data_debug);
         $this->m_template->set_Title("ตารางเวลาเดิน $route_name");
+        $this->m_template->set_Permission('SCA');
         $this->m_template->set_Content('schedule/frm_schedule', $data);
         $this->m_template->showTemplate();
     }
@@ -464,7 +467,7 @@ class schedule extends CI_Controller {
         }
     }
 
-    public function chang_vehicle($TSID) {
+    public function change_vehicle($TSID) {
         $temp = $this->m_schedule->get_route_detail_by_TSID($TSID)[0];
         $temp_vehicle = $this->m_schedule->get_vehicle($temp['RCode'], $temp['VTID']);
         $route_name = $temp['VTDescription'] . ' เส้นทาง ' . $temp['RCode'] . ' ' . $temp['RSource'] . ' - ' . $temp['RDestination'];
@@ -497,12 +500,13 @@ class schedule extends CI_Controller {
             }
         }
 
-        $data['form']['open'] = form_open('schedule/chang_vehicle/' . $TSID);
+        $data['form']['open'] = form_open('schedule/change_vehicle/' . $TSID);
         $data['form']['input'] = $this->m_schedule->set_form_change($temp['RCode'], $temp['VTID'], $temp['VID']);
         $data['form']['close'] = form_close();
 
 //        $this->m_template->set_Debug($data);
         $this->m_template->set_Title("แก้ไขตารางเวลาเดิน $route_name");
+        $this->m_template->set_Permission('SCC');
         $this->m_template->set_Content('schedule/change_vehicle', $data);
         $this->m_template->showTemplate();
     }

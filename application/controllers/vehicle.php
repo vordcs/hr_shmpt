@@ -78,6 +78,7 @@ class vehicle extends CI_Controller {
 
 //        $this->m_template->set_Debug($data);
         $this->m_template->set_Title('จัดการรถโดยสาร');
+        $this->m_template->set_Permission('VEI');
         $this->m_template->set_Content('vehicle/vehicles', $data);
         $this->m_template->showTemplate();
     }
@@ -117,6 +118,7 @@ class vehicle extends CI_Controller {
 //Load form add
 //        $this->m_template->set_Debug($data['employee_list']);
         $this->m_template->set_Title('เพิ่มรถโดยสาร');
+        $this->m_template->set_Permission('VEA');
         $this->m_template->set_Content('vehicle/frm_vehicle', $data);
         $this->m_template->showTemplate();
     }
@@ -159,6 +161,7 @@ class vehicle extends CI_Controller {
 
 //        $this->m_template->set_Debug($data['form']);
         $this->m_template->set_Title('แก้ไขข้อมูลรถโดยสาร');
+        $this->m_template->set_Permission('VEE');
         $this->m_template->set_Content('vehicle/frm_vehicle', $data);
         $this->m_template->showTemplate();
     }

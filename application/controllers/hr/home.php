@@ -32,6 +32,7 @@ class home extends CI_Controller {
         $data['e_list'] = $this->m_employee->check_last_emp();
 
 //        $this->m_template->set_Debug($data);
+        $this->m_template->set_Permission('HHI');
         $this->m_template->set_Content('hr/home', $data);
         $this->m_template->showTemplate();
     }
@@ -51,6 +52,7 @@ class home extends CI_Controller {
         $data['form_close'] = form_close();
 
 //        $this->m_template->set_Debug($c_data);
+        $this->m_template->set_Permission('HHD');
         $this->m_template->set_Content('candidate/frm_candidate', $data);
         $this->m_template->showTemplate();
     }
@@ -78,6 +80,7 @@ class home extends CI_Controller {
 
 
         $this->m_template->set_Debug($data);
+        $this->m_template->set_Permission('HHA');
         $this->m_template->showTemplate();
     }
 

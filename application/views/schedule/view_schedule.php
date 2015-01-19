@@ -223,7 +223,7 @@
                                             <input type="hidden" <?= $flag_use ?> />
                                             <?= $vcode ?>
                                             <?php
-                                            echo anchor('schedule/chang_vehicle/' . $tsid, '<span class="fa fa-pencil-square-o"></span>', array('class' => 'btn btn-default btn-xs pull-right'));
+                                            echo anchor('schedule/change_vehicle/' . $tsid, '<span class="fa fa-pencil-square-o"></span>', array('class' => 'btn btn-default btn-xs pull-right'));
                                             ?>
                                         </li>
                                         <?php

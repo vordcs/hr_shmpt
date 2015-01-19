@@ -61,6 +61,7 @@ class schedule_vehicle extends CI_Controller {
 
         $this->m_template->set_Debug($data_debug);
         $this->m_template->set_Title("ระบบจัดตารางเวลาเดินรถอัตติโนมัติ");
+        $this->m_template->set_Permission('SVI');
         $this->m_template->set_Content('schedule/schedule_vehicle', $data);
         $this->m_template->showTemplate();
     }

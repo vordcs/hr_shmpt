@@ -78,6 +78,7 @@ class fares extends CI_Controller {
 
         $this->m_template->set_Title('กำหนดอัตตราค่าโดยสาร');
 //        $this->m_template->set_Debug($data_debug);
+        $this->m_template->set_Permission('FAA');
         $this->m_template->set_Content('fares/frm_fares', $data);
         $this->m_template->showTemplate();
     }
@@ -145,6 +146,7 @@ class fares extends CI_Controller {
 //        );
         $this->m_template->set_Title('แก้ไขค่าโดยสาร');
 //        $this->m_template->set_Debug($data_debug);
+        $this->m_template->set_Permission('FAE');
         $this->m_template->set_Content('fares/frm_fares', $data);
         $this->m_template->showTemplate();
     }

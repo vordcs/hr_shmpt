@@ -35,6 +35,7 @@ class employee extends CI_Controller {
         $data['form_close'] = form_close();
 
         //$this->m_template->set_Debug($data);
+        $this->m_template->set_Permission('HEI');
         $this->m_template->set_Content('hr/employees', $data);
         $this->m_template->showTemplate();
     }
@@ -54,6 +55,7 @@ class employee extends CI_Controller {
         $data['form_close'] = form_close();
 
 //        $this->m_template->set_Debug($data);
+        $this->m_template->set_Permission('HED');
         $this->m_template->set_Content('candidate/frm_candidate', $data);
         $this->m_template->showTemplate();
     }
@@ -96,6 +98,7 @@ class employee extends CI_Controller {
         $data['form_close'] = form_close();
 
 //        $this->m_template->set_Debug($data);
+        $this->m_template->set_Permission('HEE');
         $this->m_template->set_Content('candidate/frm_candidate', $data);
         $this->m_template->showTemplate();
     }
@@ -120,6 +123,7 @@ class employee extends CI_Controller {
         }
 
         $this->m_template->set_Debug($data);
+        $this->m_template->set_Permission('HEL');
         $this->m_template->showTemplate();
     }
 

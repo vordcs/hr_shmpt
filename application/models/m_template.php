@@ -49,9 +49,11 @@ Class m_template extends CI_Model {
         if ($sess == NULL || $sess == FALSE) {
             redirect('login');
         }
-        if (strpos($permit, $this->permission) !== false) {
+        if ($this->permission == 'ALL') {
             return TRUE;
-        } elseif ($this->permission == 'ALL') {
+        } elseif ($permit == 'ALL') {
+            return TRUE;
+        } elseif (strpos($permit, $this->permission) !== false) {
             return TRUE;
         } else {
             return FALSE;

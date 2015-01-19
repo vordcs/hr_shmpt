@@ -77,6 +77,7 @@ class station extends CI_Controller {
 
         $this->m_template->set_Title('เพิ่มจุดจอด');
 //        $this->m_template->set_Debug($data_debug);
+        $this->m_template->set_Permission('STA');
         $this->m_template->set_Content('stations/frm_station', $data);
         $this->m_template->showTemplate();
     }
@@ -139,6 +140,7 @@ class station extends CI_Controller {
 
         $this->m_template->set_Title('เพิ่มและแก้ไขจุดจอด');
 //        $this->m_template->set_Debug($data_debug);
+        $this->m_template->set_Permission('STE');
         $this->m_template->set_Content('stations/frm_station', $data);
         $this->m_template->showTemplate();
     }
