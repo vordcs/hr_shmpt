@@ -110,4 +110,8 @@ class report extends CI_Controller {
         $this->m_template->showReportTemplate();
     }
 
+    public function test() {
+        $this->load->view('report/view_report_test');
+    }
+
 }

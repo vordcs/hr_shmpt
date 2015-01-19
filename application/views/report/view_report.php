@@ -12,15 +12,15 @@
         padding: 0 !important;
     }
     .table-container {
-        /*visibility: hidden;*/
+        visibility: hidden;
     }
     .table-container.show-table {
-        /*visibility: visible;*/
+        visibility: visible;
     }
-    /*    .line2 {
-            font-size: 0.8em;
-            font-weight: normal;
-        }*/
+    .line2 {
+        font-size: 0.8em;
+        font-weight: normal;
+    }
     .dataTables_wrapper {
         border: 1px solid #dddddd;
     }
@@ -69,7 +69,7 @@
     }
 </style>
 
-<div class="container" style="margin-top: 1%;">
+<div class="container" style="margin-top: 10px;">
     <div class="row">     
         <div class="col-md-12">
             <?php
@@ -85,7 +85,6 @@
             </legend>
         </div>        
     </div>
-</div>
 </div>
 <?php
 $num_vehicle = count($vehicles);
@@ -265,7 +264,7 @@ foreach ($cost_types as $ct) {
                                     }
                                     ?>
                                     <td class="text-center <?= $bg_class ?>"><?= $value != 0 ? $value : '' ?></td>                                                       
-                                    <?php                                 
+                                    <?php
                                 }
                             }
                             ?>
@@ -273,8 +272,8 @@ foreach ($cost_types as $ct) {
                             <td class="text-center <?= $bg_class ?>"> <?php echo number_format(($income - $outcome), 1, '.', ''); ?></td>
 
                             <?php
-                               $income = 0;
-                                    $outcome = 0;
+                            $income = 0;
+                            $outcome = 0;
                         }
                         ?>
 

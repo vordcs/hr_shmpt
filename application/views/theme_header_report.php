@@ -17,7 +17,8 @@
               href="<?= asset_url() ?>img/apple-touch-icon-144-precomposed.png<?= '?v=' . $version ?>">
         <link rel="shortcut icon" href="<?= asset_url() ?>img/favicon.ico<?= '?v=' . $version ?>">
         <!-- Bootstrap core CSS ans JS -->
-        <?php echo css('bootstrap.css?v=' . $version); ?>
+        <?php echo css('bootstrap2.3.2.css?v=' . $version); ?>
+        <?php echo css('bootstrap-responsive2.3.2.css?v=' . $version); ?>
         <?php echo css('bootflat.min.css?v=' . $version); ?>
         <?php echo css('font-awesome.css?v=' . $version); ?>
         <?php echo js('jquery.js?v=' . $version); ?>

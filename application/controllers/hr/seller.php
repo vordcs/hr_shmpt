@@ -49,8 +49,44 @@ class seller extends CI_Controller {
             $data['sellers'] = $this->m_seller->get_seller($rcode);
         } else {
             $data['epmployees_seller'] = $this->m_seller->get_employee_by_PID();
-            $data['sellers'] = $this->m_seller->get_employee_by_PID();
+            $data['sellers'] = $this->m_seller->get_seller();
         }
+
+        //Merge employee and seller
+        $prepare = array(
+            'SellerID' => NULL,
+            'RCode' => NULL,
+            'RSource' => NULL,
+            'RDestination' => NULL,
+            'StationName' => NULL,
+            'EID' => NULL,
+        );
+        $sort = $data['epmployees_seller'];
+        $sellers = $data['sellers'];
+        for ($i = 0; $i < count($sort); $i++) {
+            for ($j = 0; $j < count($sellers); $j++) {
+                if (isset($sort[$i]['sell_1']) == FALSE) {
+                    $sort[$i]['sell_1'] = array();
+                    $sort[$i]['sell_2'] = array();
+                }
+                if ($sellers[$j]['EID'] == $sort[$i]['EID'] && $sellers[$j]['VTID'] == '1') {
+                    array_push($sort[$i]['sell_1'], $sellers[$j]);
+                }
+                if ($sellers[$j]['EID'] == $sort[$i]['EID'] && $sellers[$j]['VTID'] == '2') {
+                    array_push($sort[$i]['sell_2'], $sellers[$j]);
+                }
+            }
+            if (count($sort[$i]['sell_1']) == 0) {
+                array_push($sort[$i]['sell_1'], $prepare);
+            }
+            if (count($sort[$i]['sell_2']) == 0) {
+                array_push($sort[$i]['sell_2'], $prepare);
+            }
+        }
+
+        //Send data to view
+        $data['sort'] = $sort;
+
         $data_debug = array(
 //            'form' => $data['form'],
 //            'routes' => $data['routes'],
@@ -58,9 +94,10 @@ class seller extends CI_Controller {
 //            'sellers' => $data['sellers'],
 //            'temp' => $temp,
 //            'epmployees_seller' => $data['epmployees_seller'],
-//              'emp_4' => $this->m_seller->get_employee_by_PID(),
+//            'emp_4' => $this->m_seller->get_employee_by_PID(),
 //            'form_data' => $form_data,
 //            'rs' => $rs,
+//            'sort' => $sort,
         );
 
 

@@ -81,28 +81,27 @@
                             <th style="width: 10%">ประเภทรถ</th>
                             <th style="width: 30%">เส้นทาง</th>
                             <th style="width: 20%">จุดจอด</th>
-                            <th style="width: 10%"></th>
+                            <th colspan="2" style="width: 10%"></th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php
-                        foreach ($epmployees_seller as $emp) {
+                        foreach ($sort as $emp) {
+                            $flag_tr = FALSE;
                             $EID = $emp['EID'];
                             $name = $emp['Title'] . $emp['FirstName'] . ' ' . $emp['LastName'];
-                            $row_spam = 3;
-                            $num_sale = 0;
-                            foreach ($sellers as $s) {
-                                if ($EID == $s['EID']) {
-                                    $num_sale++;
-//                                $row_spam++;
-                                }
+                            $num_sell_1 = count($emp['sell_1']);
+                            $num_sell_2 = count($emp['sell_2']);
+                            $row_spam = $num_sell_1 + $num_sell_2 + 1;
+
+                            if ($flag_tr == FALSE) {
+                                echo '<tr>';
+                                $flag_tr = TRUE;
                             }
-                            ?>
-                            <tr>                           
-                                <td rowspan="<?= $row_spam ?>" class="text-center"><?= $EID ?></td>                            
-                                <td rowspan="<?= $row_spam ?>" colspan=""><?= $name ?></td> 
-                            </tr>
-                            <?php
+
+                            echo '<td rowspan="' . $row_spam . '" class="text-center">' . $EID . '</td>';
+                            echo '<td rowspan="' . $row_spam . '" colspan="">' . $name . '</td>';
+
                             foreach ($vehicle_types as $type) {
                                 $vtid = $type['VTID'];
                                 $vt_name = $type['VTDescription'];
@@ -113,39 +112,122 @@
                                     'class' => "btn btn-success btn-sm",
                                 );
                                 $col_span = 0;
-                                $action = anchor("hr/seller/add/$EID/NULL/$vtid", '<i class="fa fa-plus"></i>', $add);
+                                $action_add = anchor("hr/seller/add/$EID/NULL/$vtid", '<i class="fa fa-plus"></i>', $add);
+                                $action_delete = '';
 
-                                foreach ($sellers as $seller) {
-                                    if ($EID == $seller['EID'] && $vtid == $seller['VTID']) {
-                                        $seller_id = $seller['SellerID'];
-                                        $rcode = $seller['RCode'];
-                                        $source = $seller['RSource'];
-                                        $destination = $seller['RDestination'];
-                                        $route_name = "$rcode  $source - $destination";
-                                        $station_name = $seller['StationName'];
-                                        $col_span = 0;
-                                        $delete = array(
-                                            'type' => "button",
-                                            'class' => "btn  btn-danger btn-sm",
-                                            'data-id' => "2",
-                                            'data-title' => "ลบพนักงานขายตั๋วโดยสาร",
-                                            'data-sub_title' => "$name  ",
-                                            'data-info' => " จุดจอด $station_name",
-                                            'data-toggle' => "modal",
-                                            'data-target' => "#confirm",
-                                            'data-href' => "seller/delete/$seller_id",
-                                        );
-                                        $action = anchor('#', '<i class="fa fa-times"></i>', $delete);
+                                if ($vtid == '1') {
+                                    $flag_first = TRUE;
+                                    for ($i = 0; $i < $num_sell_1; $i++) {
+                                        $seller = (isset($emp['sell_1'][$i])) ? $emp['sell_1'][$i] : NULL;
+                                        $row_v = count($emp['sell_1']);
+                                        if ($seller['EID'] != NULL && $seller['EID'] == $EID) {
+                                            if ($flag_tr == FALSE && $flag_first == FALSE) {
+                                                echo '<tr>';
+                                                $flag_tr = TRUE;
+                                            }
+                                            if ($flag_first) {
+                                                echo '<tr>';
+                                                echo '<td rowspan="' . $row_v . '" class="text-center">' . $vt_name . '</td>';
+                                                $flag_tr = TRUE;
+                                            }
+                                            $seller_id = $seller['SellerID'];
+                                            $rcode = $seller['RCode'];
+                                            $source = $seller['RSource'];
+                                            $destination = $seller['RDestination'];
+                                            $route_name = "$rcode  $source - $destination";
+                                            $station_name = $seller['StationName'];
+                                            $col_span = 0;
+                                            $delete = array(
+                                                'type' => "button",
+                                                'class' => "btn  btn-danger btn-sm",
+                                                'data-id' => "2",
+                                                'data-title' => "ลบพนักงานขายตั๋วโดยสาร",
+                                                'data-sub_title' => "$name  ",
+                                                'data-info' => " จุดจอด $station_name",
+                                                'data-toggle' => "modal",
+                                                'data-target' => "#confirm",
+                                                'data-href' => "seller/delete/$seller_id",
+                                            );
+                                            $action_delete = anchor('#', '<i class="fa fa-times"></i>', $delete);
+
+                                            echo '<td class="text-center">' . $route_name . '</td>';
+                                            echo '<td class="text-center">' . $station_name . '</td>';
+                                            echo '<td class="text-center">' . $action_delete . '</td>';
+                                            if ($flag_first) {
+                                                echo '<td rowspan="' . $row_v . '" class="text-center">' . $action_add . '</td>';
+                                                $flag_first = FALSE;
+                                            }
+                                            if ($flag_tr) {
+                                                echo '</tr>';
+                                                $flag_tr = FALSE;
+                                            }
+                                        } else {
+                                            echo '<tr>';
+                                            echo '<td class="text-center">' . $vt_name . '</td>';
+                                            echo '<td class="text-center"> - </td>';
+                                            echo '<td class="text-center"> - </td>';
+                                            echo '<td class="text-center"> - </td>';
+                                            echo '<td class="text-center">' . $action_add . '</td>';
+                                            echo '</tr>';
+                                        }
+                                    }
+                                } else if ($vtid == '2') {
+                                    $flag_first = TRUE;
+                                    for ($i = 0; $i < $num_sell_2; $i++) {
+                                        $seller = (isset($emp['sell_2'][$i])) ? $emp['sell_2'][$i] : NULL;
+                                        $row_v = count($emp['sell_2']);
+                                        if ($seller['EID'] != NULL && $seller['EID'] == $EID) {
+                                            if ($flag_tr == FALSE && $flag_first == FALSE) {
+                                                echo '<tr>';
+                                                $flag_tr = TRUE;
+                                            }
+                                            if ($flag_first) {
+                                                echo '<tr>';
+                                                echo '<td rowspan="' . $row_v . '" class="text-center">' . $vt_name . '</td>';
+                                                $flag_tr = TRUE;
+                                            }
+                                            $seller_id = $seller['SellerID'];
+                                            $rcode = $seller['RCode'];
+                                            $source = $seller['RSource'];
+                                            $destination = $seller['RDestination'];
+                                            $route_name = "$rcode  $source - $destination";
+                                            $station_name = $seller['StationName'];
+                                            $col_span = 0;
+                                            $delete = array(
+                                                'type' => "button",
+                                                'class' => "btn  btn-danger btn-sm",
+                                                'data-id' => "2",
+                                                'data-title' => "ลบพนักงานขายตั๋วโดยสาร",
+                                                'data-sub_title' => "$name  ",
+                                                'data-info' => " จุดจอด $station_name",
+                                                'data-toggle' => "modal",
+                                                'data-target' => "#confirm",
+                                                'data-href' => "seller/delete/$seller_id",
+                                            );
+                                            $action_delete = anchor('#', '<i class="fa fa-times"></i>', $delete);
+
+                                            echo '<td class="text-center">' . $route_name . '</td>';
+                                            echo '<td class="text-center">' . $station_name . '</td>';
+                                            echo '<td class="text-center">' . $action_delete . '</td>';
+                                            if ($flag_first) {
+                                                echo '<td rowspan="' . $row_v . '" class="text-center">' . $action_add . '</td>';
+                                                $flag_first = FALSE;
+                                            }
+                                            if ($flag_tr) {
+                                                echo '</tr>';
+                                                $flag_tr = FALSE;
+                                            }
+                                        } else {
+                                            echo '<tr>';
+                                            echo '<td class="text-center">' . $vt_name . '</td>';
+                                            echo '<td class="text-center"> - </td>';
+                                            echo '<td class="text-center"> - </td>';
+                                            echo '<td class="text-center"> - </td>';
+                                            echo '<td class="text-center">' . $action_add . '</td>';
+                                            echo '</tr>';
+                                        }
                                     }
                                 }
-                                ?>
-                                <tr>
-                                    <td class="text-center"><?= $vt_name ?></td>  
-                                    <td class="text-center"><?= $route_name ?></td>
-                                    <td class="text-center"><?= $station_name ?></td>
-                                    <td class="text-center"><?= $action ?></td>
-                                </tr>  
-                                <?php
                             }
                         }
                         ?>   
