@@ -187,7 +187,6 @@
                                             <strong>
                                                 <?= $time_depart ?>
                                             </strong>
-
                                         </li>
                                         <?php
                                     }
@@ -199,8 +198,10 @@
                             <legend>เบอร์รถ</legend>
                             <ul id="list_vehicles" class="exclude list-group">
                                 <?php
+                                $i = 0;
                                 foreach ($schedules as $schedule) {
                                     if ($rid == $schedule['RID']) {
+                                        $tsid = $schedule['TSID'];
                                         $vid = $schedule['VID'];
                                         $vcode = $schedule['VCode'];
                                         if ($vcode == '') {
@@ -221,9 +222,13 @@
                                         <li class="<?= $class_li ?>" id="">
                                             <input type="hidden" <?= $flag_use ?> />
                                             <?= $vcode ?>
+                                            <?php
+                                            echo anchor('schedule/chang_vehicle/' . $tsid, '<span class="fa fa-pencil-square-o"></span>', array('class' => 'btn btn-default btn-xs pull-right'));
+                                            ?>
                                         </li>
                                         <?php
                                     }
+                                    $i++;
                                 }
                                 ?>
                             </ul> 
@@ -236,8 +241,8 @@
     </div>
     <div class="row">
         <div class="col-md-12 text-center panel panel-default" style="padding: 20px;">
-            <button class="btn badge-primary" type="submit">บันทึก</button>
-            <?= anchor('schedule', '<span class="btn btn-danger">ย้อนกลับ</span>') ?>
+            <?= anchor('schedule', '<span class="btn btn-lg btn-danger">ย้อนกลับ</span>') ?>
+            <button class="btn btn-lg btn-success" type="submit">บันทึก</button>
         </div>
     </div>
     <?= $form_close ?>

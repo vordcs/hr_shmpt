@@ -361,6 +361,8 @@ class schedule extends CI_Controller {
                             $temp1[$i1]['VID'] = $temp2[$i2 + 1]['VID'];
                             $flag = TRUE;
                         }
+                        if ($temp1[$i1]['VID'] == NULL && $i1 == (count($temp1) - 1))
+                            $flag = TRUE;
                     }
                     if ($flag) {
                         if ($i2 + 1 < count($temp2)) {
@@ -371,7 +373,6 @@ class schedule extends CI_Controller {
                             $RCode = $form_data['RCode'];
                             $VTID = $route_detail[0]['VTID'];
                             $Free_VID = $this->m_schedule->get_next_vehicle($RCode, $VTID, $RID);
-
                             $temp1[$i1]['VID'] = $Free_VID[0]['VID'];
 
                             //ตรวจสอบสถานีสุดท้าย ตัวนี้จะเป็นถ้าเริ่ม S ต้องไปเอาตัวสุดท้าย, ถ้าเป็น D ต้องไปเอาตัวแรก
@@ -390,17 +391,17 @@ class schedule extends CI_Controller {
                             $duration = 10; //บวกเพิ่มแต่ 10 นาที ป้องกันเวลาเกินเที่ยงคืน
                             $t = date('H:i', strtotime("+$duration minutes", strtotime($temp['CurrentTime'])));
                             $new_last_time = $t;
-                            //$this->m_schedule->update_vehicle_curent_stations($Free_VID[0]['VID'], $next_station_id, $new_last_time);
+                            $this->m_schedule->update_vehicle_curent_stations($Free_VID[0]['VID'], $next_station_id, $new_last_time);
                             // อัพเดทตาราง vehicles_has_schedules ที่ได้จากการ sort
-                            //$this->m_schedule->update_vehicles_has_schedules_with_new_data($temp1);
+                            $this->m_schedule->update_vehicles_has_schedules_with_new_data($temp1);
                         }
                     }
                 }
                 //Alert success and redirect to candidate
-//                $alert['alert_message'] = "เพิ่มรอบ " . $vt_name . " เวลา " . $form_data['TimeDepart'] . " ของเส้นทาง " . $route_name . " สำเร็จแล้ว";
-//                $alert['alert_mode'] = "success";
-//                $this->session->set_flashdata('alert', $alert);
-//                redirect('schedule/view/' . $rcode . '/' . $vtid);
+                $alert['alert_message'] = "เพิ่มรอบ " . $vt_name . " เวลา " . $form_data['TimeDepart'] . " ของเส้นทาง " . $route_name . " สำเร็จแล้ว";
+                $alert['alert_mode'] = "success";
+                $this->session->set_flashdata('alert', $alert);
+                redirect('schedule/view/' . $rcode . '/' . $vtid);
             } else {
                 //ไม่มีรถในคิวให้ทำการเพิ่ม
                 //Alert fail and redirect to candidate
@@ -426,10 +427,10 @@ class schedule extends CI_Controller {
 //            'get_vehicle_current_stations' => $get_vehicle_current_stations,
 //            'prepare_t_schedules_day' => isset($prepare_t_schedules_day) ? $prepare_t_schedules_day : '',
 //            'result' => isset($result) ? $result : '',
-            'temp' => isset($temp1) ? $temp1 : '',
-            'last' => isset($Free_VID) ? $Free_VID : '',
+//            'temp' => isset($temp1) ? $temp1 : '',
+//            'last' => isset($Free_VID) ? $Free_VID : '',
 //            'temp1' => $this->m_schedule->get_schedule_to_sort($rid, $this->m_datetime->getDateToday()),
-            'temp2' => $this->m_schedule->get_route_detail($rcode, $vtid, $rid),
+//            'temp2' => $this->m_schedule->get_schedule_to_sort($rid, $this->m_datetime->getDateToday()),
         );
 
 
@@ -461,6 +462,49 @@ class schedule extends CI_Controller {
         } else {
             return TRUE;
         }
+    }
+
+    public function chang_vehicle($TSID) {
+        $temp = $this->m_schedule->get_route_detail_by_TSID($TSID)[0];
+        $temp_vehicle = $this->m_schedule->get_vehicle($temp['RCode'], $temp['VTID']);
+        $route_name = $temp['VTDescription'] . ' เส้นทาง ' . $temp['RCode'] . ' ' . $temp['RSource'] . ' - ' . $temp['RDestination'];
+        if ($temp['StartPoint'] == 'S') {
+            $route_name .= ' (ไป ' . $temp['RDestination'] . ')';
+        } else {
+            $route_name .= ' (ไป ' . $temp['RSource'] . ')';
+        }
+        $data = array(
+            'page_title' => 'แก้ไขตารางเวลาเดิน',
+            'page_title_small' => ' ' . $route_name,
+            'detail' => $temp,
+        );
+
+        if ($this->m_schedule->validation_form_change() && $this->form_validation->run() == TRUE) {
+            $data['post'] = $this->input->post();
+            $data['post']['TSID'] = $TSID;
+            if ($this->m_schedule->update_change_vehicle($data['post'])) {
+                //Alert success
+                $alert['alert_message'] = "แก้ไขตารางเวลาเดิน " . $route_name . ' สำเร็จ';
+                $alert['alert_mode'] = "success";
+                $this->session->set_flashdata('alert', $alert);
+                redirect('schedule/view/' . $temp['RCode'] . '/' . $temp['VTID']);
+            } else {
+                //Alert fail
+                $alert['alert_message'] = "แก้ไขตารางเวลาเดิน " . $route_name . ' ไม่สำเร็จ';
+                $alert['alert_mode'] = "danger";
+                $this->session->set_flashdata('alert', $alert);
+                redirect('schedule/view/' . $temp['RCode'] . '/' . $temp['VTID']);
+            }
+        }
+
+        $data['form']['open'] = form_open('schedule/chang_vehicle/' . $TSID);
+        $data['form']['input'] = $this->m_schedule->set_form_change($temp['RCode'], $temp['VTID'], $temp['VID']);
+        $data['form']['close'] = form_close();
+
+//        $this->m_template->set_Debug($data);
+        $this->m_template->set_Title("แก้ไขตารางเวลาเดิน $route_name");
+        $this->m_template->set_Content('schedule/change_vehicle', $data);
+        $this->m_template->showTemplate();
     }
 
 }

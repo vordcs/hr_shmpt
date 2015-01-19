@@ -334,6 +334,12 @@ class m_schedule extends CI_Model {
         return TRUE;
     }
 
+    public function validation_form_change() {
+        $this->form_validation->set_rules('VID', 'รหัสรถ', 'trim|required|xss_clean');
+        $this->form_validation->set_rules('ScheduleNote', 'โน๊ต', 'trim|xss_clean');
+        return TRUE;
+    }
+
     public function get_vehicle_types($id = NULL) {
         if ($id != NULL) {
             $this->db->where('VTID', $id);
@@ -535,4 +541,66 @@ class m_schedule extends CI_Model {
 //        $temp = $query_schedule->result_array();
 //        return $temp[0];
 //    }
+
+    function get_route_detail_by_TSID($TSID) {
+        $this->db->from('t_schedules_day as tsd');
+        $this->db->join('t_routes as tr', ' tr.RID = tsd.RID', 'left');
+        $this->db->join('vehicles_type as vt', ' vt.VTID = tr.VTID', 'left');
+        $this->db->join('vehicles_has_schedules as vhs', ' vhs.TSID = tsd.TSID', 'left');
+        $this->db->join('vehicles as ve', ' ve.VID = vhs.VID', 'left');
+
+
+        $this->db->where('tsd.TSID', $TSID);
+        $query_schedule = $this->db->get();
+        $temp = $query_schedule->result_array();
+        return $temp;
+    }
+
+    public function set_form_change($rcode, $vtid, $vid = "") {
+        $temp_vehicle = $this->m_schedule->get_vehicle($rcode, $vtid);
+        $option = array();
+        foreach ($temp_vehicle as $row) {
+            if ($row['VID'] != $vid)
+                $option[$row['VID']] = $row['VCode'];
+        }
+        $i_ScheduleNote = array(
+            'type' => 'text',
+            'name' => 'ScheduleNote',
+            'rows' => '3',
+            'placeholder' => 'หมายเหตุ',
+            'class' => 'form-control',
+            'value' => set_value('ScheduleNote'),
+        );
+
+        $dropdown = 'class="selecter_3" data-selecter-options = \'{"cover":"true"}\' ';
+        $form = array(
+            'VID' => form_dropdown('VID', $option, set_value('VID'), $dropdown),
+            'ScheduleNote' => form_textarea($i_ScheduleNote),
+        );
+        return $form;
+    }
+
+    public function update_change_vehicle($data) {
+        $flag_vhs = FALSE;
+        $pre_vhs = array(
+            'VID' => $data['VID']
+        );
+        $this->db->where('TSID', $data['TSID']);
+        if ($this->db->update('vehicles_has_schedules', $pre_vhs))
+            $flag_vhs = TRUE;
+
+        $flag_tsd = FALSE;
+        $pre_tsd = array(
+            'ScheduleNote' => $data['ScheduleNote']
+        );
+        $this->db->where('TSID', $data['TSID']);
+        if ($this->db->update('t_schedules_day', $pre_tsd))
+            $flag_tsd = TRUE;
+
+        if ($flag_vhs && $flag_tsd)
+            return TRUE;
+        else
+            return FALSE;
+    }
+
 }
