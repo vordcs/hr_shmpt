@@ -215,13 +215,14 @@ class m_cost extends CI_Model {
         $this->form_validation->set_rules('CostNote', 'หมายเหตุ', 'trim|xss_clean');
         return TRUE;
     }
+
     public function varlidation_form_search() {
-        $this->form_validation->set_rules('RCode','เส้นทาง','trim|xss_clean');
-        $this->form_validation->set_rules('VTID','ประเภทรถ','trim|xss_clean');
-        $this->form_validation->set_rules('VCode','เบอร์รถ','trim|xss_clean');
-        $this->form_validation->set_rules('DateForm','จากวันที่','trim|xss_clean');
-        $this->form_validation->set_rules('DateTo','ถึงวันที่','trim|xss_clean');
-        
+        $this->form_validation->set_rules('RCode', 'เส้นทาง', 'trim|xss_clean');
+        $this->form_validation->set_rules('VTID', 'ประเภทรถ', 'trim|xss_clean');
+        $this->form_validation->set_rules('VCode', 'เบอร์รถ', 'trim|xss_clean');
+        $this->form_validation->set_rules('DateForm', 'จากวันที่', 'trim|xss_clean');
+        $this->form_validation->set_rules('DateTo', 'ถึงวันที่', 'trim|xss_clean');
+
         return TRUE;
     }
 
@@ -243,6 +244,28 @@ class m_cost extends CI_Model {
         );
 
         return $form_data;
+    }
+
+    public function get_schedule($date = NULL, $rcode = NULL, $vtid = NULL, $rid = NULL) {
+        $this->db->select('*,t_schedules_day.RID as RID');
+        $this->db->join('t_routes', ' t_schedules_day.RID=t_routes.RID', 'left');
+        $this->db->join('vehicles_has_schedules', 't_schedules_day.TSID = vehicles_has_schedules.TSID', 'left');
+        $this->db->join('vehicles', 'vehicles_has_schedules.VID = vehicles.VID', 'left');
+        if ($date != NULL) {
+            $this->db->where('Date', $date);
+        }
+        if ($rcode != NULL) {
+            $this->db->where('t_routes.RCode', $rcode);
+        }
+        if ($vtid != NULL) {
+            $this->db->where('t_routes.VTID', $vtid);
+        }
+        if ($rid != NULL) {
+            $this->db->where('t_routes.RID', $rid);
+        }
+        $this->db->order_by('TimeDepart', 'ASC');
+        $query_schedule = $this->db->get("t_schedules_day");
+        return $query_schedule->result_array();
     }
 
 }

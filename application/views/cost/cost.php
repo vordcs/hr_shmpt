@@ -8,13 +8,6 @@
             format: 'yyyy-m-d'
         });
 
-        $('#ModalFormCost').on('show.bs.modal', function (e) {
-            var title = $(e.relatedTarget).data('title');
-
-            $('.modal-title').html('<strong>' + title + '</strong>');
-
-        });
-
     });
 
 </script>
@@ -89,7 +82,7 @@ function count_itemp($data_array, $str, $con) {
                             <br>
                             <button type="submit" class="btn btn-default">ค้นหา</button>   
                         </div>
-                       <?php echo form_close(); ?>
+                        <?php echo form_close(); ?>
                     </div>
                     <br>
                     <?php
@@ -136,36 +129,9 @@ function count_itemp($data_array, $str, $con) {
             echo anchor('#', '<span class="fa fa-plus-square">&nbsp;&nbsp;รายรับ</span>', $income) . '  ';
             echo anchor('#', '<span class="fa fa-minus-square">&nbsp;&nbsp;รายจ่าย</span>', $outcome);
             ?>                   
-        </div>
-        <div class="col-md-12 text-center hidden">   
-            <?php
-            $income = array(
-                'type' => "button",
-                'class' => "btn btn-info btn-lg",
-            );
-            $outcome = array(
-                'type' => "button",
-                'class' => "btn btn-warning btn-lg",
-            );
-
-            echo anchor('cost/add/1', '<span class="fa fa-plus-square">&nbsp;&nbsp;รายรับ</span>', $income) . '  ';
-            echo anchor('cost/add/2', '<span class="fa fa-minus-square">&nbsp;&nbsp;รายจ่าย</span>', $outcome);
-            ?> 
-        </div>
+        </div>      
     </div>   
-    <div class="row hidden">
-        <div class="col-md-12 text-center">
-            <div class="btn-group">
-                <?php
-                foreach ($vehicle_types as $vt) {
-                    $vt_id = $vt['VTID'];
-                    $vt_name = $vt['VTDescription'];
-                    ?>
-                    <a href="#vt_<?= $vt_id ?>" class="btn btn-default btn-lg" ><?= $vt_name ?></a>                   
-                <?php } ?> 
-            </div>
-        </div>
-    </div>
+
     <?php
     $active_id = $this->session->flashdata('tab_active');
     foreach ($vehicle_types as $vt) {
@@ -243,13 +209,13 @@ function count_itemp($data_array, $str, $con) {
                                 <div class="tab-pane fade in <?= $active_id != NULL && $active_id == $idtab ? 'active' : '' ?> " id="<?= $idtab ?>">                                    
                                     <div class="row">
                                         <div class="col-md-12">
-                                            <p class="lead">  
+                                            <p class="lead text-center">  
                                                 <?php
                                                 echo "ค่าใช้จ่ายประจำวันที่ $date </small>";
                                                 $view = array(
                                                     'class' => "btn btn-link pull-right",
                                                 );
-                                               echo anchor("cost/view/$rcode/$vtid","ดูรายละเอียด...",$view);
+                                                echo anchor("cost/view/$rcode/$vtid", "ดูรายละเอียด...", $view);
                                                 ?>                                               
                                             </p>
                                         </div>
@@ -258,7 +224,7 @@ function count_itemp($data_array, $str, $con) {
                                                 <thead>
                                                     <tr>
                                                         <th rowspan="2">เบอร์รถ</th>
-                                                        <th colspan="<?= $num_sale_point ?>" class="info">เวลา</th>
+                                                        <th colspan="2" class="info">จำนวนเที่ยว</th>
                                                         <th colspan="<?= $num_sale_point + 1 ?>" class="success">รายรับ</th>
                                                         <?php
                                                         foreach ($cost_types as $ct) {
@@ -275,17 +241,25 @@ function count_itemp($data_array, $str, $con) {
                                                         <th rowspan="2">คงเหลือ</th>
                                                     </tr>
                                                     <tr>
-                                                        <!--เวลา-->
+                                                        <!--จำนวนเที่ยว-->
                                                         <?php
-                                                        foreach ($stations as $s) {
-                                                            if ($rcode == $s['RCode'] && $vtid == $s['VTID'] && $s['IsSaleTicket'] == '1') {
-                                                                $station_name = $s['StationName'];
-                                                                ?>
-                                                                <th class="info"><?= $station_name ?></th>
-                                                                <?php
+                                                        //ค้าหาสถานีเเรกและสุดท้าย                                                        
+                                                        $n = 0;
+                                                        $station_in_route = array();
+                                                        foreach ($stations as $station) {
+                                                            if ($rcode == $station['RCode'] && $vtid == $station['VTID']) {
+                                                                $station_in_route[$n] = $station;
+                                                                $n++;
                                                             }
                                                         }
-                                                        ?>                                                                                                              
+                                                        $first_station_name = $station_in_route[0]['StationName'];
+                                                        $first_station_id = $station_in_route[0]['SID'];
+                                                        $last_station_name = end($station_in_route)['StationName'];
+                                                        $last_station_id = end($station_in_route)['SID'];
+                                                        $num_station = count($station_in_route);
+                                                        ?>
+                                                        <th class="info"><i>ไป</i>&nbsp;<?= $first_station_name ?></th>
+                                                        <th class="info"><i>ไป</i>&nbsp;<?= $last_station_name ?></th>
                                                         <!--รายรับ-->
                                                         <?php
                                                         foreach ($stations as $s) {
@@ -337,15 +311,23 @@ function count_itemp($data_array, $str, $con) {
                                                                 <td class="text-center"><?= $v['VCode'] ?></td>
                                                                 <!--เวลา-->
                                                                 <?php
-                                                                foreach ($stations as $s) {
-                                                                    if ($rcode == $s['RCode'] && $vtid == $s['VTID'] && $s['IsSaleTicket'] == '1') {
-                                                                        $station_name = $s['StationName'];
+                                                                foreach ($route_details as $rd) {
+                                                                    $rid = $rd['RID'];
+                                                                    if ($rcode == $rd['RCode'] && $vtid == $rd['VTID']) {
+                                                                        $start_point = $rd['StartPoint'];
+                                                                        $num_round = 0;
+                                                                        foreach ($schedules as $schedule) {
+                                                                            if ($rid == $schedule['RID'] && $vid == $schedule['VID']) {
+                                                                                $num_round++;
+                                                                            }
+                                                                        }
                                                                         ?>
-                                                                        <td class="info"><?= $station_name ?></td>
+                                                                        <td class="text-center info"><?= $num_round ?></td>
                                                                         <?php
                                                                     }
                                                                 }
-                                                                ?>   
+                                                                ?>
+
                                                                 <!--รายรับ-->
                                                                 <?php
 //                                                                รายรับแต่ละจุดขายตั๋ว
@@ -353,7 +335,7 @@ function count_itemp($data_array, $str, $con) {
                                                                     if ($rcode == $s['RCode'] && $vtid == $s['VTID'] && $s['IsSaleTicket'] == '1') {
                                                                         $station_name = $s['StationName'];
                                                                         ?>
-                                                                        <td class="success"><?= $station_name ?></td>
+                                                                        <td class="success">&nbsp;</td>
                                                                         <?php
                                                                     }
                                                                 }

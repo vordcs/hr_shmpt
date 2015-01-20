@@ -22,10 +22,10 @@ class cost extends CI_Controller {
     }
 
     public function index() {
-
+        $date = $this->m_datetime->getDateToday();
         $data = array(
             'form' => $this->m_cost->set_form_search(),
-            'route_details' => $this->m_route->get_route(),
+            'route_details' => $this->m_route->get_route_detail(),
             'stations' => $this->m_station->get_stations(),
         );
 
@@ -36,6 +36,7 @@ class cost extends CI_Controller {
         $vcode = $this->input->post('VCode');
         $from = $this->input->post('DateForm');
         $to = $this->input->post('DateTo');
+
         if ($vtid != '0' | $rcode != 0 | $vcode != NULL | $from != NULL | $to != NULL) {
             $data['strtitle'] .= 'ผลการค้นหา : ';
         }
@@ -75,6 +76,8 @@ class cost extends CI_Controller {
         } else {
             $data['cost'] = $this->m_cost->get_cost();
         }
+
+        $data['schedules'] = $this->m_cost->get_schedule($date);
         $data['cost_detail'] = $this->m_cost->get_cost_detail();
         $data['cost_types'] = $this->m_cost->get_cost_type();
 
@@ -87,6 +90,7 @@ class cost extends CI_Controller {
 //            'stations' => $data['stations'],
 //            'vehicles' => $data['vehicles'],
 //            'form' => $data['form'],
+//            'schedules' => $data['schedules'],
         );
 
         $this->m_template->set_Title('ค่าใช้จ่าย');
@@ -101,15 +105,17 @@ class cost extends CI_Controller {
         $source = $route_detail[0]['RSource'];
         $desination = $route_detail[0]['RDestination'];
         $route_name = 'เส้นทาง ' . $route_detail[0]['RCode'] . ' ' . ' ' . $source . ' - ' . $desination;
-        $date = $this->m_datetime->DateThaiToDay();
-
+        $date_th = $this->m_datetime->DateThaiToDay();
+        $date = $this->m_datetime->getDateToday();
         $data = array(
             'page_title' => 'ค่าใช้จ่าย ' . $route_name,
-            'page_title_small' => 'ประจำวันที่ ' . $date,
+            'page_title_small' => 'ประจำวันที่ ' . $date_th,
             'form' => $this->m_cost->set_form_search($rcode, $vtid),
             'route_details' => $route_detail,
             'stations' => $this->m_station->get_stations($rcode, $vtid),
             'cost' => $this->m_cost->get_cost(),
+            'rcode' => $rcode,
+            'vtid' => $vtid,
         );
 
         $data['strtitle'] = '';
@@ -133,11 +139,12 @@ class cost extends CI_Controller {
 
         $data['vehicles'] = $this->m_vehicle->get_vehicle();
         $data['routes'] = $this->m_route->get_route($rcode, $vtid);
+        $data['schedules'] = $this->m_cost->get_schedule($date,$rcode,$vtid);
 
         $data['cost_detail'] = $this->m_cost->get_cost_detail();
         $data['cost_types'] = $this->m_cost->get_cost_type();
 
-        $data['date'] = $this->m_datetime->DateThaiToDay();
+        $data['date'] = $date;
 
         $data_debug = array(
 //            'cost' => $data['cost'],
@@ -148,6 +155,7 @@ class cost extends CI_Controller {
 //            'stations' => $data['stations'],
 //            'vehicles' => $data['vehicles'],
 //            'form' => $data['form'],
+            'schedules' => $data['schedules'],
         );
 
         $this->m_template->set_Title("ค่าใช้จ่าย $route_name");
