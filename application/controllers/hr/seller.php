@@ -64,11 +64,11 @@ class seller extends CI_Controller {
         $sort = $data['epmployees_seller'];
         $sellers = $data['sellers'];
         for ($i = 0; $i < count($sort); $i++) {
+            if (isset($sort[$i]['sell_1']) == FALSE) {
+                $sort[$i]['sell_1'] = array();
+                $sort[$i]['sell_2'] = array();
+            }
             for ($j = 0; $j < count($sellers); $j++) {
-                if (isset($sort[$i]['sell_1']) == FALSE) {
-                    $sort[$i]['sell_1'] = array();
-                    $sort[$i]['sell_2'] = array();
-                }
                 if ($sellers[$j]['EID'] == $sort[$i]['EID'] && $sellers[$j]['VTID'] == '1') {
                     array_push($sort[$i]['sell_1'], $sellers[$j]);
                 }

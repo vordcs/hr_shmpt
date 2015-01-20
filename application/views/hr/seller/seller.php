@@ -62,7 +62,7 @@
     </div>   
     <div class="row"> 
         <?php
-        if (count($sellers) <= 0) {
+        if (count($sort) <= 0) {
             echo '<div class="col-md-12">
                     <div class="well" style="padding-bottom: 100px;padding-top: 100px;">
                         <p class="lead text-center">ไม่พบข้อมูล</p>

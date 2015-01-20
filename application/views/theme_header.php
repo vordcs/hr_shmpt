@@ -32,6 +32,7 @@
         <?php echo js('bootstrap.js?v=' . $version); ?>
         <?php echo js('customJS.js?v=' . $version); ?>
         <?php echo js('site.min.js?v=' . $version); ?>
+        <?php echo js('jquery.sortable.js?v=' . $version); ?>
 
         <!--time picker-->    
         <?php echo css('bootstrap-timepicker.min.css?v=' . $version); ?>  

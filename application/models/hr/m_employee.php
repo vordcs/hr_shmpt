@@ -77,6 +77,7 @@ class m_employee extends CI_Model {
         $this->db->from('employees AS em');
         $this->db->join('employee_positions AS ep', 'ep.PID = em.PID');
         $this->db->join('employee_work_status AS es', 'es.StatusID = em.StatusID');
+        $this->db->join('employee_role_permission AS erp', 'erp.RoleID = em.RoleID', 'left');
         if ($data['PID'] != 0)
             $this->db->where('em.PID', $data['PID']);
         if ($data['EID'] != NULL)
@@ -94,6 +95,7 @@ class m_employee extends CI_Model {
         $this->db->from('employees AS em');
         $this->db->join('employee_positions AS ep', 'ep.PID = em.PID');
         $this->db->join('employee_work_status AS es', 'es.StatusID = em.StatusID');
+        $this->db->join('employee_role_permission AS erp', 'erp.RoleID = em.RoleID', 'left');
         $this->db->order_by('em.PID', 'asc');
         $query = $this->db->get();
         return $query->result_array();
