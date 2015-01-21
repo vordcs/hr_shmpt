@@ -6,8 +6,6 @@ if (!defined('BASEPATH'))
 class m_route extends CI_Model {
 
     public function insert_route($data) {
-
-
 //        go to destination ,กำหนด StartPoint เป็น S 
         $dataD = array(
             'RCode' => $data['RCode'],
@@ -16,8 +14,7 @@ class m_route extends CI_Model {
             'RSource' => $data['RSource'],
             'RDestination' => $data['RDestination'],
             'Time' => $data['Time'],
-            'ScheduleType' => $schedule_type,
-            'CreateDate' => $this->m_datetime->getDatetimeNowTH(),
+            'CreateDate' => $this->m_datetime->getDatetimeNow(),
         );
         $this->db->insert('t_routes', $dataD);
 
@@ -29,7 +26,7 @@ class m_route extends CI_Model {
             'RSource' => $data['RDestination'],
             'RDestination' => $data['RSource'],
             'Time' => $data['Time'],
-            'CreateDate' => $this->m_datetime->getDatetimeNowTH(),
+            'CreateDate' => $this->m_datetime->getDatetimeNow(),
         );
         $this->db->insert('t_routes', $dataS);
 
@@ -48,7 +45,7 @@ class m_route extends CI_Model {
             'RSource' => $data['RSource'],
             'RDestination' => $data['RDestination'],
             'Time' => $data['Time'],
-            'UpdateDate' => $this->m_datetime->getDatetimeNowTH(),
+            'UpdateDate' => $this->m_datetime->getDatetimeNow(),
         );
         $this->db->where('RID', $rid[0]['RID']);
         $this->db->update('t_routes', $dataD);
@@ -61,12 +58,19 @@ class m_route extends CI_Model {
             'RSource' => $data['RDestination'],
             'RDestination' => $data['RSource'],
             'Time' => $data['Time'],
-            'UpdateDate' => $this->m_datetime->getDatetimeNowTH(),
+            'UpdateDate' => $this->m_datetime->getDatetimeNow(),
         );
         $this->db->where('RID', $rid[1]['RID']);
         $this->db->update('t_routes', $dataS);
 
         return $data['RCode'];
+    }
+
+    public function delete_route($rcode, $vtid) {
+//        $this->db->where('RCode', $rcode);
+//        $this->db->where('VTID', $vtid);
+//        $rs = $this->db->delete('t_routes');
+//        return $rs;
     }
 
     public function update_route_time($data) {

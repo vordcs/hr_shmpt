@@ -249,6 +249,17 @@ class route extends CI_Controller {
         }
     }
 
+    public function delete($rcode, $vtid) {
+
+        $this->m_route->delete_route($rcode, $vtid);
+        
+        $alert['alert_message'] = "ลบเส้นทาง ";
+        $alert['alert_mode'] = "success";
+        $this->session->set_flashdata('alert', $alert);
+        
+        redirect('route/');
+    }
+
 //    ตรวจสอบค่าใน dropdown
     public function check_dropdown($str) {
         if ($str === '0') {
