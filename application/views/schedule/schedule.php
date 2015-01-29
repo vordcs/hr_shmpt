@@ -142,6 +142,7 @@ function last_around($start_time, $interval_time, $number) {
                                             ?>                                           
                                             <div id="<?= $rcode . $vtid ?>" class="tab-pane fade">  
                                                 <p class="text-right">
+                                                    <a href="<?= base_url("schedule/vehicle_point/$rcode/$vtid") ?>" class="btn btn-success btn-sm"><i class="fa fa-car"></i>&nbsp;จัดตำแหน่งรถ</a>
                                                     <a href="<?= base_url("schedule/view/$rcode/$vtid") ?>" class="btn btn-primary btn-sm"><i class="fa fa-list-ol"></i>&nbsp;จัดการตารางเวลาเดินรถ</a>
                                                 </p>
                                                 <?php
@@ -226,7 +227,7 @@ function last_around($start_time, $interval_time, $number) {
                                                                             <tr>
                                                                                 <td class="text-center"><?php echo $seq_no_schedule; ?></td>
                                                                                 <?php
-                                                                                $temp =0;
+                                                                                $temp = 0;
                                                                                 foreach ($stations as $s) {
                                                                                     if ($rcode == $s['RCode'] && $vtid == $s['VTID'] && $s['IsSaleTicket'] == '1') {
                                                                                         $station_name = $s['StationName'];

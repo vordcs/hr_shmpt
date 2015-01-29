@@ -511,4 +511,53 @@ class schedule extends CI_Controller {
         $this->m_template->showTemplate();
     }
 
+    public function vehicle_point($rcode, $vtid) {
+        $route_detail = $this->m_route->get_route($rcode, $vtid);
+        if (count($route_detail) == 0)
+            redirect('schedule');
+        $vt_name = $route_detail[0]['VTDescription'];
+        $source = $route_detail[0]['RSource'];
+        $desination = $route_detail[0]['RDestination'];
+        $route_name = $vt_name . ' เส้นทาง ' . $route_detail[0]['RCode'] . ' ' . ' ' . $source . ' - ' . $desination;
+
+        $all_vehicle = $this->m_schedule->get_vehicle($rcode = NULL, $vtid = NULL);
+
+        $all_route_station = $this->m_schedule->get_stations($rcode, $vtid);
+        $station_s = $all_route_station[0];
+        $station_d = end($all_route_station);
+
+        $data = array(
+            'form_open' => form_open('schedule/vehicle_point/' . $rcode . '/' . $vtid),
+            'form_close' => form_close(),
+            'page_title' => 'จุดรถจอดของ ' . $route_name,
+            'page_title_small' => '',
+            'route_detail' => $this->m_route->get_route_detail($rcode, $vtid),
+            'source' => $source,
+            'desination' => $desination
+        );
+
+        $temp = $this->input->post('vid');
+
+        $data_debug = array(
+            '$route_detail' => $route_detail,
+            '$vt_name' => $vt_name,
+            '$source' => $source,
+            '$desination' => $desination,
+            'post' => $temp,
+//            '$all_route_station' => $all_route_station,
+            '$all_vehicle' => $all_vehicle,
+//            'schedules' => $data['schedules'],
+//            'check' => isset($post) ? $post : '',
+//            'post' => $this->input->post(),
+//            'sort' => isset($sort) ? $sort : '',
+        );
+
+
+        $this->m_template->set_Debug($data_debug);
+        $this->m_template->set_Title("จุดรถจอดของ $route_name");
+        $this->m_template->set_Permission('SCV');
+        $this->m_template->set_Content('schedule/vehicle_point', $data);
+        $this->m_template->showTemplate();
+    }
+
 }

@@ -23,8 +23,8 @@
         <?php echo css('font-awesome.css?v=' . $version); ?>
         <?php echo js('jquery.js?v=' . $version); ?>
         <?php echo js('bootstrap.js?v=' . $version); ?>
+        <?php echo js('jquery.table2excel.js?v=' . $version); ?> 
 
-        
         <!-- report style -->       
         <?php echo js('report/jquery-migrate-1.2.1.min.js?v=' . $version); ?> 
         <?php echo js('report/jquery.scrollTo.js?v=' . $version); ?> 
@@ -32,60 +32,6 @@
         <?php echo js('report/dataTables.scroller.js?v=' . $version); ?> 
         <?php echo js('report/FixedColumns.js?v=' . $version); ?> 
         <?php echo js('report/report.js?v=' . $version); ?> 
-
-        <script type="text/javascript">
-            $(window).scroll(function () {
-                if ($(this).scrollTop() > 50) { //use `this`, not `document`                   
-                    $(".pace-progress").css("margin-top", "58px");
-                } else {                    
-                    $(".pace-progress").css("margin-top", "91px");
-                }
-                if ($(this).scrollTop() > $(window).height() / 2) {
-                    $('#scroll-top').removeClass('hidden');
-                } else {
-                    $('#scroll-top').addClass('hidden');
-                }
-            });
-            jQuery(window).load(function () {
-                $('.alert').delay(3000).fadeOut();
-            });
-        </script>
+ 
     </head>
     <body>    
-        <?php
-        if (isset($debug) && $debug != NULL) {
-            echo '<div class="container" style="margin-top: 60px;">';
-            print '<pre>';
-            print_r($debug);
-            print '</pre>';
-            echo '</div>';
-        }
-
-        if (isset($alert) && $alert != NULL) {
-            if ($alert['alert_mode'] == 'success') {
-                echo '<div class="container alert alert-success animated pulse" style="margin-top: 60px;"><strong>สำเร็จ</strong> ';
-            } elseif ($alert['alert_mode'] == 'warning') {
-                echo '<div class="container alert alert-warning animated pulse" style="margin-top: 60px;"><strong>คำเตือน</strong> ';
-            } elseif ($alert['alert_mode'] == 'danger') {
-                echo '<div class="container alert alert-danger animated pulse" style="margin-top: 60px;"><strong>ผิดพลาด</strong> ';
-            } else {
-                echo '<div class="container alert alert-info animated pulse" style="margin-top: 60px;"><strong>เพิ่มเติม</strong> ';
-            }
-            echo $alert['alert_message'];
-            echo '</div>';
-        }
-
-        if (isset($real_alert) && $real_alert != NULL) {
-            if ($real_alert['alert_mode'] == 'success') {
-                echo '<div class="container alert alert-success animated pulse" style="margin-top: 60px;"><strong>สำเร็จ</strong> ';
-            } elseif ($real_alert['alert_mode'] == 'warning') {
-                echo '<div class="container alert alert-warning animated pulse" style="margin-top: 60px;"><strong>คำเตือน</strong> ';
-            } elseif ($real_alert['alert_mode'] == 'danger') {
-                echo '<div class="container alert alert-danger animated pulse" style="margin-top: 60px;"><strong>ผิดพลาด</strong> ';
-            } else {
-                echo '<div class="container alert alert-info animated pulse" style="margin-top: 60px;"><strong>เพิ่มเติม</strong> ';
-            }
-            echo $real_alert['alert_message'];
-            echo '</div>';
-        }
-        ?>

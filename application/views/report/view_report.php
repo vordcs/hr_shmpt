@@ -1,7 +1,11 @@
 <script>
-    jQuery(document).ready(function ($) {
-        $("#mainmenu ul li").removeAttr('class');
-        $("#btnReport").addClass("active");
+    $(function () {
+        $("#btnExport").click(function () {
+            $("#table2excel").table2excel({
+                exclude: ".noExl",
+                name: "Excel Document Name"
+            });
+        });
     });
 </script>
 <style>
@@ -83,6 +87,7 @@
                 <br> 
                 เส้นทาง <strong><?= $page_title_small ?></strong>                            
             </legend>
+            <button id="btnExport">Export</button>
         </div>        
     </div>
 </div>
@@ -110,7 +115,7 @@ foreach ($cost_types as $ct) {
 <div class="container avails-grid">
     <p class="loading alert">Loading table...</p>
     <div class="table-container">
-        <table cellpadding="0" cellspacing="0" border="0" class="table table-condensed table-bordered table-hover">
+        <table cellpadding="0" cellspacing="0" border="0" class="table table-condensed table-bordered table-hover" id="table2excel">
             <thead>            
                 <tr>
                     <th rowspan="2" style="width: 100px">เบอร์รถ</th>                
