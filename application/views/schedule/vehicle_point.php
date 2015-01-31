@@ -25,6 +25,7 @@
     }
     .sortable.grid {
         overflow: hidden;
+        min-height: 50px;
     }
     .connected li, .sortable li, .exclude li, .handles li {
         text-align: center;
@@ -93,12 +94,9 @@
                 <div class="widget-content">
                     <input type="hidden" name="vid[]" value="new_line">
                     <ul id="sortable4" class="connected sortable grid">
-                        <li>Item 1<input type="hidden" name="vid[]" value="1"></li>
-                        <li>Item 2<input type="hidden" name="vid[]" value="2"></li>
-                        <li>Item 3<input type="hidden" name="vid[]" value="3"></li>
-                        <li>Item 4<input type="hidden" name="vid[]" value="4"></li>
-                        <li>Item 5<input type="hidden" name="vid[]" value="5"></li>
-                        <li>Item 6<input type="hidden" name="vid[]" value="6"></li>
+                        <?php foreach ($all_vehicle['Source'] as $row) { ?>
+                            <li><?= $row['VCode'] ?><input type="hidden" name="vid[]" value="<?= $row['VID'] ?>"></li>
+                        <?php } ?>
                     </ul>
                 </div>
             </div>
@@ -112,12 +110,9 @@
                 <div class="widget-content"> 
                     <input type="hidden" name="vid[]" value="new_line">
                     <ul id="sortable5" class="connected sortable grid">
-                        <li>Item 7<input type="hidden" name="vid[]" value="7"></li>
-                        <li>Item 8<input type="hidden" name="vid[]" value="8"></li>
-                        <li>Item 9<input type="hidden" name="vid[]" value="9"></li>
-                        <li>Item 10<input type="hidden" name="vid[]" value="10"></li>
-                        <li>Item 11<input type="hidden" name="vid[]" value="11"></li>
-                        <li>Item 12<input type="hidden" name="vid[]" value="12"></li>
+                        <?php foreach ($all_vehicle['Destination'] as $row) { ?>
+                            <li><?= $row['VCode'] ?><input type="hidden" name="vid[]" value="<?= $row['VID'] ?>"></li>
+                        <?php } ?>
                     </ul>
                 </div>
             </div>
@@ -131,12 +126,9 @@
                 <div class="widget-content"> 
                     <input type="hidden" name="vid[]" value="new_line">
                     <ul id="sortable6" class="connected sortable grid">
-                        <li>Item 13<input type="hidden" name="vid[]" value="13"></li>
-                        <li>Item 14<input type="hidden" name="vid[]" value="14"></li>
-                        <li>Item 15<input type="hidden" name="vid[]" value="15"></li>
-                        <li>Item 16<input type="hidden" name="vid[]" value="16"></li>
-                        <li>Item 17<input type="hidden" name="vid[]" value="17"></li>
-                        <li>Item 18<input type="hidden" name="vid[]" value="18"></li>
+                        <?php foreach ($all_vehicle['Fail'] as $row) { ?>
+                            <li><?= $row['VCode'] ?><input type="hidden" name="vid[]" value="<?= $row['VID'] ?>"></li>
+                        <?php } ?>
                     </ul>
                 </div>
             </div>

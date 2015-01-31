@@ -520,11 +520,15 @@ class schedule extends CI_Controller {
         $desination = $route_detail[0]['RDestination'];
         $route_name = $vt_name . ' เส้นทาง ' . $route_detail[0]['RCode'] . ' ' . ' ' . $source . ' - ' . $desination;
 
-        $all_vehicle = $this->m_schedule->get_vehicle($rcode = NULL, $vtid = NULL);
-
         $all_route_station = $this->m_schedule->get_stations($rcode, $vtid);
         $station_s = $all_route_station[0];
         $station_d = end($all_route_station);
+
+        $all_vehicle = $this->m_schedule->get_vehicle_point($rcode, $vtid, $station_s['SID'], $station_d['SID']);
+
+        //Update vehicle point
+        $data_post = $this->m_schedule->get_post_vehicle_point();
+        $temp = $this->m_schedule->update_vehicle_point($data_post, $station_s['SID'], $station_d['SID']);
 
         $data = array(
             'form_open' => form_open('schedule/vehicle_point/' . $rcode . '/' . $vtid),
@@ -533,19 +537,21 @@ class schedule extends CI_Controller {
             'page_title_small' => '',
             'route_detail' => $this->m_route->get_route_detail($rcode, $vtid),
             'source' => $source,
-            'desination' => $desination
+            'desination' => $desination,
+            'all_vehicle' => $all_vehicle,
         );
 
-        $temp = $this->input->post('vid');
+
 
         $data_debug = array(
-            '$route_detail' => $route_detail,
-            '$vt_name' => $vt_name,
-            '$source' => $source,
-            '$desination' => $desination,
-            'post' => $temp,
+//            '$route_detail' => $route_detail,
+//            '$vt_name' => $vt_name,
+//            '$source' => $source,
+//            '$desination' => $desination,
+            'test' => $temp,
+            'post' => $data_post,
 //            '$all_route_station' => $all_route_station,
-            '$all_vehicle' => $all_vehicle,
+//            '$all_vehicle' => $all_vehicle,
 //            'schedules' => $data['schedules'],
 //            'check' => isset($post) ? $post : '',
 //            'post' => $this->input->post(),

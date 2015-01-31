@@ -603,4 +603,96 @@ class m_schedule extends CI_Model {
             return FALSE;
     }
 
+    public function get_vehicle_point($rcode = NULL, $vtid = NULL, $s_sid = NULL, $d_sid = NULL) {
+        $this->db->from('vehicles');
+        $this->db->join('t_routes_has_vehicles', 'vehicles.VID = t_routes_has_vehicles.VID', 'left');
+        $this->db->join('vehicles_current_stations AS vcs', 'vcs.VID = vehicles.VID', 'left');
+        if ($rcode != NULL) {
+            $this->db->where('t_routes_has_vehicles.RCode', $rcode);
+        }
+        if ($vtid != NULL) {
+            $this->db->where('vehicles.VTID', $vtid);
+        }
+        $this->db->order_by('CurrentStationID', 'asc');
+        $query = $this->db->get();
+        $data_table = $query->result_array();
+
+        $ans = array(
+            'Source' => array(),
+            'Destination' => array(),
+            'Fail' => array()
+        );
+
+
+        for ($i = 0; $i < count($data_table); $i++) {
+            if ($data_table[$i]['CurrentStationID'] == $s_sid && $data_table[$i]['VStatus'] == 1) {
+                array_push($ans['Source'], $data_table[$i]);
+            } else if ($data_table[$i]['CurrentStationID'] == $d_sid && $data_table[$i]['VStatus'] == 1) {
+                array_push($ans['Destination'], $data_table[$i]);
+            } else {
+                array_push($ans['Fail'], $data_table[$i]);
+            }
+        }
+
+        return $ans;
+    }
+
+    public function get_post_vehicle_point() {
+        $temp = $this->input->post('vid');
+        $ans = array(
+            'Source' => array(),
+            'Destination' => array(),
+            'Fail' => array()
+        );
+
+        $count_new = 0;
+        for ($i = 0; $i < count($temp); $i++) {
+            if ($temp[$i] == 'new_line') {
+                $count_new++;
+            } else {
+                if ($count_new == 1) {
+                    array_push($ans['Source'], $temp[$i]);
+                } else if ($count_new == 2) {
+                    array_push($ans['Destination'], $temp[$i]);
+                } else {
+                    array_push($ans['Fail'], $temp[$i]);
+                }
+            }
+        }
+
+        return $ans;
+    }
+
+    public function update_vehicle_point($data, $s_sid = NULL, $d_sid = NULL) {
+        $source = array();
+        for ($i = 0; $i < count($data['Source']); $i++) {
+            array_push($source, array('VID' => $data['Source'][$i], 'VStatus' => '1'));
+        }
+        $destination = array();
+        for ($i = 0; $i < count($data['Destination']); $i++) {
+            array_push($destination, array('VID' => $data['Destination'][$i], 'VStatus' => '1'));
+        }
+        $fail = array();
+        for ($i = 0; $i < count($data['Fail']); $i++) {
+            array_push($fail, array('VID' => $data['Fail'][$i], 'VStatus' => '0'));
+        }
+
+        $vehicle = array_merge(array_merge($source, $destination), $fail);
+//        $temp = $this->db->update_batch('vehicles', $vehicle, 'VID');
+        $count = 0;
+        for ($i = 0; $i < count($vehicle); $i++) {
+            $this->db->where('VID', $vehicle[$i]);
+            if ($this->db->update('vehicles', $vehicle[$i]))
+                $count++;
+        }
+
+        if ($this->db->affected_rows() == count($vehicle)) {
+            return '1';
+        } else {
+            return '2';
+        }
+
+        return $temp;
+    }
+
 }
