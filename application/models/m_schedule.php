@@ -646,12 +646,20 @@ class m_schedule extends CI_Model {
         );
 
         $count_new = 0;
+        $start_time = date("H:i:s");
+        $start_time = strtotime($start_time);
+//        $start_time->setTime(14, 55);
         for ($i = 0; $i < count($temp); $i++) {
             if ($temp[$i] == 'new_line') {
                 $count_new++;
             } else {
                 if ($count_new == 1) {
-                    array_push($ans['Source'], $temp[$i]);
+
+                    $temp2 = array(
+                        'VID' => $temp[$i],
+                        'CurrentTime' => $start_time
+                    );
+                    array_push($ans['Source'], $temp2);
                 } else if ($count_new == 2) {
                     array_push($ans['Destination'], $temp[$i]);
                 } else {
@@ -678,21 +686,29 @@ class m_schedule extends CI_Model {
         }
 
         $vehicle = array_merge(array_merge($source, $destination), $fail);
-//        $temp = $this->db->update_batch('vehicles', $vehicle, 'VID');
+
+        //Update vehicles (Vstatus)
         $count = 0;
-        for ($i = 0; $i < count($vehicle); $i++) {
-            $this->db->where('VID', $vehicle[$i]);
-            if ($this->db->update('vehicles', $vehicle[$i]))
+        foreach ($vehicle as $row) {
+            $pre_data = $row;
+            $pre_vid = $row['VID'];
+            unset($pre_data['VID']);
+
+            $this->db->where('VID', $pre_vid);
+            if ($this->db->update('vehicles', $pre_data)) {
                 $count++;
+            }
         }
 
-        if ($this->db->affected_rows() == count($vehicle)) {
+        //Update new point into vehicles_current_stations
+
+        if ($count == count($vehicle)) {
             return '1';
         } else {
             return '2';
         }
 
-        return $temp;
+        return $vehicle;
     }
 
 }

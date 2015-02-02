@@ -526,9 +526,12 @@ class schedule extends CI_Controller {
 
         $all_vehicle = $this->m_schedule->get_vehicle_point($rcode, $vtid, $station_s['SID'], $station_d['SID']);
 
-        //Update vehicle point
+        //Check post and Update vehicle point
         $data_post = $this->m_schedule->get_post_vehicle_point();
-        $temp = $this->m_schedule->update_vehicle_point($data_post, $station_s['SID'], $station_d['SID']);
+        if ($this->input->server('REQUEST_METHOD') === 'POST') {
+//            $temp = $this->m_schedule->update_vehicle_point($data_post, $station_s['SID'], $station_d['SID']);
+//            redirect('schedule/vehicle_point/' . $rcode . '/' . $vtid);
+        }
 
         $data = array(
             'form_open' => form_open('schedule/vehicle_point/' . $rcode . '/' . $vtid),
@@ -548,7 +551,7 @@ class schedule extends CI_Controller {
 //            '$vt_name' => $vt_name,
 //            '$source' => $source,
 //            '$desination' => $desination,
-            'test' => $temp,
+            'test' => (isset($temp)) ? $temp : NULL,
             'post' => $data_post,
 //            '$all_route_station' => $all_route_station,
 //            '$all_vehicle' => $all_vehicle,
