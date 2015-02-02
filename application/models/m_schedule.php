@@ -613,7 +613,7 @@ class m_schedule extends CI_Model {
         if ($vtid != NULL) {
             $this->db->where('vehicles.VTID', $vtid);
         }
-        $this->db->order_by('CurrentStationID', 'asc');
+        $this->db->order_by('CurrentStationID,CurrentTime', 'asc');
         $query = $this->db->get();
         $data_table = $query->result_array();
 
@@ -646,24 +646,35 @@ class m_schedule extends CI_Model {
         );
 
         $count_new = 0;
-        $start_time = date("H:i:s");
-        $start_time = strtotime($start_time);
-//        $start_time->setTime(14, 55);
+        $bast_time = strtotime('04:00:00');
         for ($i = 0; $i < count($temp); $i++) {
             if ($temp[$i] == 'new_line') {
                 $count_new++;
             } else {
                 if ($count_new == 1) {
-
+                    $time_duration = count($ans['Source']);
+                    $current_time = strtotime("+$time_duration minutes", $bast_time);
                     $temp2 = array(
                         'VID' => $temp[$i],
-                        'CurrentTime' => $start_time
+                        'CurrentTime' => date('H:i:s', $current_time),
                     );
                     array_push($ans['Source'], $temp2);
                 } else if ($count_new == 2) {
-                    array_push($ans['Destination'], $temp[$i]);
+                    $time_duration = count($ans['Destination']);
+                    $current_time = strtotime("+$time_duration minutes", $bast_time);
+                    $temp2 = array(
+                        'VID' => $temp[$i],
+                        'CurrentTime' => date('H:i:s', $current_time),
+                    );
+                    array_push($ans['Destination'], $temp2);
                 } else {
-                    array_push($ans['Fail'], $temp[$i]);
+                    $time_duration = count($ans['Fail']);
+                    $current_time = strtotime("+$time_duration minutes", $bast_time);
+                    $temp2 = array(
+                        'VID' => $temp[$i],
+                        'CurrentTime' => date('H:i:s', $current_time),
+                    );
+                    array_push($ans['Fail'], $temp2);
                 }
             }
         }
@@ -674,20 +685,21 @@ class m_schedule extends CI_Model {
     public function update_vehicle_point($data, $s_sid = NULL, $d_sid = NULL) {
         $source = array();
         for ($i = 0; $i < count($data['Source']); $i++) {
-            array_push($source, array('VID' => $data['Source'][$i], 'VStatus' => '1'));
+            array_push($source, array('VID' => $data['Source'][$i]['VID'], 'VStatus' => '1'));
         }
         $destination = array();
         for ($i = 0; $i < count($data['Destination']); $i++) {
-            array_push($destination, array('VID' => $data['Destination'][$i], 'VStatus' => '1'));
+            array_push($destination, array('VID' => $data['Destination'][$i]['VID'], 'VStatus' => '1'));
         }
         $fail = array();
         for ($i = 0; $i < count($data['Fail']); $i++) {
-            array_push($fail, array('VID' => $data['Fail'][$i], 'VStatus' => '0'));
+            array_push($fail, array('VID' => $data['Fail'][$i]['VID'], 'VStatus' => '0'));
         }
 
         $vehicle = array_merge(array_merge($source, $destination), $fail);
 
         //Update vehicles (Vstatus)
+        $flagV = FALSE;
         $count = 0;
         foreach ($vehicle as $row) {
             $pre_data = $row;
@@ -700,15 +712,40 @@ class m_schedule extends CI_Model {
             }
         }
 
-        //Update new point into vehicles_current_stations
-
         if ($count == count($vehicle)) {
-            return '1';
-        } else {
-            return '2';
+            $flagV = TRUE;
         }
 
-        return $vehicle;
+        //Update new point into vehicles_current_stations
+        $source = array();
+        for ($i = 0; $i < count($data['Source']); $i++) {
+            array_push($source, array('VID' => $data['Source'][$i]['VID'], 'CurrentTime' => $data['Source'][$i]['CurrentTime'], 'CurrentStationID' => $s_sid));
+        }
+        $destination = array();
+        for ($i = 0; $i < count($data['Destination']); $i++) {
+            array_push($destination, array('VID' => $data['Destination'][$i]['VID'], 'CurrentTime' => $data['Destination'][$i]['CurrentTime'], 'CurrentStationID' => $d_sid));
+        }
+        $vehicles_current_stations = array_merge($source, $destination);
+        $flagVCS = FALSE;
+        $count = 0;
+        foreach ($vehicles_current_stations as $row) {
+            $pre_data = $row;
+            $pre_vid = $row['VID'];
+            unset($pre_data['VID']);
+
+            $this->db->where('VID', $pre_vid);
+            if ($this->db->update('vehicles_current_stations', $pre_data)) {
+                $count++;
+            }
+        }
+        if ($count == count($vehicles_current_stations)) {
+            $flagVCS = TRUE;
+        }
+
+        if ($flagV && $flagVCS)
+            return $vehicle;
+        else
+            return 'FAIL';
     }
 
 }

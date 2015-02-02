@@ -527,10 +527,14 @@ class schedule extends CI_Controller {
         $all_vehicle = $this->m_schedule->get_vehicle_point($rcode, $vtid, $station_s['SID'], $station_d['SID']);
 
         //Check post and Update vehicle point
-        $data_post = $this->m_schedule->get_post_vehicle_point();
         if ($this->input->server('REQUEST_METHOD') === 'POST') {
-//            $temp = $this->m_schedule->update_vehicle_point($data_post, $station_s['SID'], $station_d['SID']);
-//            redirect('schedule/vehicle_point/' . $rcode . '/' . $vtid);
+            $data_post = $this->m_schedule->get_post_vehicle_point();
+            $temp = $this->m_schedule->update_vehicle_point($data_post, $station_s['SID'], $station_d['SID']);
+            //Alert success and redirect to schedule
+            $alert['alert_message'] = "จัดตำแหน่ง '.$route_name.' เรียบร้อย";
+            $alert['alert_mode'] = "success";
+            $this->session->set_flashdata('alert', $alert);
+            redirect('schedule');
         }
 
         $data = array(
@@ -551,8 +555,8 @@ class schedule extends CI_Controller {
 //            '$vt_name' => $vt_name,
 //            '$source' => $source,
 //            '$desination' => $desination,
-            'test' => (isset($temp)) ? $temp : NULL,
-            'post' => $data_post,
+//            'test' => (isset($temp)) ? $temp : NULL,
+//            'post' => (isset($data_post)) ? $data_post : NULL,
 //            '$all_route_station' => $all_route_station,
 //            '$all_vehicle' => $all_vehicle,
 //            'schedules' => $data['schedules'],
