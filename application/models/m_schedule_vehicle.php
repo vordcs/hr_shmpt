@@ -314,18 +314,18 @@ class m_schedule_vehicle extends CI_Model {
             }
             $schedule_s = $this->get_schedule_by_route($date, $rid_s);
             $schedule_d = $this->get_schedule_by_route($date, $rid_d);
-            $nun_schedule_s = count($schedule_s);
-            $nun_schedule_d = count($schedule_d);
+            $num_schedule_s = count($schedule_s);
+            $num_schedule_d = count($schedule_d);
             /*
              * เปรียบเทียบเอาค่ามากที่สุด               
              */
             $max_num_schedule = 0;
-            if ($nun_schedule_s > $nun_schedule_d) {
-                $max_num_schedule = $nun_schedule_s;
-            } elseif ($nun_schedule_d > $nun_schedule_s) {
-                $max_num_schedule = $nun_schedule_d;
+            if ($num_schedule_s > $num_schedule_d) {
+                $max_num_schedule = $num_schedule_s;
+            } elseif ($num_schedule_d > $num_schedule_s) {
+                $max_num_schedule = $num_schedule_d;
             } else {
-                $max_num_schedule = $nun_schedule_d;
+                $max_num_schedule = $num_schedule_d;
             }
             $n = 0;
             for ($i = 0; $i < $max_num_schedule; $i++) {
@@ -393,6 +393,7 @@ class m_schedule_vehicle extends CI_Model {
         if ($rid != NULL) {
             $this->db->where('t_routes.RID', $rid);
         }
+        $this->db->group_by('t_schedules_day.TSID');
         $this->db->order_by('TimeDepart', 'ASC');
         $query_schedule = $this->db->get("t_schedules_day");
         return $query_schedule->result_array();
@@ -424,15 +425,18 @@ class m_schedule_vehicle extends CI_Model {
      */
 
     public function insert_vehicle_has_schedule($tsid, $vid) {
-        $data_vehicles_has_schedules = array(
-            'TSID' => $tsid,
-            'VID' => $vid,
-        );
-        if (count($this->is_exit_vehicle_in_schedule($tsid, $vid) == 0)) {
-            $this->db->insert('vehicles_has_schedules', $data_vehicles_has_schedules);
-        } else {
+        if (count($this->is_exit_vehicle_in_schedule($tsid, $vid)) == 0) {
+            $data_insert = array(
+                'TSID' => $tsid,
+                'VID' => $vid,
+            );
+            $this->db->insert('vehicles_has_schedules', $data_insert);
+        } elseif (count($this->is_exit_vehicle_in_schedule($tsid)) > 0) {
+            $data_update = array(
+                'VID' => $vid
+            );
             $this->db->where('TSID', $tsid);
-            $this->db->update('vehicles_has_schedules', $data_vehicles_has_schedules);
+            $this->db->update('vehicles_has_schedules', $data_update);
         }
     }
 
@@ -459,15 +463,14 @@ class m_schedule_vehicle extends CI_Model {
      * ตรวจสอบรถในตารางเดินรถ 
      */
 
-    public function is_exit_vehicle_in_schedule($tsid, $vid) {
+    public function is_exit_vehicle_in_schedule($tsid, $vid = NULL) {
         $this->db->where('TSID', $tsid);
-        $this->db->where('VID', $vid);
-        $query = $this->db->get('vehicles_has_schedules');
-        $rs = array();
-        if ($query->num_rows() > 0) {
-            $rs = $query->row_array();
+        if ($vid == NULL) {
+            $this->db->where('VID', $vid);
         }
-        return $rs;
+        $query = $this->db->get('vehicles_has_schedules');
+
+        return $query->result_array();
     }
 
     /*
@@ -486,6 +489,7 @@ class m_schedule_vehicle extends CI_Model {
         if ($vid != NULL) {
             $this->db->where('vehicles.VID', $vid);
         }
+        $this->db->where('VStatus', 1);
         $this->db->order_by('CurrentTime,CurrentDate,CurrentStationID,vehicles.VID', 'ASC');
         $query = $this->db->get('vehicles');
         return $query->result_array();
@@ -599,7 +603,7 @@ class m_schedule_vehicle extends CI_Model {
      */
 
     public function get_schedule($date = NULL, $rid = NULL) {
-        $this->db->select('*,t_schedules_day.RID as RID');
+        $this->db->select('*,t_schedules_day.TSID as TSID,t_schedules_day.RID as RID');
         $this->db->join('t_routes', ' t_schedules_day.RID=t_routes.RID', 'left');
         $this->db->join('vehicles_has_schedules', 't_schedules_day.TSID = vehicles_has_schedules.TSID', 'left');
         $this->db->join('vehicles', 'vehicles_has_schedules.VID = vehicles.VID', 'left');
@@ -609,6 +613,7 @@ class m_schedule_vehicle extends CI_Model {
         if ($rid != NULL) {
             $this->db->where('t_routes.RID', $rid);
         }
+        $this->db->group_by('t_schedules_day.TSID');
         $this->db->order_by('TimeDepart', 'ASC');
         $query_schedule = $this->db->get("t_schedules_day");
         return $query_schedule->result_array();

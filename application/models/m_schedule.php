@@ -26,7 +26,7 @@ class m_schedule extends CI_Model {
         }
 
         $this->db->where('t_schedules_day.ScheduleStatus', '1');
-
+        $this->db->group_by('t_schedules_day.TSID');
         $this->db->order_by('TimeDepart,SeqNo', 'asc');
         $query_schedule = $this->db->get("t_schedules_day");
         return $query_schedule->result_array();

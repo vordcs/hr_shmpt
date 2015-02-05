@@ -13,7 +13,7 @@
     </div>
     <div class="row">
 
-        <legend>ตำแหน่งปัจจุบันของรถ</legend>
+        <legend>ตำแหน่งปัจจุบันของรถ : <?= $this->m_datetime->getDateToday() ?></legend>
         <?php
         foreach ($routes as $r) {
             $vtid = $r['VTID'];
@@ -30,6 +30,7 @@
                 <table class="table table-bordered table-hover">  
                     <thead>
                         <tr>
+                            <th>สถานะรถ</th>
                             <th>เบอร์รถ</th>
                             <th>เวลามาถึง</th>
                             <th>สถานี</th>
@@ -52,9 +53,14 @@
                                     }
                                 }
                                 if ($rcode == $vehicle['RCode'] && $vtid == $vehicle['VTID']) {
+                                    $v_status = '<i class="fa fa-check fa-lg" style="color:#00B5AD;"></i>';
+                                    if ($vehicle['VStatus'] == 0) {
+                                        $v_status = '<i class="fa fa-times fa-lg" style="color:#e9322d;"></i>';
+                                    }
                                     ?>
                                     <tr>
-                                        <td class="text-center"><?= $vcode ?></td>
+                                        <td class="text-center"><?= $v_status ?></td>
+                                        <td class="text-center"><?= $vcode ?></td>                                        
                                         <td class="text-center"><?= $in_time ?></td>
                                         <td class="text-center"><?= $curent_station_name ?></td>
                                         <td class="text-center"><?= $curent_station_id ?></td>
