@@ -431,7 +431,7 @@ class m_schedule_vehicle extends CI_Model {
                 'VID' => $vid,
             );
             $this->db->insert('vehicles_has_schedules', $data_insert);
-        } elseif (count($this->is_exit_vehicle_in_schedule($tsid)) > 0) {
+        } else {
             $data_update = array(
                 'VID' => $vid
             );
