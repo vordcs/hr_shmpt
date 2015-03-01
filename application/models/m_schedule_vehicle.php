@@ -75,7 +75,7 @@ class m_schedule_vehicle extends CI_Model {
                             'TimeDepart' => date('H:i:s', $s_time),
                             'TimeArrive' => date('H:i:s', $e_time),
                             'Date' => $this->m_datetime->getDateToday(),
-                            'ScheduleNote' => " $vt_name เส้นทาง $rcode  $source - $destination (ไป $destination)",
+//                            'ScheduleNote' => " $vt_name เส้นทาง $rcode  $source - $destination (ไป $destination)",
                             'CreateDate' => $this->m_datetime->getDatetimeNow(),
                         );
                         $rs[$n] = $temp_schedual;

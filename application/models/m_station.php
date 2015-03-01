@@ -207,6 +207,7 @@ class m_station extends CI_Model {
     }
 
     public function set_form_add($rcode = NULL, $vtid = NULL) {
+
         $station_name = $this->input->post('StationName');
         $travel_time = $this->input->post('TravelTime');
         $is_sale_ticket = $this->input->post('IsSaleTicket');
@@ -219,6 +220,14 @@ class m_station extends CI_Model {
         $StationName = array();
         $TravelTime = array();
         $StopTime = array();
+
+        $source = '';
+        $desination = '';
+
+        if (count($route) > 0) {
+            $source = $route[0]['RSource'];
+            $desination = $route[0]['RDestination'];
+        }
 
         $i_TimeTotal = array(
             'type' => "hidden",
