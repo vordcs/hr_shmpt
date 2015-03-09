@@ -144,7 +144,9 @@ class vehicle extends CI_Controller {
         $detail = $this->m_vehicle->get_vehicle($vid);
         if ($detail[0] != NULL) {
             $detail_driver = $this->m_vehicle->get_employee_driver($vid);
-            $detail[0]+=$detail_driver[0];
+            if (count($detail_driver) > 0) {
+                $detail[0]+=$detail_driver[0];
+            }
             $detail[0]['RCode'] = $route[0]['RCode'];
             $data = array(
                 'VID' => $vid,
@@ -209,8 +211,9 @@ class vehicle extends CI_Controller {
 
     public function delete($VID) {
         $temp = $this->m_vehicle->check_vehicle($VID);
-        if ($temp == NULL)
+        if ($temp == NULL) {
             redirect('vehicle');
+        }
 
         $RCode = $temp[0]['RCode'];
         $RegID = $temp[0]['RegID'];

@@ -77,9 +77,9 @@ Class m_datetime extends CI_Model {
         return $date;
     }
 
-    function setDBDateToTH($input_date) {
+    function setDBDateToTH($input_date = NULL) {
         $date = NULL;
-        if ($input_date != NULL || $input_date != '') {
+        if ($input_date != NULL) {
             $d = new DateTime($input_date);
             if ($d->format('Y') > date('Y')) {
                 $date .= ($d->format('Y') + 543) . '-';
@@ -88,6 +88,8 @@ Class m_datetime extends CI_Model {
             } else {
                 $date = $d->format('Y-m-d');
             }
+        }  else {
+            $date = $this->getDateTodayTH();
         }
         return $date;
     }
