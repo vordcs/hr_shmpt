@@ -80,6 +80,7 @@ class cost extends CI_Controller {
         $data['schedules'] = $this->m_cost->get_schedule($date);
         $data['cost_detail'] = $this->m_cost->get_cost_detail();
         $data['cost_types'] = $this->m_cost->get_cost_type();
+        $data['all_cost'] = $this->m_cost->check_cost();
 
         $data_debug = array(
 //            'cost' => $data['cost'],
@@ -91,6 +92,10 @@ class cost extends CI_Controller {
 //            'vehicles' => $data['vehicles'],
 //            'form' => $data['form'],
 //            'schedules' => $data['schedules'],
+            'date' => $this->m_datetime->getDateToday(),
+//            'detail' => $this->m_route->get_route('264', NULL),
+//            'all_cost' => $this->m_cost->check_cost(),
+            'tbody' => $this->m_cost->generate_tbody('264', '1', $this->m_datetime->getDateToday()),
         );
 
         $this->m_template->set_Title('ค่าใช้จ่าย');
@@ -139,7 +144,7 @@ class cost extends CI_Controller {
 
         $data['vehicles'] = $this->m_vehicle->get_vehicle();
         $data['routes'] = $this->m_route->get_route($rcode, $vtid);
-        $data['schedules'] = $this->m_cost->get_schedule($date,$rcode,$vtid);
+        $data['schedules'] = $this->m_cost->get_schedule($date, $rcode, $vtid);
 
         $data['cost_detail'] = $this->m_cost->get_cost_detail();
         $data['cost_types'] = $this->m_cost->get_cost_type();

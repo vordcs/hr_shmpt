@@ -268,4 +268,143 @@ class m_cost extends CI_Model {
         return $query_schedule->result_array();
     }
 
+    /*
+     * **** Check cost ****
+     * 
+     * ****Result ****
+     * result
+     * 
+     */
+
+    function check_cost($date = NULL) {
+        if ($date == NULL) {
+            $date = $this->m_datetime->getDateToday();
+        }
+        $ans = $this->get_vehicle_types();
+
+        foreach ($ans as $key => $value) {
+            $temp = $this->get_route(NULL, $value['VTID']);
+
+            foreach ($temp as $temp_key => $temp_value) {
+                $temp[$temp_key]['tab_title'] = $temp[$temp_key]['RCode'] . ' ' . $temp[$temp_key]['RSource'] . ' - ' . $temp[$temp_key]['RDestination'];
+                $temp[$temp_key]['date'] = $this->m_datetime->DateThaiToDay();
+                unset($temp[$temp_key]['RID']);
+                unset($temp[$temp_key]['VTID']);
+                unset($temp[$temp_key]['RSource']);
+                unset($temp[$temp_key]['RDestination']);
+                unset($temp[$temp_key]['StartPoint']);
+                unset($temp[$temp_key]['Time']);
+                unset($temp[$temp_key]['StartTime']);
+                unset($temp[$temp_key]['ScheduleType']);
+                unset($temp[$temp_key]['IntervalEachAround']);
+                unset($temp[$temp_key]['AroundNumber']);
+                unset($temp[$temp_key]['CreateBy']);
+                unset($temp[$temp_key]['CreateDate']);
+                unset($temp[$temp_key]['UpdateBy']);
+                unset($temp[$temp_key]['UpdateDate']);
+                unset($temp[$temp_key]['VTDescription']);
+
+                //Generate thead
+                $temp[$temp_key]['thead'] = $this->generate_thead($temp[$temp_key]['RCode'], $value['VTID']);
+
+                //Generate tbody
+//                $temp[$temp_key]['tbody'] = $this->generate_tbody($temp[$temp_key]['RCode'], $value['VTID'],$date);
+            }
+            $ans[$key]['line'] = $temp;
+        }
+
+
+
+
+        return $ans;
+    }
+
+    function generate_thead($rcode, $vtid) {
+        $ans = array();
+
+        //Prepare data for use to make thead
+        $this->db->from('t_stations');
+        $this->db->where('RCode', $rcode);
+        $this->db->where('VTID', $vtid);
+        $this->db->where('IsSaleTicket', '1');
+        $this->db->order_by('Seq', 'ASC');
+        $query = $this->db->get();
+        $temp_station = $query->result_array();
+
+        $this->db->from('cost_detail');
+        $this->db->where('CostTypeID', '1');
+        $this->db->order_by('CostDetailID', 'ASC');
+        $query = $this->db->get();
+        $temp_income = $query->result_array();
+
+        $this->db->from('cost_detail');
+        $this->db->where('CostTypeID', '2');
+        $this->db->order_by('CostDetailID', 'ASC');
+        $query = $this->db->get();
+        $temp_charge = $query->result_array();
+
+        //Gen car number
+        $ans['carnum'] = 'เบอร์รถ';
+
+        //Gen frequencies
+        $ans['frequencies'][0] = $temp_station[0]['StationName'];
+        $ans['frequencies'][1] = end($temp_station)['StationName'];
+
+        //Gen income
+        $temp2 = array();
+        foreach ($temp_station as $row) {
+            array_push($temp2, $row['StationName']);
+        }
+        foreach ($temp_income as $row) {
+            array_push($temp2, $row['CostDetail']);
+        }
+        $ans['income'] = $temp2;
+
+        //Gen charge
+        $temp3 = array();
+        foreach ($temp_charge as $row) {
+            array_push($temp3, $row['CostDetail']);
+        }
+        $ans['charge'] = $temp3;
+
+        //Gen balance
+        $ans['balance'] = 'คงเหลือ';
+
+
+        return $ans;
+    }
+
+    function generate_tbody($rcode, $vtid, $date) {
+        $date = '2015-02-11';
+        $ans = array();
+
+        $this->db->from('vehicles as ve');
+        $this->db->join('t_routes_has_vehicles as trhv', 'trhv.VID=ve.VID');
+        $this->db->where('trhv.RCode', $rcode);
+        $this->db->where('ve.VTID', $vtid);
+        $this->db->order_by('ve.VID', 'ASC');
+        $query = $this->db->get();
+        $temp_vehicle = $query->result_array();
+
+        $this->db->from('t_schedules_day as ts');
+        $this->db->join('vehicles_has_schedules as vhs', 'vhs.TSID=ts.TSID ');
+        $this->db->join('vehicles as ve', 've.VID=vhs.VID ');
+        $this->db->where('ts.Date', $date);
+        $query = $this->db->get();
+        $temp_schedule = $query->result_array();
+
+
+        foreach ($temp_vehicle as $vehicle) {
+            $temp = array();
+            $temp['carnum'] = $vehicle['VCode'];
+
+
+            array_push($ans, $temp);
+        }
+
+
+        $ans['num'] = count($temp_schedule);
+        return $ans;
+    }
+
 }

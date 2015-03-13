@@ -105,6 +105,97 @@ function count_itemp($data_array, $str, $con) {
     <?php } ?>  
 
 </div>
+
+<!--All tab of cost-->
+<div class="container-fluid">
+    <?php foreach ($all_cost as $row_vtid) { ?>
+        <div class="row">
+            <div class="col-md-12">
+                <h3><?= $row_vtid['VTDescription'] ?></h3>
+                <hr>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <?php if (count($row_vtid['line']) > 0) { ?>
+                    <div class="panel">
+                        <!--start tab bar-->
+                        <ul class="nav nav-tabs nav-justified">
+                            <?php
+                            $flag_first_tab = TRUE;
+                            foreach ($row_vtid['line'] as $row_line) {
+                                $tab_id = $row_vtid['VTID'] . '__' . $row_line['RCode'];
+                                $set_active = NULL;
+                                if ($flag_first_tab) {
+                                    $flag_first_tab = FALSE;
+                                    $set_active = 'active';
+                                }
+                                ?>
+                                <li class="<?= $set_active ?>"><a href="#<?= $tab_id ?>" data-toggle="tab"><?= $row_line['tab_title'] ?></a></li>
+                            <?php } ?>
+                        </ul>
+                        <!--end tab bar-->
+                        <!--start tab content-->
+                        <div class="tab-content">
+                            <?php
+                            $flag_first_tab = TRUE;
+                            foreach ($row_vtid['line'] as $row_line) {
+                                $tab_id = $row_vtid['VTID'] . '__' . $row_line['RCode'];
+                                $set_active = NULL;
+                                if ($flag_first_tab) {
+                                    $flag_first_tab = FALSE;
+                                    $set_active = 'active';
+                                }
+                                ?>
+                                <div class="tab-pane <?= $set_active ?>" id="<?= $tab_id ?>">                                    
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <p class="lead text-center">ค่าใช้จ่ายประจำวันที่ <?= $row_line['date'] ?></p>
+                                        </div>
+                                        <div class="col-md-12">                                            
+                                            <table class="table table-hover table-bordered">
+                                                <thead>
+                                                    <tr>
+                                                        <th rowspan="2"><?= $row_line['thead']['carnum'] ?></th>
+                                                        <th colspan="2">จำนวนเที่ยว</th>
+                                                        <th colspan="<?= count($row_line['thead']['income']) ?>">รายรับ</th>
+                                                        <th colspan="<?= count($row_line['thead']['charge']) ?>">รายจ่าย</th>
+                                                        <th rowspan="2"><?= $row_line['thead']['balance'] ?></th>
+                                                    </tr>
+                                                    <tr>
+                                                        <th><em>ไป</em> <?= $row_line['thead']['frequencies'][0] ?></th>
+                                                        <th><em>ไป</em> <?= $row_line['thead']['frequencies'][1] ?></th>
+                                                        <?php foreach ($row_line['thead']['income'] as $row_income) { ?>
+                                                            <th><?= $row_income ?></th>
+                                                        <?php } ?>
+                                                        <?php foreach ($row_line['thead']['charge'] as $row_charge) { ?>
+                                                            <th><?= $row_charge ?></th>
+                                                        <?php } ?>
+                                                    </tr>
+
+                                                    <!--                                                   $row_line['thead']-->
+                                                </thead>
+                                            </table>   
+                                        </div>
+                                    </div>
+                                </div> 
+                            <?php } ?>
+                        </div>
+                        <!--end tab content-->
+
+                    </div>
+                <?php } else {//End (count($row_vtid['line']) > 0)   ?>
+                    <div class="panel" style="min-height: 100px;">
+                        <p class="lead text-center">ไม่พบข้อมูล</p>
+                    </div>
+                <?php } ?>
+            </div>
+        </div>
+    <?php } ?>
+</div>
+<!--End All tab of cost-->
+
 <div class="container-fluid" style="min-height: 500px;">  
     <div class="row">
         <div class="col-md-12 text-center hidden">
