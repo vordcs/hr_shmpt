@@ -10,6 +10,7 @@ class schedule_vehicle extends CI_Controller {
         $this->load->model('m_template');
         $this->load->library('form_validation');
         $this->load->model('m_schedule_vehicle');
+        $this->load->helper("file");
         //Initial language
         $this->m_template->set_Language(array('plan'));
     }
@@ -18,12 +19,19 @@ class schedule_vehicle extends CI_Controller {
         $data = array(
             'page_title' => 'ทดสอบรัน รอบรถ ',
             'page_title_small' => '',
-            'routes' => $this->m_schedule_vehicle->get_routes(),
-            'route_detail' => $this->m_schedule_vehicle->get_routes_detail(),
             'data' => $this->m_schedule_vehicle->set_form_view(),
         );
-        $rs = $data['gen_schedule'] = $get_vehicle_curent_stations = array();
+        $data['gen_schedule'] = $get_vehicle_curent_stations = array();
 
+        /*
+         * ลบ file barcode,QRcode
+         */
+
+//        $folder_barcode = FCPATH . "assets/barcode";
+//        delete_files($folder_barcode,true);
+//
+//        $folder_qrcode = FCPATH . "assets/qrcode";
+//        delete_files($folder_qrcode,true);   
 //        
 //        $this->db->truncate('t_schedules_day');
 //        $this->db->truncate('vehicles_has_schedules');
@@ -63,7 +71,11 @@ class schedule_vehicle extends CI_Controller {
 //            'set_time_initicial_vehicles'=>$set_time_initicial_vehicles,
 //            'run_vehicles_to_schedule' => $run_vehicles_to_schedule,
 //            'data' => $data['data'],
+//            'schedules_manual'=>  $this->m_schedule_vehicle->get_schedule_master(7),
         );
+
+        $data['routes'] = $this->m_schedule_vehicle->get_routes();
+        $data['route_detail'] = $this->m_schedule_vehicle->get_routes_detail();
 
         $this->m_template->set_Debug($data_debug);
         $this->m_template->set_Title("ระบบจัดตารางเวลาเดินรถอัตติโนมัติ");

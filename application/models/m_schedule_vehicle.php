@@ -4,7 +4,7 @@
  * ลำดับการทำงาน 
  *  1 เพิ่มข้อมูลใน t_schedules_day
  *      - 
- *      
+ *      -
  *  2 update ค่าเวลา vehicles_current_stations 
  *  3 เลือกหรือเพิ่ม รถในแต่ละรอบ 
  */
@@ -313,7 +313,7 @@ class m_schedule_vehicle extends CI_Model {
                         if ($this->check_vehicle_has_schedule($TSID) == NULL) {
                             $vehicle = $this->get_vehicles_current_stations($RCode, $VTID, $first_station_id);
                             if (count($vehicle) == 0) {
-                                $vehicles = $this->get_vehicle($RCode, $VTID);
+                                $vehicles = $this->get_vehicles($RCode, $VTID);
                                 $VID = reset($vehicles)['VID'];
                             } else {
                                 $VID = $vehicle['VID'];
@@ -337,7 +337,7 @@ class m_schedule_vehicle extends CI_Model {
                             $vehicle = $this->get_vehicles_current_stations($RCode, $VTID, $last_station_id);
 
                             if (count($vehicle) == 0) {
-                                $vehicles = $this->get_vehicle($RCode, $VTID);
+                                $vehicles = $this->get_vehicles($RCode, $VTID);
                                 $VID = reset($vehicles)['VID'];
                             } else {
                                 $VID = $vehicle['VID'];
