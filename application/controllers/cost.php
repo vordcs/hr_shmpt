@@ -95,7 +95,7 @@ class cost extends CI_Controller {
             'date' => $this->m_datetime->getDateToday(),
 //            'detail' => $this->m_route->get_route('264', NULL),
 //            'all_cost' => $this->m_cost->check_cost(),
-            'tbody' => $this->m_cost->generate_tbody('264', '1', $this->m_datetime->getDateToday()),
+            'tbody' => $this->m_cost->generate_tbody('278', '1', '2015-03-13'),
         );
 
         $this->m_template->set_Title('ค่าใช้จ่าย');

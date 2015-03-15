@@ -375,7 +375,6 @@ class m_cost extends CI_Model {
     }
 
     function generate_tbody($rcode, $vtid, $date) {
-        $date = '2015-02-11';
         $ans = array();
 
         $this->db->from('vehicles as ve');
@@ -386,24 +385,65 @@ class m_cost extends CI_Model {
         $query = $this->db->get();
         $temp_vehicle = $query->result_array();
 
-        $this->db->from('t_schedules_day as ts');
-        $this->db->join('vehicles_has_schedules as vhs', 'vhs.TSID=ts.TSID ');
-        $this->db->join('vehicles as ve', 've.VID=vhs.VID ');
-        $this->db->where('ts.Date', $date);
+        //สร้างตัวแปรเก็บค่ารอบรถทั้งสายไว้ใช้ในการนับจำนวนรอบรถที่ไปกลับ
+        $all_round = array();
+        $this->db->from('t_routes as tr');
+        $this->db->where('tr.RCode', $rcode);
+        $this->db->where('tr.VTID', $vtid);
+        $this->db->order_by('tr.StartTime', 'ASC');
         $query = $this->db->get();
-        $temp_schedule = $query->result_array();
+        $temp_routes = $query->result_array();
+        foreach ($temp_routes as $row) {
+            $this->db->select('*,tsd.RID as RID');
+            $this->db->from('t_schedules_day as tsd');
+            $this->db->join('vehicles_has_schedules as vhs', 'vhs.TSID=tsd.TSID');
+            $this->db->where('tsd.Date', $date);
+            $this->db->where('tsd.RID', $row['RID']);
+            $this->db->where('tsd.ScheduleStatus', '1');
+            $query = $this->db->get();
+            $temp_schedules_day = $query->result_array();
+            $all_round[$row['RID']] = $temp_schedules_day;
+        }
+
 
 
         foreach ($temp_vehicle as $vehicle) {
             $temp = array();
+            $temp['ref_vid'] = $vehicle['VID'];
             $temp['carnum'] = $vehicle['VCode'];
+
+            // ตรวจจำนวนรอบรถจาก $all_round
+            // f_station l_station
+            // จากการใช้ array pointer reset next
+            reset($all_round);
+            $temp_count = current($all_round);
+            $count = 0;
+            foreach ($temp_count as $row) {
+                if ($row['VID'] == $vehicle['VID']) {
+                    $count++;
+                }
+            }
+            $temp['ref_f_station'] = $temp_count[0]['RID'];
+            $temp['f_station'] = $count;
+
+            $temp_count = next($all_round);
+            $count = 0;
+            foreach ($temp_count as $row) {
+                if ($row['VID'] == $vehicle['VID']) {
+                    $count++;
+                }
+            }
+            $temp['ref_l_station'] = $temp_count[0]['RID'];
+            $temp['l_station'] = $count;
+
 
 
             array_push($ans, $temp);
         }
 
-
-        $ans['num'] = count($temp_schedule);
+        reset($all_round);
+        next($all_round);
+//        $ans['num'] = $all_round;
         return $ans;
     }
 
