@@ -173,9 +173,23 @@ function count_itemp($data_array, $str, $con) {
                                                             <th><?= $row_charge ?></th>
                                                         <?php } ?>
                                                     </tr>
-
-                                                    <!--                                                   $row_line['thead']-->
                                                 </thead>
+                                                <tbody>
+                                                    <?php foreach ($row_line['tbody'] as $row_body) { ?>
+                                                        <tr>
+                                                            <td><?= $row_body['carnum'] ?></td>
+                                                            <td><?= $row_body['f_station'] ?></td>
+                                                            <td><?= $row_body['l_station'] ?></td>
+                                                            <?php foreach ($row_body['income']as $row_income) { ?>
+                                                                <td><?= $row_income ?></td>
+                                                            <?php } ?>
+                                                            <?php foreach ($row_body['outcome']as $row_outcome) { ?>
+                                                                <td><?= $row_outcome ?></td>
+                                                            <?php } ?>
+                                                            <td><?= $row_body['balance'] ?></td>
+                                                        </tr>
+                                                    <?php } ?>
+                                                </tbody>
                                             </table>   
                                         </div>
                                     </div>

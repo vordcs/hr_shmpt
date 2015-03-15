@@ -308,7 +308,7 @@ class m_cost extends CI_Model {
                 $temp[$temp_key]['thead'] = $this->generate_thead($temp[$temp_key]['RCode'], $value['VTID']);
 
                 //Generate tbody
-//                $temp[$temp_key]['tbody'] = $this->generate_tbody($temp[$temp_key]['RCode'], $value['VTID'],$date);
+                $temp[$temp_key]['tbody'] = $this->generate_tbody($temp[$temp_key]['RCode'], $value['VTID'], $date);
             }
             $ans[$key]['line'] = $temp;
         }
@@ -377,6 +377,112 @@ class m_cost extends CI_Model {
     function generate_tbody($rcode, $vtid, $date) {
         $ans = array();
 
+        // สร้างตัวแปรเก็บค่าพนักงานขายตั๋ว และตรวจว่าวันนั้นขายอะไรไปบ้าง
+        // รวม รายทาง, ค่าฝากของ, อื่นๆ ด้วย
+        // รวมรายจ่าย ค่าเที่ยว, ค่าก๊าซ, ค่าน้ำมัน, อื่นๆ ด้วย
+        $all_seller_in_station = array();
+        $this->db->from('t_stations');
+        $this->db->where('RCode', $rcode);
+        $this->db->where('VTID', $vtid);
+        $this->db->where('IsSaleTicket', '1');
+        $this->db->order_by('Seq', 'ASC');
+        $query = $this->db->get();
+        $temp_station = $query->result_array();
+        foreach ($temp_station as $row) {
+            $this->db->from('sellers as se');
+            $this->db->where('se.SID', $row['SID']);
+            $query = $this->db->get();
+            $temp_seller = $query->result_array();
+
+            foreach ($temp_seller as $key => $row2) {
+                // ตั๋วที่คนนั้นขายทั้งหมด
+                $this->db->select('ts.TicketID, ts.RID, ts.VID, ts.PriceSeat');
+                $this->db->from('ticket_sale as ts');
+                $this->db->where('ts.Seller', $row2['EID']);
+                $this->db->where('ts.DateSale', $date);
+                $this->db->where('ts.StatusSeat', '1');
+                $query = $this->db->get();
+                $temp_sale = $query->result_array();
+                $temp_seller[$key]['sale'] = $temp_sale;
+
+                // รายทาง, ค่าฝากของ, อื่นๆ ที่คนนั้นรับ
+                $this->db->from('cost as co');
+                $this->db->join('vehicles_has_cost as vhc', 'vhc.CostID=co.CostID');
+                $this->db->where('co.CreateBy', $row2['EID']);
+                $this->db->where('co.CostDate', $date);
+                $this->db->where('co.CostDetailID', '1'); // 1 = รายทาง
+                $query = $this->db->get();
+                $temp_sale = $query->result_array();
+                $temp_seller[$key]['onway'] = $temp_sale;
+
+                $this->db->from('cost as co');
+                $this->db->join('vehicles_has_cost as vhc', 'vhc.CostID=co.CostID');
+                $this->db->where('co.CreateBy', $row2['EID']);
+                $this->db->where('co.CostDate', $date);
+                $this->db->where('co.CostDetailID', '6'); // 6 = ฝากของ
+                $query = $this->db->get();
+                $temp_sale = $query->result_array();
+                $temp_seller[$key]['messenger'] = $temp_sale;
+
+                $this->db->from('cost as co');
+                $this->db->join('vehicles_has_cost as vhc', 'vhc.CostID=co.CostID');
+                $this->db->where('co.CreateBy', $row2['EID']);
+                $this->db->where('co.CostDate', $date);
+                $this->db->where('co.CostDetailID', '888'); // 888 = รายรับอื่นๆ
+                $query = $this->db->get();
+                $temp_sale = $query->result_array();
+                $temp_seller[$key]['in_other'] = $temp_sale;
+
+                $this->db->from('cost as co');
+                $this->db->join('vehicles_has_cost as vhc', 'vhc.CostID=co.CostID');
+                $this->db->where('co.CreateBy', $row2['EID']);
+                $this->db->where('co.CostDate', $date);
+                $this->db->where('co.CostDetailID', '2'); // 2 = ค่าเที่ยว
+                $query = $this->db->get();
+                $temp_sale = $query->result_array();
+                $temp_seller[$key]['license'] = $temp_sale;
+
+                $this->db->from('cost as co');
+                $this->db->join('vehicles_has_cost as vhc', 'vhc.CostID=co.CostID');
+                $this->db->where('co.CreateBy', $row2['EID']);
+                $this->db->where('co.CostDate', $date);
+                $this->db->where('co.CostDetailID', '3'); // 3 = ค่าก๊าซ
+                $query = $this->db->get();
+                $temp_sale = $query->result_array();
+                $temp_seller[$key]['gas'] = $temp_sale;
+
+                $this->db->from('cost as co');
+                $this->db->join('vehicles_has_cost as vhc', 'vhc.CostID=co.CostID');
+                $this->db->where('co.CreateBy', $row2['EID']);
+                $this->db->where('co.CostDate', $date);
+                $this->db->where('co.CostDetailID', '4'); // 4 = ค่าน้ำมัน
+                $query = $this->db->get();
+                $temp_sale = $query->result_array();
+                $temp_seller[$key]['oil'] = $temp_sale;
+
+                $this->db->from('cost as co');
+                $this->db->join('vehicles_has_cost as vhc', 'vhc.CostID=co.CostID');
+                $this->db->where('co.CreateBy', $row2['EID']);
+                $this->db->where('co.CostDate', $date);
+                $this->db->where('co.CostDetailID', '5'); // 5 = ค่าอะไหล่
+                $query = $this->db->get();
+                $temp_sale = $query->result_array();
+                $temp_seller[$key]['part'] = $temp_sale;
+
+                $this->db->from('cost as co');
+                $this->db->join('vehicles_has_cost as vhc', 'vhc.CostID=co.CostID');
+                $this->db->where('co.CreateBy', $row2['EID']);
+                $this->db->where('co.CostDate', $date);
+                $this->db->where('co.CostDetailID', '999'); // 999 = รายจ่ายอื่น
+                $query = $this->db->get();
+                $temp_sale = $query->result_array();
+                $temp_seller[$key]['out_other'] = $temp_sale;
+            }
+
+            $all_seller_in_station[$row['SID']] = $temp_seller;
+        }
+
+
         $this->db->from('vehicles as ve');
         $this->db->join('t_routes_has_vehicles as trhv', 'trhv.VID=ve.VID');
         $this->db->where('trhv.RCode', $rcode);
@@ -385,7 +491,7 @@ class m_cost extends CI_Model {
         $query = $this->db->get();
         $temp_vehicle = $query->result_array();
 
-        //สร้างตัวแปรเก็บค่ารอบรถทั้งสายไว้ใช้ในการนับจำนวนรอบรถที่ไปกลับ
+        //สร้างตัวแปรเก็บค่ารอบรถต้นสายปลายสาย ไว้ใช้ในการนับจำนวนรอบรถที่ไปกลับ
         $all_round = array();
         $this->db->from('t_routes as tr');
         $this->db->where('tr.RCode', $rcode);
@@ -417,6 +523,12 @@ class m_cost extends CI_Model {
             // จากการใช้ array pointer reset next
             reset($all_round);
             $temp_count = current($all_round);
+
+            // ตรวจสอบถ้ารถนั้นไม่มีตารางเดินรถ TSID ก็ไม่ต้องทำ
+            if (count($temp_count) == 0) {
+                return $ans;
+            }
+
             $count = 0;
             foreach ($temp_count as $row) {
                 if ($row['VID'] == $vehicle['VID']) {
@@ -436,13 +548,99 @@ class m_cost extends CI_Model {
             $temp['ref_l_station'] = $temp_count[0]['RID'];
             $temp['l_station'] = $count;
 
+            // วนนับจำนวนเงินของรถคันนั้นๆที่ขายได้จาก $all_seller_in_station
+            // เข้าผ่าน RID แล้วก็จะได้มีพนักงานขายตั๋วกี่คน
+            // แล้วค่อยไปนับว่าคนนั้นขายใบไหนบ้างที่ตรงกับรถ
+            // นับ รายทาง, ฝากของ, อื่นๆ ด้วยเลย
+            // นับ รายจ่ายด้วยเลย
+            $income = array();
+            foreach ($all_seller_in_station as $key => $row_rid) {
+                $total_sale = 0;
+                $total_onway = 0;
+                $total_messenger = 0;
+                $total_in_other = 0;
 
+                $total_license = 0;
+                $total_gas = 0;
+                $total_oil = 0;
+                $total_part = 0;
+                $total_out_other = 0;
 
+                foreach ($row_rid as $row_seller) {
+                    $temp_sale = $row_seller['sale'];
+                    foreach ($temp_sale as $ticket) {
+                        if ($ticket['VID'] == $vehicle['VID'])
+                            $total_sale+=$ticket['PriceSeat'];
+                    }
+                    $temp_sale = $row_seller['onway'];
+                    foreach ($temp_sale as $ticket) {
+                        if ($ticket['VID'] == $vehicle['VID'])
+                            $total_onway+=$ticket['CostValue'];
+                    }
+                    $temp_sale = $row_seller['messenger'];
+                    foreach ($temp_sale as $ticket) {
+                        if ($ticket['VID'] == $vehicle['VID'])
+                            $total_messenger+=$ticket['CostValue'];
+                    }
+                    $temp_sale = $row_seller['in_other'];
+                    foreach ($temp_sale as $ticket) {
+                        if ($ticket['VID'] == $vehicle['VID'])
+                            $total_in_other+=$ticket['CostValue'];
+                    }
+                    $temp_sale = $row_seller['license'];
+                    foreach ($temp_sale as $ticket) {
+                        if ($ticket['VID'] == $vehicle['VID'])
+                            $total_license+=$ticket['CostValue'];
+                    }
+                    $temp_sale = $row_seller['gas'];
+                    foreach ($temp_sale as $ticket) {
+                        if ($ticket['VID'] == $vehicle['VID'])
+                            $total_gas+=$ticket['CostValue'];
+                    }
+                    $temp_sale = $row_seller['oil'];
+                    foreach ($temp_sale as $ticket) {
+                        if ($ticket['VID'] == $vehicle['VID'])
+                            $total_oil+=$ticket['CostValue'];
+                    }
+                    $temp_sale = $row_seller['part'];
+                    foreach ($temp_sale as $ticket) {
+                        if ($ticket['VID'] == $vehicle['VID'])
+                            $total_part+=$ticket['CostValue'];
+                    }
+                    $temp_sale = $row_seller['out_other'];
+                    foreach ($temp_sale as $ticket) {
+                        if ($ticket['VID'] == $vehicle['VID'])
+                            $total_out_other+=$ticket['CostValue'];
+                    }
+                }
+                array_push($income, $total_sale);
+            }
+            $temp['income'] = $income;
+            $temp['income']['onway'] = $total_onway;
+            $temp['income']['messenger'] = $total_messenger;
+            $temp['income']['in_other'] = $total_in_other;
+
+            $temp['outcome']['license'] = $total_license;
+            $temp['outcome']['gas'] = $total_gas;
+            $temp['outcome']['oil'] = $total_oil;
+            $temp['outcome']['part'] = $total_part;
+            $temp['outcome']['out_other'] = $total_out_other;
+
+            // คำนวนเงินคงเหลือ
+            $balance = 0;
+            foreach ($temp['income'] as $row) {
+                $balance+=$row;
+            }
+            foreach ($temp['outcome'] as $row) {
+                $balance-=$row;
+            }
+            $temp['balance'] = $balance;
+
+            // รวมค่าทั้งหมดลง $ans เพื่อใช้เป็น tbody ต่อไป
             array_push($ans, $temp);
         }
 
-        reset($all_round);
-        next($all_round);
+
 //        $ans['num'] = $all_round;
         return $ans;
     }
