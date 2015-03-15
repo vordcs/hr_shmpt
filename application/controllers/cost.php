@@ -63,24 +63,12 @@ class cost extends CI_Controller {
             $data['vehicles'] = $this->m_cost->get_vehicle();
         }
 
-        if ($from != NULL || $to != NULL) {
+        
 
-            if ($from != NULL && $to == NULL) {
-                $data['strtitle'] .='วันที่ ' . $this->m_datetime->getDateThaiString($from);
-            }
-            if ($from != NULL && $to != NULL) {
-                $data['strtitle'] .='วันที่ ' . $this->m_datetime->getDateThaiString($from);
-                $data['strtitle'] .='ถึง ' . $this->m_datetime->getDateThaiString($to);
-            }
-            $data['cost'] = $this->m_cost->search_cost($from, $to);
-        } else {
-            $data['cost'] = $this->m_cost->get_cost();
-        }
-
-        $data['schedules'] = $this->m_cost->get_schedule($date);
-        $data['cost_detail'] = $this->m_cost->get_cost_detail();
-        $data['cost_types'] = $this->m_cost->get_cost_type();
-        $data['all_cost'] = $this->m_cost->check_cost('2015-03-13');
+//        $data['schedules'] = $this->m_cost->get_schedule($date);
+//        $data['cost_detail'] = $this->m_cost->get_cost_detail();
+//        $data['cost_types'] = $this->m_cost->get_cost_type();
+        $data['all_cost'] = $this->m_cost->check_cost();
 
         $data_debug = array(
 //            'cost' => $data['cost'],

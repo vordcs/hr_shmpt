@@ -157,17 +157,17 @@ function count_itemp($data_array, $str, $con) {
                                             <table class="table table-hover table-bordered">
                                                 <thead>
                                                     <tr>
-                                                        <th rowspan="2"><?= $row_line['thead']['carnum'] ?></th>
-                                                        <th colspan="2">จำนวนเที่ยว</th>
-                                                        <th colspan="<?= count($row_line['thead']['income']) ?>">รายรับ</th>
+                                                        <th rowspan="2" class="th-blue-jeans"><?= $row_line['thead']['carnum'] ?></th>
+                                                        <th colspan="2" class="th-sunflower">จำนวนเที่ยว</th>
+                                                        <th colspan="<?= count($row_line['thead']['income']) ?>" class="th-dark-gray">รายรับ</th>
                                                         <th colspan="<?= count($row_line['thead']['charge']) ?>">รายจ่าย</th>
-                                                        <th rowspan="2"><?= $row_line['thead']['balance'] ?></th>
+                                                        <th rowspan="2" class="th-grass"><?= $row_line['thead']['balance'] ?></th>
                                                     </tr>
                                                     <tr>
-                                                        <th><em>ไป</em> <?= $row_line['thead']['frequencies'][0] ?></th>
-                                                        <th><em>ไป</em> <?= $row_line['thead']['frequencies'][1] ?></th>
+                                                        <th class="th-sunflower"><em>ไป</em> <?= $row_line['thead']['frequencies'][0] ?></th>
+                                                        <th class="th-sunflower"><em>ไป</em> <?= $row_line['thead']['frequencies'][1] ?></th>
                                                         <?php foreach ($row_line['thead']['income'] as $row_income) { ?>
-                                                            <th><?= $row_income ?></th>
+                                                        <th class="th-dark-gray"><?= $row_income ?></th>
                                                         <?php } ?>
                                                         <?php foreach ($row_line['thead']['charge'] as $row_charge) { ?>
                                                             <th><?= $row_charge ?></th>
@@ -177,16 +177,16 @@ function count_itemp($data_array, $str, $con) {
                                                 <tbody>
                                                     <?php foreach ($row_line['tbody'] as $row_body) { ?>
                                                         <tr>
-                                                            <td><?= $row_body['carnum'] ?></td>
-                                                            <td><?= $row_body['f_station'] ?></td>
-                                                            <td><?= $row_body['l_station'] ?></td>
+                                                            <td class="text-center td-blue-jeans"><?= $row_body['carnum'] ?></td>
+                                                            <td class="text-center td-sunflower"><?= $row_body['f_station'] ?></td>
+                                                            <td class="text-center td-sunflower"><?= $row_body['l_station'] ?></td>
                                                             <?php foreach ($row_body['income']as $row_income) { ?>
-                                                                <td><?= $row_income ?></td>
+                                                                <td class="text-right td-dark-gray"><?= $row_income ?></td>
                                                             <?php } ?>
                                                             <?php foreach ($row_body['outcome']as $row_outcome) { ?>
-                                                                <td><?= $row_outcome ?></td>
+                                                                <td class="text-right"><?= $row_outcome ?></td>
                                                             <?php } ?>
-                                                            <td><?= $row_body['balance'] ?></td>
+                                                            <td class="text-right td-grass"><?= $row_body['balance'] ?></td>
                                                         </tr>
                                                     <?php } ?>
                                                 </tbody>
