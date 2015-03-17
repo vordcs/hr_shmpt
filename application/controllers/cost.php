@@ -23,52 +23,26 @@ class cost extends CI_Controller {
 
     public function index() {
         $date = $this->m_datetime->getDateToday();
+        // ตรวจการส่งค่า POST เพื่อเปลี่ยงแปลง $date ที่จะแสดงข้อมูล
+        if ($this->input->server('REQUEST_METHOD') === 'POST') {
+            $temp = $this->input->post('date');
+            if ($temp != NULL)
+                $date = $this->m_datetime->setTHDateToDB($temp);
+        }
+
         $data = array(
+            'form_open' => form_open('cost', array('class' => 'form-inline')),
+            'form_close' => form_close(),
             'form' => $this->m_cost->set_form_search(),
             'route_details' => $this->m_route->get_route_detail(),
             'stations' => $this->m_station->get_stations(),
+            'date' => $date,
         );
-
-        $data['strtitle'] = '';
-
-        $vtid = $this->input->post('VTID');
-        $rcode = $this->input->post('RCode');
-        $vcode = $this->input->post('VCode');
-        $from = $this->input->post('DateForm');
-        $to = $this->input->post('DateTo');
-
-        if ($vtid != '0' | $rcode != 0 | $vcode != NULL | $from != NULL | $to != NULL) {
-            $data['strtitle'] .= 'ผลการค้นหา : ';
-        }
-
-        if ($vtid != '0') {
-            $data['vehicle_types'] = $this->m_vehicle->get_vehicle_types($vtid);
-            $data['strtitle'] .= $data['vehicle_types'][0]['VTDescription'] . '  ';
-        } else {
-            $data['vehicle_types'] = $this->m_vehicle->get_vehicle_types();
-        }
-
-        if ($rcode != '0') {
-            $data['routes'] = $this->m_route->get_route($rcode, NULL);
-            $data['strtitle'] .= 'เส้นทาง ' . $data['routes'][0]['RCode'] . ' ' . $data['routes'][0]['RSource'] . ' - ' . $data['routes'][0]['RDestination'] . '  ';
-        } else {
-            $data['routes'] = $this->m_route->get_route();
-        }
-
-
-        if ($vcode != NULL) {
-            $data['vehicles'] = $this->m_cost->get_vehicle($vcode);
-            $data['strtitle'] .= 'เบอร์ ' . $vcode . '  ';
-        } else {
-            $data['vehicles'] = $this->m_cost->get_vehicle();
-        }
-
-        
 
 //        $data['schedules'] = $this->m_cost->get_schedule($date);
 //        $data['cost_detail'] = $this->m_cost->get_cost_detail();
 //        $data['cost_types'] = $this->m_cost->get_cost_type();
-        $data['all_cost'] = $this->m_cost->check_cost();
+        $data['all_cost'] = $this->m_cost->check_cost($date);
 
         $data_debug = array(
 //            'cost' => $data['cost'],
@@ -80,9 +54,9 @@ class cost extends CI_Controller {
 //            'vehicles' => $data['vehicles'],
 //            'form' => $data['form'],
 //            'schedules' => $data['schedules'],
-//            'date' => $this->m_datetime->getDateToday(),
+//            'date' => $this->m_datetime->setTHDateToDB($date),
 //            'detail' => $this->m_route->get_route('264', NULL),
-//            'all_cost' => $this->m_cost->check_cost(),
+//            'all_cost' => $data['all_cost'],
 //            'tbody' => $this->m_cost->generate_tbody('264', '1', '2015-03-13'),
         );
 

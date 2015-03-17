@@ -287,7 +287,7 @@ class m_cost extends CI_Model {
 
             foreach ($temp as $temp_key => $temp_value) {
                 $temp[$temp_key]['tab_title'] = $temp[$temp_key]['RCode'] . ' ' . $temp[$temp_key]['RSource'] . ' - ' . $temp[$temp_key]['RDestination'];
-                $temp[$temp_key]['date'] = $this->m_datetime->DateThaiToDay();
+                $temp[$temp_key]['date'] = $this->m_datetime->DateThai($date);
                 unset($temp[$temp_key]['RID']);
                 unset($temp[$temp_key]['VTID']);
                 unset($temp[$temp_key]['RSource']);

@@ -568,19 +568,19 @@ body {
     background: rgba(74, 137, 220, .2)!important;
 }
 
-.th-sunflower {
-    color: #fffaed;
-    background-color: #F6BB42!important;    
+.th-bittersweet {
+    color: #fff3f0;
+    background-color: #E9573F!important;    
 }
 
-.td-sunflower {
-    color: #fffaed;
-    background-color: #FFCE54!important;    
+.td-bittersweet {
+    color: #fff3f0;
+    background-color: #FC6E51!important;    
 }
 
-.table-hover>tbody>tr:hover>td.td-sunflower {
-    color: #F6BB42;
-    background: rgba(255, 206, 84, .2)!important;
+.table-hover>tbody>tr:hover>td.td-bittersweet {
+    color: #FC6E51;
+    background: rgba(14, 149, 115, .2)!important;
 }
 
 .th-dark-gray {
