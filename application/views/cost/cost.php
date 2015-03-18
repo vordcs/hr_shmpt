@@ -110,18 +110,18 @@
                                                     <tr>
                                                         <th rowspan="2" class="th-blue-jeans"><?= $row_line['thead']['carnum'] ?></th>
                                                         <th colspan="2" class="th-bittersweet">จำนวนเที่ยว</th>
-                                                        <th colspan="<?= count($row_line['thead']['income']) ?>" class="th-dark-gray">รายรับ</th>
-                                                        <th colspan="<?= count($row_line['thead']['charge']) ?>">รายจ่าย</th>
+                                                        <th colspan="<?= count($row_line['thead']['income']) ?>">รายรับ</th>
+                                                        <th colspan="<?= count($row_line['thead']['charge']) ?>" class="th-dark-gray">รายจ่าย</th>
                                                         <th rowspan="2" class="th-grass"><?= $row_line['thead']['balance'] ?></th>
                                                     </tr>
                                                     <tr>
                                                         <th class="th-bittersweet"><em>ไป</em> <?= $row_line['thead']['frequencies'][0] ?></th>
                                                         <th class="th-bittersweet"><em>ไป</em> <?= $row_line['thead']['frequencies'][1] ?></th>
                                                         <?php foreach ($row_line['thead']['income'] as $row_income) { ?>
-                                                            <th class="th-dark-gray"><?= $row_income ?></th>
+                                                            <th><?= $row_income ?></th>
                                                         <?php } ?>
                                                         <?php foreach ($row_line['thead']['charge'] as $row_charge) { ?>
-                                                            <th><?= $row_charge ?></th>
+                                                            <th class="th-dark-gray"><?= $row_charge ?></th>
                                                         <?php } ?>
                                                     </tr>
                                                 </thead>
@@ -132,10 +132,10 @@
                                                             <td class="text-center td-bittersweet"><?= $row_body['f_station'] ?></td>
                                                             <td class="text-center td-bittersweet"><?= $row_body['l_station'] ?></td>
                                                             <?php foreach ($row_body['income']as $row_income) { ?>
-                                                                <td class="text-right td-dark-gray"><?= $row_income ?></td>
+                                                                <td class="text-right"><?= $row_income ?></td>
                                                             <?php } ?>
                                                             <?php foreach ($row_body['outcome']as $row_outcome) { ?>
-                                                                <td class="text-right"><?= $row_outcome ?></td>
+                                                                <td class="text-right td-dark-gray"><?= $row_outcome ?></td>
                                                             <?php } ?>
                                                             <td class="text-right td-grass"><?= $row_body['balance'] ?></td>
                                                         </tr>
