@@ -7,6 +7,10 @@
             language: 'th-th',
             format: 'yyyy-m-d'
         });
+        $('[data-toggle="popover"]').popover({
+            html: true,
+            trigger: 'hover'
+        });
     });
 </script>
 <div class="container-fluid">
@@ -111,8 +115,8 @@
                                                         <th rowspan="2" class="th-blue-jeans"><?= $row_line['thead']['carnum'] ?></th>
                                                         <th colspan="2" class="th-bittersweet">จำนวนเที่ยว</th>
                                                         <th colspan="<?= count($row_line['thead']['income']) ?>">รายรับ</th>
-                                                        <th colspan="<?= count($row_line['thead']['charge']) ?>" class="th-dark-gray">รายจ่าย</th>
-                                                        <th rowspan="2" class="th-grass"><?= $row_line['thead']['balance'] ?></th>
+                                                        <th colspan="<?= count($row_line['thead']['charge']) ?>" class="th-grass">รายจ่าย</th>
+                                                        <th rowspan="2" class="th-dark-gray"><?= $row_line['thead']['balance'] ?></th>
                                                     </tr>
                                                     <tr>
                                                         <th class="th-bittersweet"><em>ไป</em> <?= $row_line['thead']['frequencies'][0] ?></th>
@@ -121,7 +125,7 @@
                                                             <th><?= $row_income ?></th>
                                                         <?php } ?>
                                                         <?php foreach ($row_line['thead']['charge'] as $row_charge) { ?>
-                                                            <th class="th-dark-gray"><?= $row_charge ?></th>
+                                                            <th class="th-grass"><?= $row_charge ?></th>
                                                         <?php } ?>
                                                     </tr>
                                                 </thead>
@@ -131,13 +135,29 @@
                                                             <td class="text-center td-blue-jeans"><?= $row_body['carnum'] ?></td>
                                                             <td class="text-center td-bittersweet"><?= $row_body['f_station'] ?></td>
                                                             <td class="text-center td-bittersweet"><?= $row_body['l_station'] ?></td>
-                                                            <?php foreach ($row_body['income']as $row_income) { ?>
-                                                                <td class="text-right"><?= $row_income ?></td>
+                                                            <?php
+                                                            foreach ($row_body['income']as $row_income) {
+                                                                $popup_title = 'รายการจาก';
+                                                                $popup_content = '';
+                                                                //อ่านว่าเงินมาจากใครเท่าไหร่
+                                                                foreach ($row_income['list'] as $row_saler) {
+                                                                    $popup_content.=$row_saler['name'] . ' ' . $row_saler['price'] . '<br/>';
+                                                                }
+                                                                ?>
+                                                                <td class="text-right"><div data-toggle="popover" title="<?= $popup_title ?>" data-content="<?= $popup_content ?>"><?= $row_income['price'] ?></div></td>
                                                             <?php } ?>
-                                                            <?php foreach ($row_body['outcome']as $row_outcome) { ?>
-                                                                <td class="text-right td-dark-gray"><?= $row_outcome ?></td>
+                                                            <?php
+                                                            foreach ($row_body['outcome']as $row_outcome) {
+                                                                $popup_title = 'รายการจาก';
+                                                                $popup_content = '';
+                                                                //อ่านว่าเงินมาจากใครเท่าไหร่
+                                                                foreach ($row_outcome['list'] as $row_saler) {
+                                                                    $popup_content.=$row_saler['name'] . ' ' . $row_saler['price'] . '<br/>';
+                                                                }
+                                                                ?>
+                                                                <td class="text-right td-grass"><div data-toggle="popover" title="<?= $popup_title ?>" data-content="<?= $popup_content ?>"><?= $row_outcome['price'] ?></div></td>
                                                             <?php } ?>
-                                                            <td class="text-right td-grass"><?= $row_body['balance'] ?></td>
+                                                            <td class="text-right td-dark-gray"><?= $row_body['balance'] ?></td>
                                                         </tr>
                                                     <?php } ?>
                                                     <?php
@@ -156,7 +176,7 @@
                         <!--end tab content-->
 
                     </div>
-                <?php } else {//End (count($row_vtid['line']) > 0)   ?>
+                <?php } else {//End (count($row_vtid['line']) > 0)     ?>
                     <div class="panel" style="min-height: 100px;">
                         <p class="lead text-center">ไม่พบข้อมูล</p>
                     </div>

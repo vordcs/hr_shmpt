@@ -390,6 +390,7 @@ class m_cost extends CI_Model {
         $temp_station = $query->result_array();
         foreach ($temp_station as $row) {
             $this->db->from('sellers as se');
+            $this->db->join('employees', 'employees.EID = se.EID');
             $this->db->where('se.SID', $row['SID']);
             $query = $this->db->get();
             $temp_seller = $query->result_array();
@@ -554,6 +555,23 @@ class m_cost extends CI_Model {
             // นับ รายทาง, ฝากของ, อื่นๆ ด้วยเลย
             // นับ รายจ่ายด้วยเลย
             $income = array();
+            $onway = array();
+            $messenger = array();
+            $in_other = array();
+            $license = array();
+            $gas = array();
+            $oil = array();
+            $part = array();
+            $out_other = array();
+
+            $all_onway = array();
+            $all_messenger = array();
+            $all_in_other = array();
+            $all_license = array();
+            $all_gas = array();
+            $all_oil = array();
+            $all_part = array();
+            $all_out_other = array();
             foreach ($all_seller_in_station as $key => $row_rid) {
                 $total_sale = 0;
                 $total_onway = 0;
@@ -566,73 +584,185 @@ class m_cost extends CI_Model {
                 $total_part = 0;
                 $total_out_other = 0;
 
+                $temp_name = array();
                 foreach ($row_rid as $row_seller) {
+                    //Temp
+                    $temp_data_sale = array(
+                        'EID' => $row_seller['EID'],
+                        'name' => $row_seller['Title'] . $row_seller['FirstName'] . ' ' . $row_seller['LastName'],
+                        'price' => 0
+                    );
+                    $temp_data_onway = array(
+                        'EID' => $row_seller['EID'],
+                        'name' => $row_seller['Title'] . $row_seller['FirstName'] . ' ' . $row_seller['LastName'],
+                        'price' => 0
+                    );
+                    $temp_data_messenger = array(
+                        'EID' => $row_seller['EID'],
+                        'name' => $row_seller['Title'] . $row_seller['FirstName'] . ' ' . $row_seller['LastName'],
+                        'price' => 0
+                    );
+                    $temp_data_in_other = array(
+                        'EID' => $row_seller['EID'],
+                        'name' => $row_seller['Title'] . $row_seller['FirstName'] . ' ' . $row_seller['LastName'],
+                        'price' => 0
+                    );
+                    $temp_data_license = array(
+                        'EID' => $row_seller['EID'],
+                        'name' => $row_seller['Title'] . $row_seller['FirstName'] . ' ' . $row_seller['LastName'],
+                        'price' => 0
+                    );
+                    $temp_data_gas = array(
+                        'EID' => $row_seller['EID'],
+                        'name' => $row_seller['Title'] . $row_seller['FirstName'] . ' ' . $row_seller['LastName'],
+                        'price' => 0
+                    );
+                    $temp_data_oil = array(
+                        'EID' => $row_seller['EID'],
+                        'name' => $row_seller['Title'] . $row_seller['FirstName'] . ' ' . $row_seller['LastName'],
+                        'price' => 0
+                    );
+                    $temp_data_part = array(
+                        'EID' => $row_seller['EID'],
+                        'name' => $row_seller['Title'] . $row_seller['FirstName'] . ' ' . $row_seller['LastName'],
+                        'price' => 0
+                    );
+                    $temp_data_out_other = array(
+                        'EID' => $row_seller['EID'],
+                        'name' => $row_seller['Title'] . $row_seller['FirstName'] . ' ' . $row_seller['LastName'],
+                        'price' => 0
+                    );
+
                     $temp_sale = $row_seller['sale'];
                     foreach ($temp_sale as $ticket) {
-                        if ($ticket['VID'] == $vehicle['VID'])
+                        if ($ticket['VID'] == $vehicle['VID']) {
                             $total_sale+=$ticket['PriceSeat'];
+                            $temp_data_sale['price']+=$ticket['PriceSeat'];
+                        }
                     }
                     $temp_sale = $row_seller['onway'];
                     foreach ($temp_sale as $ticket) {
-                        if ($ticket['VID'] == $vehicle['VID'])
+                        if ($ticket['VID'] == $vehicle['VID']) {
                             $total_onway+=$ticket['CostValue'];
+                            $temp_data_onway['price']+=$ticket['CostValue'];
+                        }
                     }
                     $temp_sale = $row_seller['messenger'];
                     foreach ($temp_sale as $ticket) {
-                        if ($ticket['VID'] == $vehicle['VID'])
+                        if ($ticket['VID'] == $vehicle['VID']) {
                             $total_messenger+=$ticket['CostValue'];
+                            $temp_data_messenger['price']+=$ticket['CostValue'];
+                        }
                     }
                     $temp_sale = $row_seller['in_other'];
                     foreach ($temp_sale as $ticket) {
-                        if ($ticket['VID'] == $vehicle['VID'])
+                        if ($ticket['VID'] == $vehicle['VID']) {
                             $total_in_other+=$ticket['CostValue'];
+                            $temp_data_in_other['price']+=$ticket['CostValue'];
+                        }
                     }
                     $temp_sale = $row_seller['license'];
                     foreach ($temp_sale as $ticket) {
-                        if ($ticket['VID'] == $vehicle['VID'])
+                        if ($ticket['VID'] == $vehicle['VID']) {
                             $total_license+=$ticket['CostValue'];
+                            $temp_data_license['price']+=$ticket['CostValue'];
+                        }
                     }
                     $temp_sale = $row_seller['gas'];
                     foreach ($temp_sale as $ticket) {
-                        if ($ticket['VID'] == $vehicle['VID'])
+                        if ($ticket['VID'] == $vehicle['VID']) {
                             $total_gas+=$ticket['CostValue'];
+                            $temp_data_gas['price']+=$ticket['CostValue'];
+                        }
                     }
                     $temp_sale = $row_seller['oil'];
                     foreach ($temp_sale as $ticket) {
-                        if ($ticket['VID'] == $vehicle['VID'])
+                        if ($ticket['VID'] == $vehicle['VID']) {
                             $total_oil+=$ticket['CostValue'];
+                            $temp_data_oil['price']+=$ticket['CostValue'];
+                        }
                     }
                     $temp_sale = $row_seller['part'];
                     foreach ($temp_sale as $ticket) {
-                        if ($ticket['VID'] == $vehicle['VID'])
+                        if ($ticket['VID'] == $vehicle['VID']) {
                             $total_part+=$ticket['CostValue'];
+                            $temp_data_part['price']+=$ticket['CostValue'];
+                        }
                     }
                     $temp_sale = $row_seller['out_other'];
                     foreach ($temp_sale as $ticket) {
-                        if ($ticket['VID'] == $vehicle['VID'])
+                        if ($ticket['VID'] == $vehicle['VID']) {
                             $total_out_other+=$ticket['CostValue'];
+                            $temp_data_out_other['price']+=$ticket['CostValue'];
+                        }
                     }
+                    array_push($temp_name, $temp_data_sale);
+                    array_push($onway, $temp_data_onway);
+                    array_push($messenger, $temp_data_messenger);
+                    array_push($in_other, $temp_data_in_other);
+                    array_push($license, $temp_data_license);
+                    array_push($gas, $temp_data_gas);
+                    array_push($oil, $temp_data_oil);
+                    array_push($part, $temp_data_part);
+                    array_push($out_other, $temp_data_out_other);
                 }
-                array_push($income, $total_sale);
+                $temp_data = array(
+                    'price' => $total_sale,
+                    'list' => $temp_name
+                );
+                array_push($income, $temp_data);
             }
-            $temp['income'] = $income;
-            $temp['income']['onway'] = $total_onway;
-            $temp['income']['messenger'] = $total_messenger;
-            $temp['income']['in_other'] = $total_in_other;
+            $all_onway = array(
+                'price' => $total_onway,
+                'list' => $onway
+            );
+            $all_messenger = array(
+                'price' => $total_messenger,
+                'list' => $messenger
+            );
+            $all_in_other = array(
+                'price' => $total_in_other,
+                'list' => $in_other
+            );
+            $all_license = array(
+                'price' => $total_license,
+                'list' => $license
+            );
+            $all_gas = array(
+                'price' => $total_gas,
+                'list' => $gas
+            );
+            $all_oil = array(
+                'price' => $total_oil,
+                'list' => $oil
+            );
+            $all_part = array(
+                'price' => $total_part,
+                'list' => $part
+            );
+            $all_out_other = array(
+                'price' => $total_out_other,
+                'list' => $out_other
+            );
 
-            $temp['outcome']['license'] = $total_license;
-            $temp['outcome']['gas'] = $total_gas;
-            $temp['outcome']['oil'] = $total_oil;
-            $temp['outcome']['part'] = $total_part;
-            $temp['outcome']['out_other'] = $total_out_other;
+            $temp['income'] = $income;
+            $temp['income']['onway'] = $all_onway;
+            $temp['income']['messenger'] = $all_messenger;
+            $temp['income']['in_other'] = $all_in_other;
+
+            $temp['outcome']['license'] = $all_license;
+            $temp['outcome']['gas'] = $all_gas;
+            $temp['outcome']['oil'] = $all_oil;
+            $temp['outcome']['part'] = $all_part;
+            $temp['outcome']['out_other'] = $all_out_other;
 
             // คำนวนเงินคงเหลือ
             $balance = 0;
             foreach ($temp['income'] as $row) {
-                $balance+=$row;
+                $balance+=$row['price'];
             }
             foreach ($temp['outcome'] as $row) {
-                $balance-=$row;
+                $balance-=$row['price'];
             }
             $temp['balance'] = $balance;
 
@@ -641,7 +771,7 @@ class m_cost extends CI_Model {
         }
 
 
-//        $ans['num'] = $all_round;
+//        $ans['num'] = $all_seller_in_station;
         return $ans;
     }
 
