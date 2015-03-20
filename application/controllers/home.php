@@ -8,7 +8,7 @@ class Home extends CI_Controller {
     public function __construct() {
         parent::__construct();
         $this->load->model('m_template');
-        $this->load->model('m_route');
+        $this->load->model('m_home');
         $this->load->library('form_validation');
 
         //Initial language
@@ -18,9 +18,15 @@ class Home extends CI_Controller {
     public function index() {
         $data = array(
 //            'route' => $route,
+            'timeline' => $this->m_home->check_report_day(),
         );
 
-//        $this->m_template->set_Debug($this->session->userdata('permittion'));
+        
+        $data_debug = array(
+//            'timeline' => $this->m_home->check_report_day(),
+        );
+
+        $this->m_template->set_Debug($data_debug);
         //$this->m_template->set_Permission('SSL');
         $this->m_template->set_Content('home/main', $data);
         $this->m_template->showTemplate();
