@@ -74,6 +74,7 @@ class m_login extends CI_Model {
         $this->db->where('un.UserName', $user);
         $this->db->where('un.Password', md5($pass));
         $this->db->where('un.IsNormal', 1);
+        $this->db->where('ep.PID', '3');
         $query = $this->db->get();
         if ($query->num_rows() == 1) {
             return $query->result_array();

@@ -30,60 +30,59 @@
 <div class="container">
     <div class="row">
         <div class="col-sm-6" >
-            <div id="panalPositions" class="panel panel-default">
+            <div id="panalPositions" class="panel panel-info">
                 <div class="panel-heading">
-                    <h3 class="panel-title">ตำแหน่งงาน</h3>
+                    <h3 class="panel-title">ข้อมูลส่วนตัว</h3>
                 </div>
                 <div class="panel-body">
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>ชื่อตำแหน่ง</th>
-                                        <th>จำนวนพนักงาน</th>
-                                        <th></th>
-                                    </tr>
-
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>
-                                            ชื่อตำแหน่งงาน
-                                        </td>
-                                        <td>
-                                            10
-                                        </td>
-                                        <td>
-                                            <button class="btn btn-info btn-xs" data-toggle="modal" data-target="#frm_position"><i class="fa fa-pencil"></i></button>
-                                            <a class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></a>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-
-                        </div>
-                    </div>
-                    <div class="row text-center">
-                        <div class="col-sm-12">
-                            <button class="btn btn-primary" data-toggle="modal" data-target="#frm_position">
-                                <i class="fa fa-plus"></i>&nbsp;&nbsp;เพิ่มตำแหน่งงาน
-                            </button>
-
-                        </div>
-                    </div>
+                    <address>
+                        <h4 style="margin: 0px 0px 10px 0px;">ประวัติ</h4>
+                        <strong>รหัสประชาชน</strong> <?= $detail['PersonalID'] ?><br>
+                        <strong>ชื่อ - นามสกุล</strong> <?= $detail['Title'] . $detail['FirstName'] . ' ' . $detail['LastName'] ?><br>
+                        <strong>ชื่อเล่น</strong> <?= $detail['NickName'] ?><br>
+                    </address>
                 </div>
             </div>
         </div>
         <div class="col-sm-6" >
             <div id="panalPositions" class="panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title">คำนำหน้าชื่อ</h3>
+                    <h3 class="panel-title">รหัสผ่านเพื่อเข้าระบบ</h3>
                 </div>
                 <div class="panel-body">
-                    Panel content
+                    <address>
+                        <strong>Username</strong> <?= $detail['EID'] ?><br>
+                    </address>
                 </div>
             </div>
+            <?= $form_open ?>
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title">เปลี่ยนรหัสผ่าน</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-sm-5 control-label">รหัสผ่านเก่า</label>
+                            <div class="col-sm-7">
+                                <input type="password" name="old_pass" class="form-control">
+                            </div>
+                        </div>  
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-sm-5 control-label">รหัสผ่านใหม่</label>
+                            <div class="col-sm-7">
+                                <input type="password" name="new_pass" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer text-center">
+                    <button type="submit" class="btn btn-success"><i class="fa fa-floppy-o"></i> เปลี่ยนรหัสผ่าน</button>
+                </div>
+            </div>
+            <?= $form_close ?>
         </div>
     </div>
 </div>

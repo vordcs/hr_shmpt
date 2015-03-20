@@ -100,7 +100,7 @@
                                 }
                             } else {
                                 ?>
-                                <tr><td colspan="5" class="text-center">ไม่พบข้อมูลผู้สมัครงานที่ยังไม่ได้รับอนุมัติ</td></tr>
+                                <tr><td colspan="6" class="text-center">ไม่พบข้อมูลผู้สมัครงานที่ยังไม่ได้รับอนุมัติ</td></tr>
                             <?php } ?>
                         </tbody>
                     </table>
