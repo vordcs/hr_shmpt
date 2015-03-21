@@ -5,18 +5,27 @@ if (!defined('BASEPATH'))
 
 class m_vehicle extends CI_Model {
 
-    function get_vehicle($vid = NULL) {
+    function get_vehicle($RCode = NULL, $VTID = NULL, $VID = NULL, $VStatus = NULL) {
         $this->db->select('*,vehicles.VID as VID');
         $this->db->from('vehicles');
-        $this->db->join('vehicles_type', 'vehicles.VTID = vehicles_type.VTID');
-        $this->db->join('vehicles_registration', 'vehicles.RegID =vehicles_registration.RegID');
-        $this->db->join('vehicles_insurance_act', 'vehicles.ActID = vehicles_insurance_act.ActID');
-        $this->db->join('t_routes_has_vehicles', 'vehicles.VID = t_routes_has_vehicles.VID');
+        $this->db->join('vehicles_type', 'vehicles.VTID = vehicles_type.VTID', 'left');
+        $this->db->join('vehicles_registration', 'vehicles.RegID =vehicles_registration.RegID', 'left');
+        $this->db->join('vehicles_insurance_act', 'vehicles.ActID = vehicles_insurance_act.ActID', 'left');
+        $this->db->join('t_routes_has_vehicles', 'vehicles.VID = t_routes_has_vehicles.VID', 'left');
         $this->db->join('vehicles_driver', 'vehicles_driver.VID = vehicles.VID', 'left');
         $this->db->join('employees', 'employees.EID = vehicles_driver.EID', 'left');
 
-        if ($vid != NULL) {
-            $this->db->where('vehicles.VID', $vid);
+        if ($RCode != NULL) {
+            $this->db->where('t_routes_has_vehicles.RCode', $RCode);
+        }
+        if ($VTID != NULL) {
+            $this->db->where('vehicles.VTID', $VTID);
+        }
+        if ($VID != NULL) {
+            $this->db->where('vehicles.VID', $VID);
+        }
+        if ($VStatus != NULL) {
+            $this->db->where('vehicles.VStatus', $VStatus);
         }
         $this->db->order_by('vehicles.VID', 'ASC');
         $query = $this->db->get();
@@ -89,8 +98,11 @@ class m_vehicle extends CI_Model {
         $v_id = $this->db->insert_id();
 
 //      insert vehicles has route
+        $RCode = $data['RCode'];
+        $VTID = $data['VTID'];
         $data_v_r = array(
-            'RCode' => $data['RCode'],
+            'RCode' => $RCode,
+            'VTID' => $VTID,
             'VID' => $v_id,
         );
         $this->db->insert('t_routes_has_vehicles', $data_v_r);
@@ -99,7 +111,9 @@ class m_vehicle extends CI_Model {
         $data['data_driver']['VID'] = $v_id;
         $this->db->insert('vehicles_driver', $data['data_driver']);
         $vdid = $this->db->insert_id();
-
+        
+//      insert vehicles_current_stations
+        $this->insert_vehicles_current_stations($RCode, $VTID, $v_id);
         return $v_id;
     }
 
@@ -135,7 +149,7 @@ class m_vehicle extends CI_Model {
         $this->db->where('VID', $vid);
         $this->db->update('vehicles_driver', $data['data_driver']);
 
-//        return $vid;
+        return $vid;
     }
 
     function delete_vehicle($VID, $RCode, $RegID, $ActID) {
@@ -148,6 +162,71 @@ class m_vehicle extends CI_Model {
             return TRUE;
         else
             return FALSE;
+    }
+
+    function insert_vehicles_current_stations($RCode, $VTID, $VID) {
+        $this->load->model('m_station');
+        $stations = $this->m_station->get_stations($RCode, $VTID);
+        if (count($stations) > 0) {
+            $station = reset($stations);
+            $data = array(
+                'VID' => $VID,
+                'CurrentTime' => $this->m_datetime->getTimeNow(),
+                'CurrentDate' => $this->m_datetime->getDateToday(),
+                'CurrentStationID' => $station['SID'],
+                'CurrentStatonSeq' => $station['Seq'],
+                'UpdateDate' => $this->m_datetime->getDateTimeNow(),
+            );
+            $this->db->insert('vehicles_current_stations',$data);
+        }
+    }
+
+    function set_form_view($rcode = NULL, $vtid = NULL, $vcode = NULL) {
+
+        $this->load->model('m_route');
+        $result = array();
+        if ($vtid != NULL && $vtid != 0) {
+            $vehicle_types = $this->get_vehicle_types($vtid);
+        } else {
+            $vehicle_types = $this->get_vehicle_types();
+        }
+        foreach ($vehicle_types as $type) {
+            $VTID = $type['VTID'];
+            $VTName = $type['VTDescription'];
+
+
+            $route_in_type = array();
+            if ($rcode != NULL && $rcode != 0) {
+                $routes = $this->m_route->get_route($rcode, $VTID);
+            } else {
+                $routes = $this->m_route->get_route(NULL, $VTID);
+            }
+
+            foreach ($routes as $route) {
+                $RCode = $route['RCode'];
+                $SoureceName = $route['RSource'];
+                $DestinationName = $route['RDestination'];
+                $RouteName = "$VTName สาย $RCode " . ' ' . ' ' . $SoureceName . ' - ' . $DestinationName;
+
+
+                $vehicles = $this->get_vehicle($RCode, $VTID);
+
+                $temp_route = array(
+                    'RCode' => $RCode,
+                    'RouteName' => $RouteName,
+                    'vehicles' => $vehicles,
+                );
+                array_push($route_in_type, $temp_route);
+            }
+            $temp_type = array(
+                'VTID' => $VTID,
+                'VTName' => $VTName,
+                'NumberRoute' => count($routes),
+                'routes' => $route_in_type,
+            );
+            array_push($result, $temp_type);
+        }
+        return $result;
     }
 
     function set_form_add($rcode, $vtid) {
@@ -520,10 +599,10 @@ class m_vehicle extends CI_Model {
 
 //       ข้อมูลรถ
         $this->form_validation->set_rules('VTID', 'ประเภทรถ', 'trim|required|xss_clean|callback_check_dropdown');
-        $this->form_validation->set_rules('NumberPlate', 'ทะเบียนรถ', 'trim|required|xss_clean|callback_check_numberplate');
+//        $this->form_validation->set_rules('NumberPlate', 'ทะเบียนรถ', 'trim|required|xss_clean|callback_check_numberplate');
         $this->form_validation->set_rules('VCode', 'เบอร์รถ', 'trim|required|xss_clean|callback_check_vcode');
-        $this->form_validation->set_rules('VColor', 'สีรถ', 'trim|required|xss_clean');
-        $this->form_validation->set_rules('VBrand', 'ยี่ห้อรถ', 'trim|required|xss_clean');
+//        $this->form_validation->set_rules('VColor', 'สีรถ', 'trim|required|xss_clean');
+//        $this->form_validation->set_rules('VBrand', 'ยี่ห้อรถ', 'trim|required|xss_clean');
         $this->form_validation->set_rules('VSeat', 'จำนวนที่นั่ง', 'trim|required|xss_clean');
         $this->form_validation->set_rules('RegNote', 'หมายเหตุ', 'trim|xss_clean');
 
@@ -532,24 +611,59 @@ class m_vehicle extends CI_Model {
         $this->form_validation->set_rules('DateExpire', 'วันหมดอายุ', 'trim|required|xss_clean');
         $this->form_validation->set_rules('VRNote', 'หมายเหตุ', 'trim|xss_clean');
 //       ประกันและพรบ
-        $this->form_validation->set_rules('InsuranceCompanyName', 'ชื่อบริษัทประกัน', 'trim|required|xss_clean');
-        $this->form_validation->set_rules('PolicyType', 'ประเภทกรมธรรม์', 'trim|required|xss_clean|callback_check_dropdown');
+//        $this->form_validation->set_rules('InsuranceCompanyName', 'ชื่อบริษัทประกัน', 'trim|required|xss_clean');
+//        $this->form_validation->set_rules('PolicyType', 'ประเภทกรมธรรม์', 'trim|required|xss_clean|callback_check_dropdown');
         $this->form_validation->set_rules('PolicyStart', 'วันที่เริ่มกรมธรรม์', 'trim|required|xss_clean');
         $this->form_validation->set_rules('PolicyEnd', 'วันที่สิ้นสุดกรมธรรม์', 'trim|required|xss_clean');
-        $this->form_validation->set_rules('PolicyNumber', 'เลขที่กรมธรรม์', 'trim|required|xss_clean');
+//        $this->form_validation->set_rules('PolicyNumber', 'เลขที่กรมธรรม์', 'trim|required|xss_clean');
         $this->form_validation->set_rules('ActNote', 'หมายเหตุ', 'trim|xss_clean');
         //พนักงานขับรถ
-        $this->form_validation->set_rules('EID', 'รหัสพนักงาน', 'trim|required|xss_clean');
-        $this->form_validation->set_rules('Driverlicense', 'ใบขับขี่', 'trim|required|xss_clean');
-        $this->form_validation->set_rules('ExpireDate', 'วันหมดอายุ', 'trim|required|xss_clean');
+//        $this->form_validation->set_rules('EID', 'รหัสพนักงาน', 'trim|required|xss_clean');
+//        $this->form_validation->set_rules('Driverlicense', 'ใบขับขี่', 'trim|required|xss_clean');
+//        $this->form_validation->set_rules('ExpireDate', 'วันหมดอายุ', 'trim|required|xss_clean');
         return TRUE;
+    }
+
+    public function get_post_form_search() {
+        $strtitle = '';
+        $vtid = $this->input->post('VTID');
+        $rcode = $this->input->post('RCode');
+        $vcode = $this->input->post('VCode');
+        $number_plate = $this->input->post('NumberPlate');
+
+        if ($vtid != '0' | $rcode != '0' | $vcode != NULL || $number_plate != NULL) {
+            $strtitle = '<strong>ผลการค้นหา : </strong> ';
+        } else {
+            $strtitle = NULL;
+        }
+        if ($vtid != '0') {
+            $vehicle_types = reset($this->get_vehicle_types($vtid));
+            $strtitle .= $vehicle_types['VTDescription'] . '  ';
+        }
+
+        if ($rcode != '0') {
+            $route = reset($this->m_vehicle->get_route($rcode, NULL));
+            $strtitle .= 'เส้นทาง ' . $route['RCode'] . ' ' . $route['RSource'] . ' - ' . $route['RDestination'] . '  ';
+        }
+
+        if ($vcode != NULL || $number_plate != NULL) {
+            if ($vcode != NULL)
+                $strtitle .= 'เบอร์ ' . $vcode . '  ';
+            if ($number_plate != NULL)
+                $strtitle .= 'ทะเบียน ' . $number_plate . '  ';
+        }
+        $data_form_search = array(
+            'StringData' => $strtitle,
+            'RCode' => $rcode,
+        );
+        return $data_form_search;
     }
 
     function get_post_form_add($rcode, $vtid) {
 //       ข้อมูลรถ        
         $data_vehicle = array(
             'NumberPlate' => $this->input->post('NumberPlate'),
-            'VTID' => $vtid,
+            'VTID'=>$vtid,
             'VCode' => $this->input->post('VCode'),
             'VColor' => $this->input->post('VColor'),
             'VBrand' => $this->input->post('VBrand'),
@@ -587,6 +701,7 @@ class m_vehicle extends CI_Model {
 
         $form_data = array(
             'RCode' => $rcode,
+            'VTID' => $vtid,
             'data_vehicle' => $data_vehicle,
             'data_registered' => $data_registered,
             'data_act' => $data_act,

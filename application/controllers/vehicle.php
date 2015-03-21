@@ -68,15 +68,18 @@ class vehicle extends CI_Controller {
             $data['vehicles'] = $this->m_vehicle->get_vehicle();
         }
 
+        $data['data'] = $this->m_vehicle->set_form_view($rcode, $vtid, $vcode, $number_plate);
+
         $data_debug = array(
 //            'RCode' => $this->input->post('RCode'),
 //            'strtitle' => $data['strtitle'],
 //            'vehicle_types' => $data['vehicle_types'],
 //            'route' => $data['route'],
 //            'vehicles' => $data['vehicles'],
+//            'data' => $data['data'],
         );
 
-//        $this->m_template->set_Debug($data);
+        $this->m_template->set_Debug($data_debug);
         $this->m_template->set_Title('จัดการรถโดยสาร');
         $this->m_template->set_Permission('VEI');
         $this->m_template->set_Content('vehicle/vehicles', $data);
@@ -129,7 +132,7 @@ class vehicle extends CI_Controller {
         $type_name = $route[0]['VTDescription'];
 
         if ($this->m_vehicle->validation_form_edit() && $this->form_validation->run() == TRUE) {
-            $form_data = $this->m_vehicle->get_post_form_edit($vid);
+            $form_data = $this->m_vehicle->get_post_form_edit($rcode,$vtid,$vid);
 //            $this->m_template->set_Debug($form_data);
 //Update data
             $this->m_vehicle->update_vehicle($form_data);
@@ -141,7 +144,7 @@ class vehicle extends CI_Controller {
         }
 
 //      get detail and sent to load form
-        $detail = $this->m_vehicle->get_vehicle($vid);
+        $detail = $this->m_vehicle->get_vehicle($rcode,$vtid,$vid);
         if ($detail[0] != NULL) {
             $detail_driver = $this->m_vehicle->get_employee_driver($vid);
             if (count($detail_driver) > 0) {

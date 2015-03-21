@@ -319,11 +319,13 @@ class m_schedule_vehicle extends CI_Model {
                                 $VID = $vehicle['VID'];
                             }
 
-                            $this->insert_vehicle_has_schedule($TSID, $VID);
-                            $this->update_vehicles_current_stations($VID, $last_station_id, $last_station_seq, $TimeArrive);
+                            if ($VID != NULL) {
+                                $this->insert_vehicle_has_schedule($TSID, $VID);
+                                $this->update_vehicles_current_stations($VID, $last_station_id, $last_station_seq, $TimeArrive);
 
-                            $action[$n] = "INSERT -> S (RID = $RID_S) : $TSID -> $VID || UPDATE $first_station_id -> $last_station_id";
-                            $n++;
+                                $action[$n] = "INSERT -> S (RID = $RID_S) : $TSID -> $VID || UPDATE $first_station_id -> $last_station_id";
+                                $n++;
+                            }
                         }
                     }
                     if (array_key_exists($i, $schedules_d)) {
@@ -342,11 +344,13 @@ class m_schedule_vehicle extends CI_Model {
                             } else {
                                 $VID = $vehicle['VID'];
                             }
-                            $this->insert_vehicle_has_schedule($TSID, $VID);
-                            $this->update_vehicles_current_stations($VID, $first_station_id, $first_station_seq, $TimeArrive);
+                            if ($VID != NULL) {
+                                $this->insert_vehicle_has_schedule($TSID, $VID);
+                                $this->update_vehicles_current_stations($VID, $first_station_id, $first_station_seq, $TimeArrive);
 
-                            $action[$n] = "INSERT -> D (RID = $RID_D) : $TSID -> $VID || UPDATE $last_station_id -> $first_station_id";
-                            $n++;
+                                $action[$n] = "INSERT -> D (RID = $RID_D) : $TSID -> $VID || UPDATE $last_station_id -> $first_station_id";
+                                $n++;
+                            }
                         }
                     }
                 }
@@ -442,10 +446,10 @@ class m_schedule_vehicle extends CI_Model {
      */
 
     public function get_vehicles($rcode = NULL, $vtid = NULL, $status = NULL, $vid = NULL) {
-        
+
         $this->db->join('t_routes_has_vehicles', 'vehicles.VID = t_routes_has_vehicles.VID', 'left');
         $this->db->join('vehicles_current_stations', 'vehicles.VID = vehicles_current_stations.VID', 'left');
-        $this->db->join('t_stations','vehicles_current_stations.CurrentStationID = t_stations.SID');
+        $this->db->join('t_stations', 'vehicles_current_stations.CurrentStationID = t_stations.SID');
         if ($rcode != NULL) {
             $this->db->where('t_routes_has_vehicles.RCode', $rcode);
         }
@@ -730,11 +734,11 @@ class m_schedule_vehicle extends CI_Model {
                 $RouteName = "เส้นทาง $VTName $RCode $RSourceName - $RDestinationName";
 
                 $Vehicles = $this->get_vehicles($RCode, $VTID);
-                
+
                 $temp_in_route = array(
-                    'RCode' => $RCode,                    
+                    'RCode' => $RCode,
                     'RouteName' => $RouteName,
-                    'Vehicles'=>$Vehicles,
+                    'Vehicles' => $Vehicles,
                 );
                 array_push($routes_in_type, $temp_in_route);
             }

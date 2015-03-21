@@ -612,6 +612,7 @@ class m_schedule extends CI_Model {
     }
 
     public function get_vehicle_point($rcode = NULL, $vtid = NULL, $s_sid = NULL, $d_sid = NULL) {
+        $this->db->select('*,vehicles.VID as VID');
         $this->db->from('vehicles');
         $this->db->join('t_routes_has_vehicles', 'vehicles.VID = t_routes_has_vehicles.VID', 'left');
         $this->db->join('vehicles_current_stations AS vcs', 'vcs.VID = vehicles.VID', 'left');
