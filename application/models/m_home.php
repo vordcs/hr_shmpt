@@ -15,7 +15,7 @@ class m_home extends CI_Model {
         $this->db->join('employees AS em', 'em.EID = rd.CreateBy');
         $this->db->where('rd.ReportDate >=', $start);
         $this->db->where('rd.ReportDate <=', $end);
-        $this->db->order_by('rd.ReportTime', 'desc');
+        $this->db->order_by('rd.CreateDate', 'desc');
         $query = $this->db->get();
         $temp = $query->result_array();
 
