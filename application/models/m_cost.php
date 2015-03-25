@@ -429,6 +429,15 @@ class m_cost extends CI_Model {
                 $this->db->join('vehicles_has_cost as vhc', 'vhc.CostID=co.CostID');
                 $this->db->where('co.CreateBy', $row2['EID']);
                 $this->db->where('co.CostDate', $date);
+                $this->db->where('co.CostDetailID', '7'); // 7 = ค่าคิว
+                $query = $this->db->get();
+                $temp_sale = $query->result_array();
+                $temp_seller[$key]['queue_price'] = $temp_sale;
+
+                $this->db->from('cost as co');
+                $this->db->join('vehicles_has_cost as vhc', 'vhc.CostID=co.CostID');
+                $this->db->where('co.CreateBy', $row2['EID']);
+                $this->db->where('co.CostDate', $date);
                 $this->db->where('co.CostDetailID', '888'); // 888 = รายรับอื่นๆ
                 $query = $this->db->get();
                 $temp_sale = $query->result_array();
@@ -469,6 +478,15 @@ class m_cost extends CI_Model {
                 $query = $this->db->get();
                 $temp_sale = $query->result_array();
                 $temp_seller[$key]['part'] = $temp_sale;
+
+                $this->db->from('cost as co');
+                $this->db->join('vehicles_has_cost as vhc', 'vhc.CostID=co.CostID');
+                $this->db->where('co.CreateBy', $row2['EID']);
+                $this->db->where('co.CostDate', $date);
+                $this->db->where('co.CostDetailID', '8'); // 8 = ค่าเปอร์เซ็นต์
+                $query = $this->db->get();
+                $temp_sale = $query->result_array();
+                $temp_seller[$key]['percent_price'] = $temp_sale;
 
                 $this->db->from('cost as co');
                 $this->db->join('vehicles_has_cost as vhc', 'vhc.CostID=co.CostID');
@@ -557,11 +575,13 @@ class m_cost extends CI_Model {
             $income = array();
             $onway = array();
             $messenger = array();
+            $queue_price = array();
             $in_other = array();
             $license = array();
             $gas = array();
             $oil = array();
             $part = array();
+            $percent_price = array();
             $out_other = array();
 
             $all_onway = array();
@@ -576,12 +596,14 @@ class m_cost extends CI_Model {
                 $total_sale = 0;
                 $total_onway = 0;
                 $total_messenger = 0;
+                $total_queue_price = 0;
                 $total_in_other = 0;
 
                 $total_license = 0;
                 $total_gas = 0;
                 $total_oil = 0;
                 $total_part = 0;
+                $total_percent_price = 0;
                 $total_out_other = 0;
 
                 $temp_name = array();
@@ -598,6 +620,11 @@ class m_cost extends CI_Model {
                         'price' => 0
                     );
                     $temp_data_messenger = array(
+                        'EID' => $row_seller['EID'],
+                        'name' => $row_seller['Title'] . $row_seller['FirstName'] . ' ' . $row_seller['LastName'],
+                        'price' => 0
+                    );
+                    $temp_data_queue_price = array(
                         'EID' => $row_seller['EID'],
                         'name' => $row_seller['Title'] . $row_seller['FirstName'] . ' ' . $row_seller['LastName'],
                         'price' => 0
@@ -627,6 +654,11 @@ class m_cost extends CI_Model {
                         'name' => $row_seller['Title'] . $row_seller['FirstName'] . ' ' . $row_seller['LastName'],
                         'price' => 0
                     );
+                    $temp_data_percent_price = array(
+                        'EID' => $row_seller['EID'],
+                        'name' => $row_seller['Title'] . $row_seller['FirstName'] . ' ' . $row_seller['LastName'],
+                        'price' => 0
+                    );
                     $temp_data_out_other = array(
                         'EID' => $row_seller['EID'],
                         'name' => $row_seller['Title'] . $row_seller['FirstName'] . ' ' . $row_seller['LastName'],
@@ -652,6 +684,13 @@ class m_cost extends CI_Model {
                         if ($ticket['VID'] == $vehicle['VID']) {
                             $total_messenger+=$ticket['CostValue'];
                             $temp_data_messenger['price']+=$ticket['CostValue'];
+                        }
+                    }
+                    $temp_sale = $row_seller['queue_price'];
+                    foreach ($temp_sale as $ticket) {
+                        if ($ticket['VID'] == $vehicle['VID']) {
+                            $total_queue_price+=$ticket['CostValue'];
+                            $temp_data_queue_price['price']+=$ticket['CostValue'];
                         }
                     }
                     $temp_sale = $row_seller['in_other'];
@@ -689,6 +728,13 @@ class m_cost extends CI_Model {
                             $temp_data_part['price']+=$ticket['CostValue'];
                         }
                     }
+                    $temp_sale = $row_seller['percent_price'];
+                    foreach ($temp_sale as $ticket) {
+                        if ($ticket['VID'] == $vehicle['VID']) {
+                            $total_percent_price+=$ticket['CostValue'];
+                            $temp_data_percent_price['price']+=$ticket['CostValue'];
+                        }
+                    }
                     $temp_sale = $row_seller['out_other'];
                     foreach ($temp_sale as $ticket) {
                         if ($ticket['VID'] == $vehicle['VID']) {
@@ -699,11 +745,13 @@ class m_cost extends CI_Model {
                     array_push($temp_name, $temp_data_sale);
                     array_push($onway, $temp_data_onway);
                     array_push($messenger, $temp_data_messenger);
+                    array_push($queue_price, $temp_data_queue_price);
                     array_push($in_other, $temp_data_in_other);
                     array_push($license, $temp_data_license);
                     array_push($gas, $temp_data_gas);
                     array_push($oil, $temp_data_oil);
                     array_push($part, $temp_data_part);
+                    array_push($percent_price, $temp_data_percent_price);
                     array_push($out_other, $temp_data_out_other);
                 }
                 $temp_data = array(
@@ -719,6 +767,10 @@ class m_cost extends CI_Model {
             $all_messenger = array(
                 'price' => $total_messenger,
                 'list' => $messenger
+            );
+            $all_queue_price = array(
+                'price' => $total_queue_price,
+                'list' => $queue_price
             );
             $all_in_other = array(
                 'price' => $total_in_other,
@@ -740,6 +792,10 @@ class m_cost extends CI_Model {
                 'price' => $total_part,
                 'list' => $part
             );
+            $all_percent_price = array(
+                'price' => $total_percent_price,
+                'list' => $percent_price
+            );
             $all_out_other = array(
                 'price' => $total_out_other,
                 'list' => $out_other
@@ -748,12 +804,14 @@ class m_cost extends CI_Model {
             $temp['income'] = $income;
             $temp['income']['onway'] = $all_onway;
             $temp['income']['messenger'] = $all_messenger;
+            $temp['income']['queue_price'] = $all_in_other;
             $temp['income']['in_other'] = $all_in_other;
 
             $temp['outcome']['license'] = $all_license;
             $temp['outcome']['gas'] = $all_gas;
             $temp['outcome']['oil'] = $all_oil;
             $temp['outcome']['part'] = $all_part;
+            $temp['outcome']['percent_price'] = $all_percent_price;
             $temp['outcome']['out_other'] = $all_out_other;
 
             // คำนวนเงินคงเหลือ

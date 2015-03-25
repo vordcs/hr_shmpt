@@ -12,7 +12,7 @@
                         <?php foreach ($row as $index => $report) { ?>
                             <dd class="pos-<?= (($index % 2) == 0) ? 'right' : 'left' ?> clearfix">
                                 <div class="circ"></div>
-                                <div class="time"><?= $report['ReportTime'] ?></div>
+                                <div class="time"><?=date('H:i',  strtotime($report['ReportTime']));  ?></div>
                                 <div class="events">
                                     <div class="events-body">
                                         <h4 class="events-heading">รถ<?= ($report['VTID'] == 1) ? 'ตู้' : 'บัส' ?> สาย:<?= $report['RCode'] ?></h4>
