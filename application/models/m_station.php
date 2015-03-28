@@ -102,22 +102,22 @@ class m_station extends CI_Model {
     public function delete_station($rcode, $vtid, $sid = NULL) {
         $station = $this->get_stations($rcode, $vtid);
         if ($sid == NULL) {
-
             foreach ($station as $s) {
-//        detete all stations
+                //detete all stations
                 $this->db->where('RCode', $rcode);
                 $this->db->where('VTID', $vtid);
                 $this->db->where('SID', $s['SID']);
                 $this->db->delete('t_stations');
             }
         } else {
-//        detete station by SID
+            //detete station by SID
             $this->db->where('SID', $sid);
             $this->db->delete('t_stations');
         }
     }
 
-    public function delete_fares($rcode, $vtid, $station_id) {
+    public function delete_fares($rcode, $vtid, $SID) {
+        
         $this->db->where('RCode', $rcode);
         $this->db->where('VTID', $vtid);
 
@@ -187,6 +187,34 @@ class m_station extends CI_Model {
         return $rs;
     }
 
+     public function get_stations_by_start_point($start_point, $rcode = null, $vtid = null, $seq = NULL) {
+        if ($rcode != NULL) {
+            $this->db->where('RCode', $rcode);
+        }
+        if ($vtid != NULL) {
+            $this->db->where('VTID', $vtid);
+        }
+        if ($seq != NULL && $start_point == 'S') {
+            $this->db->where('Seq >', $seq);
+        }
+        if ($seq != NULL && $start_point == 'D') {
+            $this->db->where('Seq <', $seq);
+        }
+
+        if ($start_point == 'S') {
+            $this->db->order_by('Seq', 'asc');
+        }
+        if ($start_point == 'D') {
+            $this->db->order_by('Seq', 'desc');
+        }
+
+        $query = $this->db->get('t_stations');
+        $rs = $query->result_array();
+
+        return $rs;
+    }
+
+    
     public function get_fares($rcode, $vtid, $source_id = NULL, $destination_id = NULL) {
 
         $this->db->join('f_fares_has_rate', 'f_fares_has_rate.FID=f_fares.FID');

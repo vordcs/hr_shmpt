@@ -11,70 +11,85 @@
             </div>
         </div>
     </div>
-    <div class="row">
-
-        <legend>ตำแหน่งปัจจุบันของรถ : <?= $this->m_datetime->getDateToday() ?></legend>
+    <div class="row">        
         <?php
-        foreach ($routes as $r) {
-            $vtid = $r['VTID'];
-            $vt_name = $r['VTDescription'];
-            $rcode = $r['RCode'];
-            $source = $r['RSource'];
-            $destination = $r['RDestination'];
-            $schedule_type = $r["ScheduleType"];
-            $route_name = "$vt_name " . $rcode . ' ' . ' ' . $source . ' - ' . $destination;
+        foreach ($data['data_vehicles'] as $type) {
+            $VTID = $type['VTID'];
             ?>
             <div class="col-md-12">
-                <p><?= $route_name ?></p>
-
-                <table class="table table-bordered table-hover">  
-                    <thead>
-                        <tr>
-                            <th>สถานะรถ</th>
-                            <th>เบอร์รถ</th>
-                            <th>เวลามาถึง</th>
-                            <th>สถานี</th>
-                            <th>รหัสสถานี</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+                <p class="lead"><?= $type['VTName'] ?></p>
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs nav-justified" role="tablist">
+                    <?php
+                    foreach ($type['routes'] as $route) {
+                        $RCode = $route['RCode'];
+                        $id_tab = "$RCode$VTID";
+                        ?>
+                        <li><a href="#<?= $id_tab ?>" aria-controls="home" role="tab" data-toggle="tab"><?= $route['RouteName'] ?></a></li>                
                         <?php
-                        if (count($vehicles) > 0) {
-                            foreach ($vehicles as $vehicle) {
-                                $vcode = $vehicle['VCode'];
-                                $in_time = $vehicle['CurrentTime'];
-                                $curent_station_id = $vehicle['CurrentStationID'];
-                                $current_staton_seq = $vehicle['CurrentStatonSeq'];
-                                $curent_station_name = '';
-                                foreach ($stations as $station) {
-                                    $station_name = $station['StationName'];
-                                    if ($rcode == $station['RCode'] && $curent_station_id == $station['SID']) {
-                                        $curent_station_name = $station_name;
-                                    }
-                                }
-                                if ($rcode == $vehicle['RCode'] && $vtid == $vehicle['VTID']) {
-                                    $v_status = '<i class="fa fa-check fa-lg" style="color:#00B5AD;"></i>';
-                                    if ($vehicle['VStatus'] == 0) {
-                                        $v_status = '<i class="fa fa-times fa-lg" style="color:#e9322d;"></i>';
-                                    }
-                                    ?>
-                                    <tr>
-                                        <td class="text-center"><?= $v_status ?></td>
-                                        <td class="text-center"><?= $vcode ?></td>                                        
-                                        <td class="text-center"><?= $in_time ?></td>
-                                        <td class="text-center"><?= $curent_station_name ?></td>
-                                        <td class="text-center"><?= $curent_station_id ?></td>
-                                    </tr>
-                                    <?php
-                                }
-                            }
-                        }
-                        ?>                   
-                    </tbody>
-                </table>
+                    }
+                    ?>
+                </ul>
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    <?php
+                    foreach ($type['routes'] as $route) {
+                        $RCode = $route['RCode'];
+                        $id_content = "$RCode$VTID";
+                        ?>
+                        <div role="tabpanel" class="tab-pane" id="<?= $id_content ?>">
+                            <legend>ตำแหน่งปัจจุบันของรถ : <?= $this->m_datetime->getDateToday() ?></legend>
+                            <div class="col-md-12">
+                                <table class="table table-bordered table-hover">  
+                                    <thead>
+                                        <tr>
+                                            <th>สถานะรถ</th>
+                                            <th>เบอร์รถ</th>
+                                            <th>เวลามาถึง</th>
+                                            <th>สถานี</th>
+                                            <th>รหัสสถานี</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php
+                                        foreach ($route['vehicles'] as $vehicle) {
+                                            $vcode = $vehicle['VCode'];
+                                            $in_time = $vehicle['CurrentTime'];
+                                            $curent_station_id = $vehicle['CurrentStationID'];
+                                            $current_staton_seq = $vehicle['CurrentStatonSeq'];
+                                            $curent_station_name = $vehicle['StationName'];
+                                            $v_status = '<i class="fa fa-check fa-lg" style="color:#00B5AD;"></i>';
+                                            if ($vehicle['VStatus'] == 0) {
+                                                $v_status = '<i class="fa fa-times fa-lg" style="color:#e9322d;"></i>';
+                                            }
+                                            ?>
+                                            <tr>
+                                                <td class="text-center"><?= $v_status ?></td>
+                                                <td class="text-center"><?= $vcode ?></td>                                        
+                                                <td class="text-center"><?= $in_time ?></td>
+                                                <td class="text-center"><?= $curent_station_name ?></td>
+                                                <td class="text-center"><?= $curent_station_id ?></td>
+                                            </tr>
+                                            <?php
+                                        }
+                                        ?>                   
+                                    </tbody>
+                                </table>
+                            </div>
+                            <?php  ?>
+                            <div class="col-md-12">
+
+                            </div>
+                            <?php ?>
+                        </div> 
+                        <?php
+                    }
+                    ?>
+                </div>
             </div>
         <?php } ?>
-    </div>
+    </div>   
+ 
     <div class="row">  
         <legend>ตารางเวลาเดินรถ</legend>
         <div class="col-md-12">

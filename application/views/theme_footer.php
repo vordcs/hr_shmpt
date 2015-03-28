@@ -6,6 +6,16 @@
                 <h4 class="modal-title" id="modal-title">Confirm</h4>
             </div>
             <div class="modal-body" id="modal-body">
+                <div class="col-md-12">
+                    <div class="modal-body-title">
+
+                    </div>                    
+                </div>
+                <div class="col-md-12">
+                    <div class="modal-body-content">
+
+                    </div>                    
+                </div>
             </div>
             <div class="modal-footer" align="center">
                 <button type="button" class="btn btn-default" data-dismiss="modal" id="btn_no"><i class="fa fa-times fa-lg"></i>&nbsp;ไม่</button>
@@ -30,15 +40,19 @@
         $('#top').click(function () {
             $("html, body").animate({scrollTop: 0}, 500);
         });
-    });  
+    });
     $('#confirm').on('show.bs.modal', function (e) {
-
         var id = $(e.relatedTarget).data('id');
         var title = $(e.relatedTarget).data('title');
         var sub_title = $(e.relatedTarget).data('sub_title');
         var info = $(e.relatedTarget).data('info');
+        var content = $(e.relatedTarget).data('content');
+        var form = $(e.relatedTarget).data('form_id');
+        var url = '<?= base_url() ?>' + $(e.relatedTarget).data('href');
+
         $('.modal-title').html('<i class="fa fa-info-circle fa-lg"></i> คุณต้องการ <strong>' + title + '</strong>');
-        $('.modal-body').html('<strong>' + sub_title + '</strong> : ' + info + '');
+        $('.modal-body-title').html('<strong>' + sub_title + '</strong> : ' + info + '');
+        $('.modal-body-content').html(content);
         if (id === 1) //edit
         {
             $('#btn_yes').show();
@@ -49,7 +63,7 @@
         {
             $('#btn_yes').hide();
             $('#btn_delete').show();
-            $(this).find('.danger').attr('href', $(e.relatedTarget).data('href'));
+            $(this).find('.danger').attr('href', url);
 
         }
         else if (id === 3) //cancle
@@ -58,12 +72,20 @@
             $('#btn_delete').hide();
             $(this).find('.yes').attr('href', $(e.relatedTarget).data('href'));
 
-        } else if (id == 4) //active
+        } else if (id === 4) //active
         {
             $('#btn_yes').show();
             $('#btn_delete').hide();
             $(this).find('.yes').attr('href', $(e.relatedTarget).data('href'));
 
+        } else if (id === 5)//submit form
+        {
+            $('#btn_yes').show();
+            $('#btn_delete').hide();
+
+            $("#btn_yes").on('click', function () {
+                $('#' + form).submit();
+            });
         }
     });
 </script>

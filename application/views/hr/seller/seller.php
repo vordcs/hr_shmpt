@@ -29,215 +29,124 @@
         </div>
     </div>
 </div>
-
-<div class="container">
-    <div class="row"> 
-        <div class="panel panel-info">
-            <div class="panel-heading">
-                <h3 class="panel-title"><i class="fa fa-search">&nbsp;ค้นหา</i></h3>
+<div class="container" style="padding-top: 3% ;"> 
+    <?= $form['form'] ?>
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="col-md-4">           
+                <?=$form['VTID']?>
             </div>
-            <div class="panel-body">
-                <?= $form['form'] ?>
-                <div class="col-md-6 col-md-offset-3">
-                    <!--                    <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label for="">ประเภทรถ</label>
-                    <?php $form['VTID'] ?>
-                                            </div>                      
-                                        </div>-->
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="">เส้นทาง</label>
-                            <?= $form['RCode'] ?>
-                        </div>                      
-                    </div>
-                    <div class="col-md-12 text-center">
-                        <button type="submit" class="btn btn-default"><i class="fa fa-search"></i>&nbsp;&nbsp;ค้นหา</button>
-                    </div>
-
-                </div>
-                <?= form_close() ?>
-            </div>            
+            <div class="col-md-6">   
+                <?=$form['RCode']?>
+            </div>
+            <div class="col-md-2">                
+                <button type="submit" class="btn btn-default"><i class="fa fa-search"></i>&nbsp;แสดงผล</button>
+            </div>   
         </div>
-    </div>   
-    <div class="row"> 
+    </div>
+    <?= form_close() ?>
+</div>
+<div class="container">
+    <div class="row">
+        <p class="lead">
+            ข้อมูลพนักงานขายตั๋ว
+        </p>
         <?php
-        if (count($sort) <= 0) {
-            echo '<div class="col-md-12">
-                    <div class="well" style="padding-bottom: 100px;padding-top: 100px;">
-                        <p class="lead text-center">ไม่พบข้อมูล</p>
-                    </div>
-                </div>';
-        } else {
+        foreach ($data_seller as $type) {
+            $VTID = $type['VTID'];
             ?>
-            <div class="col-md-12">
-                <h4>ข้อมูลพนักงานขายตั๋ว</h4>
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-
-                            <th style="width: 15%">รหัสพนักงาน</th>
-                            <th style="width: 25%">ชื่อ-นามสกุล</th> 
-                            <th style="width: 10%">ประเภทรถ</th>
-                            <th style="width: 30%">เส้นทาง</th>
-                            <th style="width: 20%">จุดจอด</th>
-                            <th colspan="2" style="width: 10%"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php
-                        foreach ($sort as $emp) {
-                            $flag_tr = FALSE;
-                            $EID = $emp['EID'];
-                            $name = $emp['Title'] . $emp['FirstName'] . ' ' . $emp['LastName'];
-                            $num_sell_1 = count($emp['sell_1']);
-                            $num_sell_2 = count($emp['sell_2']);
-                            $row_spam = $num_sell_1 + $num_sell_2 + 1;
-
-                            if ($flag_tr == FALSE) {
-                                echo '<tr>';
-                                $flag_tr = TRUE;
-                            }
-
-                            echo '<td rowspan="' . $row_spam . '" class="text-center">' . $EID . '</td>';
-                            echo '<td rowspan="' . $row_spam . '" colspan="">' . $name . '</td>';
-
-                            foreach ($vehicle_types as $type) {
-                                $vtid = $type['VTID'];
-                                $vt_name = $type['VTDescription'];
-
-                                $route_name = '-';
-                                $station_name = '-';
-                                $add = array(
-                                    'class' => "btn btn-success btn-sm",
-                                );
-                                $col_span = 0;
-                                $action_add = anchor("hr/seller/add/$EID/NULL/$vtid", '<i class="fa fa-plus"></i>', $add);
-                                $action_delete = '';
-
-                                if ($vtid == '1') {
-                                    $flag_first = TRUE;
-                                    for ($i = 0; $i < $num_sell_1; $i++) {
-                                        $seller = (isset($emp['sell_1'][$i])) ? $emp['sell_1'][$i] : NULL;
-                                        $row_v = count($emp['sell_1']);
-                                        if ($seller['EID'] != NULL && $seller['EID'] == $EID) {
-                                            if ($flag_tr == FALSE && $flag_first == FALSE) {
-                                                echo '<tr>';
-                                                $flag_tr = TRUE;
-                                            }
-                                            if ($flag_first) {
-                                                echo '<tr>';
-                                                echo '<td rowspan="' . $row_v . '" class="text-center">' . $vt_name . '</td>';
-                                                $flag_tr = TRUE;
-                                            }
-                                            $seller_id = $seller['SellerID'];
-                                            $rcode = $seller['RCode'];
-                                            $source = $seller['RSource'];
-                                            $destination = $seller['RDestination'];
-                                            $route_name = "$rcode  $source - $destination";
-                                            $station_name = $seller['StationName'];
-                                            $col_span = 0;
-                                            $delete = array(
-                                                'type' => "button",
-                                                'class' => "btn  btn-danger btn-sm",
-                                                'data-id' => "2",
-                                                'data-title' => "ลบพนักงานขายตั๋วโดยสาร",
-                                                'data-sub_title' => "$name  ",
-                                                'data-info' => " จุดจอด $station_name",
-                                                'data-toggle' => "modal",
-                                                'data-target' => "#confirm",
-                                                'data-href' => "seller/delete/$seller_id",
-                                            );
-                                            $action_delete = anchor('#', '<i class="fa fa-times"></i>', $delete);
-
-                                            echo '<td class="text-center">' . $route_name . '</td>';
-                                            echo '<td class="text-center">' . $station_name . '</td>';
-                                            echo '<td class="text-center">' . $action_delete . '</td>';
-                                            if ($flag_first) {
-                                                echo '<td rowspan="' . $row_v . '" class="text-center">' . $action_add . '</td>';
-                                                $flag_first = FALSE;
-                                            }
-                                            if ($flag_tr) {
-                                                echo '</tr>';
-                                                $flag_tr = FALSE;
-                                            }
-                                        } else {
-                                            echo '<tr>';
-                                            echo '<td class="text-center">' . $vt_name . '</td>';
-                                            echo '<td class="text-center"> - </td>';
-                                            echo '<td class="text-center"> - </td>';
-                                            echo '<td class="text-center"> - </td>';
-                                            echo '<td class="text-center">' . $action_add . '</td>';
-                                            echo '</tr>';
-                                        }
-                                    }
-                                } else if ($vtid == '2') {
-                                    $flag_first = TRUE;
-                                    for ($i = 0; $i < $num_sell_2; $i++) {
-                                        $seller = (isset($emp['sell_2'][$i])) ? $emp['sell_2'][$i] : NULL;
-                                        $row_v = count($emp['sell_2']);
-                                        if ($seller['EID'] != NULL && $seller['EID'] == $EID) {
-                                            if ($flag_tr == FALSE && $flag_first == FALSE) {
-                                                echo '<tr>';
-                                                $flag_tr = TRUE;
-                                            }
-                                            if ($flag_first) {
-                                                echo '<tr>';
-                                                echo '<td rowspan="' . $row_v . '" class="text-center">' . $vt_name . '</td>';
-                                                $flag_tr = TRUE;
-                                            }
-                                            $seller_id = $seller['SellerID'];
-                                            $rcode = $seller['RCode'];
-                                            $source = $seller['RSource'];
-                                            $destination = $seller['RDestination'];
-                                            $route_name = "$rcode  $source - $destination";
-                                            $station_name = $seller['StationName'];
-                                            $col_span = 0;
-                                            $delete = array(
-                                                'type' => "button",
-                                                'class' => "btn  btn-danger btn-sm",
-                                                'data-id' => "2",
-                                                'data-title' => "ลบพนักงานขายตั๋วโดยสาร",
-                                                'data-sub_title' => "$name  ",
-                                                'data-info' => " จุดจอด $station_name",
-                                                'data-toggle' => "modal",
-                                                'data-target' => "#confirm",
-                                                'data-href' => "seller/delete/$seller_id",
-                                            );
-                                            $action_delete = anchor('#', '<i class="fa fa-times"></i>', $delete);
-
-                                            echo '<td class="text-center">' . $route_name . '</td>';
-                                            echo '<td class="text-center">' . $station_name . '</td>';
-                                            echo '<td class="text-center">' . $action_delete . '</td>';
-                                            if ($flag_first) {
-                                                echo '<td rowspan="' . $row_v . '" class="text-center">' . $action_add . '</td>';
-                                                $flag_first = FALSE;
-                                            }
-                                            if ($flag_tr) {
-                                                echo '</tr>';
-                                                $flag_tr = FALSE;
-                                            }
-                                        } else {
-                                            echo '<tr>';
-                                            echo '<td class="text-center">' . $vt_name . '</td>';
-                                            echo '<td class="text-center"> - </td>';
-                                            echo '<td class="text-center"> - </td>';
-                                            echo '<td class="text-center"> - </td>';
-                                            echo '<td class="text-center">' . $action_add . '</td>';
-                                            echo '</tr>';
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        ?>   
-                    </tbody>
-                </table>
+            <div class="col-md-12">  
+                <legend class="lead"><?= $type['VTName'] ?></legend>
             </div>
             <?php
-        }
-        ?>
+            foreach ($type['routes'] as $route) {
+                $RCode = $route['RCode'];
+                $add = array(
+                    'class' => "btn btn-success pull-right",
+                );
+                $RouteName = $route['RouteName'];
+                ?>
+                <div class="col-md-12">
+                    <div class="widget">
+                        <div class="widget-header">
+                            <?= $RouteName ?>
+                        </div>
+                        <div class="widget-content">   
+                            <div class="col-md-12" style="padding-bottom: 1%;">
+                                <?php
+                                echo anchor("hr/seller/add/$RCode/$VTID", '<i class="fa fa-plus"></i>&nbsp;พนักงานขายตั๋ว', $add);
+                                ?>
+                            </div>
+                            <?php
+                            $num_station = count($route['stations']);
+                            if ($num_station == 1) {
+                                $num_col = "6 col-md-offset-3";
+                            } elseif ($num_station == 2) {
+                                $num_col = "6";
+                            } else {
+                                $num_col = "4";
+                            }
+                            foreach ($route['stations'] as $station) {
+                                $StationName = $station['StationName'];
+                                ?>
+                                <div class="col-md-<?= $num_col ?>">
+                                    <div class="panel panel-default">
+                                        <!-- Default panel contents -->
+                                        <div class="panel-heading"><?= $station['StationName'] ?></div> 
+                                        <!-- Table -->
+                                        <table class="table table-hover table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th style="width: 30%">รหัสพนักงาน</th>
+                                                    <th style="width: 55%">ชื่อ-นามสกุล</th>
+                                                    <th style="width: 15%"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php
+                                                foreach ($station['sellers'] as $seller) {
+                                                    $SellerID = $seller['SellerID'];
+                                                    $EID = $seller['EID'];
+                                                    $Title = $seller['Title'];
+                                                    $FirstName = $seller['FirstName'];
+                                                    $LastName = $seller['LastName'];
+                                                    $SellerNote = $seller['SellerNote'];
+                                                    $FullName = "$Title$FirstName $LastName";
+                                                    if ($SellerNote != NULL) {
+                                                        $FullName .=" ($SellerNote)";
+                                                    }
 
+                                                    $delete = array(
+                                                        'class' => "btn btn-danger btn-sm",
+                                                        'type' => "button",
+                                                        'data-id' => "1",
+                                                        'data-title' => "คุณต้องการ ลบ พนักงานขายตั๋ว ",
+                                                        'data-sub_title' => "$FullName",
+                                                        'data-info' => "$StationName",
+                                                        'data-content' => "$RouteName",
+                                                        'data-toggle' => "modal",
+                                                        'data-target' => "#confirm",
+                                                        'data-href' => "seller/delete/$SellerID",
+                                                    );
+                                                    $action = anchor('#', '<i class="fa fa-trash-o"></i>', $delete);
+                                                    ?>
+                                                    <tr>
+                                                        <td class="text-center"><?= $EID ?></td>
+                                                        <td class="text-left text"><?= $FullName ?></td>
+                                                        <td class="text-center"><?= $action ?></td>
+                                                    </tr>
+                                                <?php } ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                </div>
+                            <?php } ?>
+                        </div>
+                    </div>
+                </div>
+            <?php } ?>
+        <?php } ?>
     </div>
-
 </div>
+

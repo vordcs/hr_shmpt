@@ -70,7 +70,7 @@ class schedule_vehicle extends CI_Controller {
 //            'vehicles_initicial_station' => $vehicles_initicial_station,
 //            'set_time_initicial_vehicles'=>$set_time_initicial_vehicles,
 //            'run_vehicles_to_schedule' => $run_vehicles_to_schedule,
-//            'data' => $data['data'],
+//            'data_scheadules' => $data['data']['data_scheadules'],
 //            'schedules_manual'=>  $this->m_schedule_vehicle->get_schedule_master(7),
         );
 
