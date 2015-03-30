@@ -135,10 +135,10 @@ class fares extends CI_Controller {
             $rs = $this->m_fares->update_fares($form_data);
 
 
-//            $alert['alert_message'] = "แก้ไขข้อมูลค่าโดยสาร $route_name สำเร็จ";
-//            $alert['alert_mode'] = "success";
-//            $this->session->set_flashdata('alert', $alert);
-//            redirect("fares/search/$rcode/$vtid");
+            $alert['alert_message'] = "แก้ไขข้อมูลค่าโดยสาร $route_name สำเร็จ";
+            $alert['alert_mode'] = "success";
+            $this->session->set_flashdata('alert', $alert);
+            redirect("fares/search/$rcode/$vtid");
         }
         $data['data'] = $this->m_fares->set_form_edit_($rcode, $vtid, $SID);
         $data_debug = array(
@@ -151,8 +151,8 @@ class fares extends CI_Controller {
 //            'form' => $data['form'],
 //            'price' =>  $this->m_fares->get_post_form_add($rcode, $vtid),
 //            'data' => $data['data'],
-            'form_data' => $form_data,
-            'rs' => $rs,
+//            'form_data' => $form_data,
+//            'rs' => $rs,
         );
 
         $this->m_template->set_Debug($data_debug);
