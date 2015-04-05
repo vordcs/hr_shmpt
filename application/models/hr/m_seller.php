@@ -85,6 +85,7 @@ class m_seller extends CI_Model {
         }
         if ($eid != NULL) {
             $this->db->where('sellers.EID', $eid);
+            $this->db->group_by('sellers.EID');
         }
         $query = $this->db->get('sellers');
 

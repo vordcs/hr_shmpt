@@ -187,6 +187,25 @@ class m_route extends CI_Model {
         return $query->result_array();
     }
 
+    public function get_route_by_start_point($start_point = NULL, $rcode = NULL, $vtid = NULL) {
+        $this->db->select('*');
+        
+        $this->db->join('vehicles_type', 'vehicles_type.VTID = t_routes.VTID');
+        
+        if ($rcode != NULL) {
+            $this->db->where('t_routes.RCode', $rcode);
+        }
+        if ($vtid != NULL) {
+            $this->db->where('t_routes.VTID', $vtid);
+        }
+        if ($start_point != NULL) {
+            $this->db->where('t_routes.StartPoint', $start_point);
+        }      
+        $query = $this->db->get('t_routes');
+
+        return $query->result_array();
+    }
+
     public function search_route($rcode = NULL, $source = NULL, $destination = NULL) {
 
         if ($rcode != NULL)

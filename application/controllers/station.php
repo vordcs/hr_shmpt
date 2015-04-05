@@ -63,7 +63,7 @@ class station extends CI_Controller {
             $alert['alert_mode'] = "success";
             $this->session->set_flashdata('alert', $alert);
 
-            redirect('fares/add/' . $rcode . '/' . $vtid);
+            redirect('fares/search/' . $rcode . '/' . $vtid);
         }
 //        $data_debug = array(
 ////            'page_title' => $data['page_title'],
@@ -114,7 +114,7 @@ class station extends CI_Controller {
             $alert['alert_mode'] = "success";
             $this->session->set_flashdata('alert', $alert);
 
-            redirect('fares/edit/' . $rcode . '/' . $vtid);
+            redirect('fares/search/' . $rcode . '/' . $vtid);
         }
 
         $data = array(

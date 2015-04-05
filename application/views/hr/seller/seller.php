@@ -119,7 +119,7 @@
                                                     $delete = array(
                                                         'class' => "btn btn-danger btn-sm",
                                                         'type' => "button",
-                                                        'data-id' => "1",
+                                                        'data-id' => "2",
                                                         'data-title' => "คุณต้องการ ลบ พนักงานขายตั๋ว ",
                                                         'data-sub_title' => "$FullName",
                                                         'data-info' => "$StationName",

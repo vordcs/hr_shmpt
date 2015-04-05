@@ -64,6 +64,7 @@
                 </thead>
                 <tbody>
                     <?php
+                    array_pop($data['data']);
                     foreach ($data['data'] as $rate) {
                         $source_id = $rate['SourceID'];
                         $source_name = $rate['SourceName'];

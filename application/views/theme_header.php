@@ -5,11 +5,10 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="keywords"
-              content="thaihubhosting, hosting, host, high perfomance">
+              content="">
         <meta name="description"
-              content="เว็บโฮสติ้งคุณภาพสูง ที่ได้รับการออกแบบติดตั้งและผู้แลจากผู้เชี่ยวชาญตลอด 24 ชั่วโมง">
-        <meta name="author" content="CBNUKE">
-
+              content="">
+        <meta name="author" content="VoRDcsCBNUKE">  
 
         <title><?php echo $title; ?></title>
         <!-- Favicons -->
@@ -80,7 +79,7 @@
             <div class="navbar-collapse collapse">
                 <div class="subnavbar">
                     <div class="subnavbar-inner">
-                        <div class="container" id="mainmenu">
+                        <div class="container text-center" id="mainmenu">
                             <ul class="mainnav">
                                 <li class="active"><a href="<?= base_url('home/') ?>"><i class="fa fa-dashboard"></i><span>Dashboard</span> </a> </li>
                                 <li id="btnCandidate"><a href="<?= base_url('candidate/') ?>"><i class="fa fa-bullhorn"></i><span>สมัครงาน</span> </a> </li>
@@ -88,6 +87,7 @@
                                 <li id="btnVehicle"><a href="<?= base_url('vehicle/') ?>"><i class="fa fa-car"></i><span>รถ</span> </a> </li>
                                 <li id="btnRoute"><a href="<?= base_url('route/') ?>"><i class="fa fa-share-alt"></i><span>เส้นทาง</span></a></li>
                                 <li id="btnSchedule"><a href="<?= base_url('schedule/') ?>"><i class="fa fa-list"></i><span>ตารางเดินรถ</span></a></li>
+                                <li id="btnTicket"><a href="<?= base_url('ticket/') ?>"><i class="fa fa-ticket"></i><span>ตั๋วโดยสาร</span> </a> </li>
                                 <li id="btnCost"><a href="<?= base_url('cost/') ?>"><i class="fa fa-pencil-square-o"></i><span>ค่าใช้จ่าย</span></a></li>
                                 <li id="btnReport"><a href="<?= base_url('report/') ?>"><i class="fa fa-calendar-o"></i><span>รายงาน</span> </a> </li>                              
                             </ul>

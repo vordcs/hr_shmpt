@@ -6,14 +6,14 @@ if (!defined('BASEPATH')) {
 
 class m_schedule extends CI_Model {
 
-    public function get_schedule($date = NULL, $rcode = NULL, $vtid = NULL, $rid = NULL) {
+    public function get_schedule($date = NULL, $rcode = NULL, $vtid = NULL, $rid = NULL, $TSID = NULL) {
         $this->db->select('*,t_schedules_day.TSID as TSID,t_schedules_day.RID as RID');
         $this->db->join('t_routes', ' t_schedules_day.RID = t_routes.RID ', 'left');
         $this->db->join('vehicles_has_schedules', ' vehicles_has_schedules.TSID = t_schedules_day.TSID', 'left');
         $this->db->join('vehicles', ' vehicles.VID = vehicles_has_schedules.VID', 'left');
 
-        if ($date != NULL) {
-            $this->db->where('Date', $date);
+        if ($date == NULL) {
+            $date = $this->m_datetime->getDateToday();
         }
         if ($rcode != NULL) {
             $this->db->where('t_routes.RCode', $rcode);
@@ -24,12 +24,172 @@ class m_schedule extends CI_Model {
         if ($rid != NULL) {
             $this->db->where('t_schedules_day.RID', $rid);
         }
+        if ($TSID != NULL) {
+            $this->db->where('t_schedules_day.TSID', $TSID);
+        } else {
+            $this->db->where('Date', $date);
+        }
 
         $this->db->where('t_schedules_day.ScheduleStatus', '1');
         $this->db->group_by('t_schedules_day.TSID');
         $this->db->order_by('TimeDepart,SeqNo', 'asc');
         $query_schedule = $this->db->get("t_schedules_day");
         return $query_schedule->result_array();
+    }
+
+    public function get_time_depart($date, $rid, $tsid = NULL, $sid = NULL) {
+
+        $this->load->model('m_station');
+
+        /*
+         * ข้อมูลเส้นทาง
+         */
+        $this->db->where('RID', $rid);
+        $query_route = $this->db->get('t_routes');
+        $route = $query_route->result_array()[0];
+
+        $RCode = $route['RCode'];
+        $VTID = $route['VTID'];
+        $StartPoint = $route['StartPoint'];
+        /*
+         * ข้อมูลจุดจอด
+         */
+        $stations_in_route = $this->m_station->get_stations_by_start_point($StartPoint, $RCode, $VTID);
+        $num_station = count($stations_in_route);
+        /*
+         * ข้อมูลตารางเวลาเดินรถ
+         */
+        $schedules = $this->get_schedule($date, $RCode, $VTID, $rid, $tsid);
+
+        $TimeDepart = array();
+        foreach ($schedules as $schedule) {
+            $start_time = $schedule['TimeDepart'];
+            $end_time = $schedule['TimeArrive'];
+            $rid = $schedule['RID'];
+            $temp = 0;
+            foreach ($stations_in_route as $s) {
+                if ($s['IsSaleTicket'] == '1') {
+                    $travel_time = $s['TravelTime'];
+
+                    if ($s['Seq'] == '1') {
+                        $time = strtotime($start_time);
+                    } elseif ($s['Seq'] == $num_station) {
+                        $time = strtotime($end_time);
+                    } else {
+                        $temp+=$travel_time;
+                        $time = strtotime("+$temp minutes", strtotime($start_time));
+                    }
+                    
+                    $time_depart = date('H:i', $time);
+
+                    if ($sid != NULL && $sid == $s['SID']) {
+                        $temp_time_depart = array(
+                            'RID' => $rid,
+                            'SID' => $s['SID'],
+                            "StationName" => $s['StationName'],
+                            'TimeDepart' => $time_depart,
+                        );
+                        $TimeDepart[0] = $temp_time_depart;
+                        break;
+                    } else {
+                        $temp_time_depart = array(
+                            'RID' => $rid,
+                            'SID' => $s['SID'],
+                            "StationName" => $s['StationName'],
+                            'TimeDepart' => $time_depart,
+                        );
+                        array_push($TimeDepart, $temp_time_depart);
+                    }
+                }
+            }
+        }
+        return $TimeDepart;
+    }
+
+    public function time_depart($RID, $TSID, $SID = NULL) {
+
+        $this->load->model('m_station');
+
+        /*
+         * ข้อมูลเส้นทาง
+         */
+        $this->db->where('RID', $RID);
+        $query_route = $this->db->get('t_routes');
+        $route = $query_route->result_array()[0];
+
+        $RCode = $route['RCode'];
+        $VTID = $route['VTID'];
+        $StartPoint = $route['StartPoint'];
+
+        /*
+         * ข้อมูลจุดจอด
+         */
+        $stations = $this->m_station->get_station_sale_ticket($RCode, $VTID, $StartPoint);
+        $num_station = count($this->get_stations($RCode, $VTID));
+        /*
+         * ข้อมูลตารางเวลาเดินรถ
+         */
+        $schedules = $this->get_schedule(NULL, $RCode, $VTID, $RID, $TSID);
+
+        $TimeDepart = NULL;
+        $debug = array();
+        foreach ($schedules as $schedule) {
+            $StartTime = $schedule['TimeDepart'];
+            $EndTime = $schedule['TimeArrive'];
+            $temp = 0;
+            foreach ($stations as $station) {
+                $sid = $station['SID'];
+                $travel_time = $station['TravelTime'];
+                if ($station['Seq'] == '1') {
+                    if ($StartPoint == 'S') {
+                        $time = strtotime($StartTime);
+                    } else {
+                        $time = strtotime($EndTime);
+                    }
+                    $debug[0] = "สถานีต้นทาง";
+                } elseif ($station['Seq'] == $num_station) {
+                    if ($StartPoint == 'S') {
+                        $time = strtotime($EndTime);
+                    } else {
+                        $time = strtotime($StartTime);
+                    }
+                    $debug[0] = "สถานีปลายทาง";
+                } else {
+                    $temp+=$travel_time;
+                    $time = strtotime("+$temp minutes", strtotime($StartTime));
+                    $debug[0] = "สถานีกลางทาง";
+                }
+                $time_depart = date('H:i', $time);
+                if ($SID == $sid) {
+                    $TimeDepart = $time_depart;
+                    $debug[1] = $time_depart;
+                    $debug[2] = "$sid";
+                    break;
+                }
+            }
+        }
+        return $TimeDepart;
+    }
+
+    public function get_checkin_time($TSID, $SID, $EID = NULL) {
+
+//        $this->db->select('');
+
+        if ($TSID != NULL) {
+            $this->db->where('TSID', $TSID);
+        }
+
+        if ($SID != NULL) {
+            $this->db->where('SID', $SID);
+        }
+
+        if ($EID != NULL) {
+            $this->db->where('CreateBy', $EID);
+        }
+
+        $query = $this->db->get('check_in');
+
+        return $query->row_array();
     }
 
     public function insert_schedule($data) {

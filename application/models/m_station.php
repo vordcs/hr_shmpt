@@ -117,13 +117,12 @@ class m_station extends CI_Model {
     }
 
     public function delete_fares($rcode, $vtid, $SID) {
-        
-        $this->db->where('RCode', $rcode);
-        $this->db->where('VTID', $vtid);
 
+//        $this->db->where('RCode', $rcode);
+//        $this->db->where('VTID', $vtid);
 //                delete fares and rate 
 //                $this->db->where('SourceID', $s['SID']);
-        $this->db->delete('f_fares');
+//        $this->db->delete('f_fares');
 //
 //                $this->db->where('DestinationID', $s['SID']);
 //                $this->db->delete('f_fares');
@@ -187,7 +186,7 @@ class m_station extends CI_Model {
         return $rs;
     }
 
-     public function get_stations_by_start_point($start_point, $rcode = null, $vtid = null, $seq = NULL) {
+    public function get_stations_by_start_point($start_point, $rcode = null, $vtid = null, $seq = NULL) {
         if ($rcode != NULL) {
             $this->db->where('RCode', $rcode);
         }
@@ -214,7 +213,31 @@ class m_station extends CI_Model {
         return $rs;
     }
 
-    
+    public function get_station_sale_ticket($rcode = null, $vtid = null, $StartPoint = NULL) {
+        if ($rcode != NULL) {
+            $this->db->where('RCode', $rcode);
+        }
+        if ($vtid != NULL) {
+            $this->db->where('VTID', $vtid);
+        }
+
+        $this->db->where('IsSaleTicket', 1);
+
+        if ($StartPoint == 'S') {
+            $this->db->order_by('Seq', 'asc');
+        }
+        if ($StartPoint == 'D') {
+            $this->db->order_by('Seq', 'desc');
+        }
+
+
+        $query = $this->db->get('t_stations');
+
+        $rs = $query->result_array();
+
+        return $rs;
+    }
+
     public function get_fares($rcode, $vtid, $source_id = NULL, $destination_id = NULL) {
 
         $this->db->join('f_fares_has_rate', 'f_fares_has_rate.FID=f_fares.FID');

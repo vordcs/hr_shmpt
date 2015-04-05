@@ -61,10 +61,14 @@ class fares extends CI_Controller {
         $this->m_template->showTemplate();
     }
 
-    public function add($rcode, $vtid, $SID) {
+    public function add($rcode, $vtid, $SID = NULL) {
+
+        if ($SID == NULL) {
+            redirect("fares/search/$rcode/$vtid");
+        }
 
         if ($rcode == NULL || $vtid == NULL || $SID == NULL) {
-            echo "<script>window.location.href='javascript:history.back(-1);'</script>";
+//            echo "<script>window.location.href='javascript:history.back(-1);'</script>";
         }
 
         $route_detail = reset($this->m_route->get_route($rcode, $vtid));
@@ -112,7 +116,7 @@ class fares extends CI_Controller {
         if ($rcode == NULL || $vtid == NULL || $SID == NULL) {
             echo "<script>window.location.href='javascript:history.back(-1);'</script>";
         }
-        
+
         $route_detail = $this->m_route->get_route($rcode, $vtid);
 
         $vt_name = $route_detail[0]['VTDescription'];
