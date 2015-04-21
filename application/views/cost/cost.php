@@ -141,6 +141,8 @@
                                                                 $popup_content = '';
                                                                 //อ่านว่าเงินมาจากใครเท่าไหร่
                                                                 foreach ($row_income['list'] as $row_saler) {
+                                                                    if ($row_saler['price'] == '0')
+                                                                        continue;
                                                                     $popup_content.=$row_saler['name'] . ' ' . $row_saler['price'] . '<br/>';
                                                                 }
                                                                 ?>
@@ -152,6 +154,8 @@
                                                                 $popup_content = '';
                                                                 //อ่านว่าเงินมาจากใครเท่าไหร่
                                                                 foreach ($row_outcome['list'] as $row_saler) {
+                                                                    if ($row_saler['price'] == '0')
+                                                                        continue;
                                                                     $popup_content.=$row_saler['name'] . ' ' . $row_saler['price'] . '<br/>';
                                                                 }
                                                                 ?>
@@ -167,6 +171,18 @@
                                                         <tr><td colspan="100%" class="text-center">ไม่พบข้อมูล</td></tr>
                                                     <?php } ?>
                                                 </tbody>
+                                                <tfoot>
+                                                    <tr>
+                                                        <td colspan="3" class="text-center td-dark-gray">ยอดรวมแต่ละช่อง</td>
+                                                        <?php
+                                                        foreach ($row_line['tfoot'] as $key => $row) {
+                                                            if ($key < 3)
+                                                                continue;
+                                                            ?>
+                                                            <td class="text-right td-dark-gray"><?= $row ?></td>
+                                                        <?php } ?>
+                                                    </tr>
+                                                </tfoot>
                                             </table>   
                                         </div>
                                     </div>
@@ -176,7 +192,7 @@
                         <!--end tab content-->
 
                     </div>
-                <?php } else {//End (count($row_vtid['line']) > 0)     ?>
+                <?php } else {//End (count($row_vtid['line']) > 0)      ?>
                     <div class="panel" style="min-height: 100px;">
                         <p class="lead text-center">ไม่พบข้อมูล</p>
                     </div>

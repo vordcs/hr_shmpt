@@ -309,6 +309,9 @@ class m_cost extends CI_Model {
 
                 //Generate tbody
                 $temp[$temp_key]['tbody'] = $this->generate_tbody($temp[$temp_key]['RCode'], $value['VTID'], $date);
+
+                //Generate tbody
+                $temp[$temp_key]['tfoot'] = $this->m_cost->generate_tfoot($temp[$temp_key]['tbody']);
             }
             $ans[$key]['line'] = $temp;
         }
@@ -592,19 +595,22 @@ class m_cost extends CI_Model {
             $all_oil = array();
             $all_part = array();
             $all_out_other = array();
+
+            //รวมรายรับรายจ่ายอื่นๆ นอกจากค่าตั๋ว
+            $total_onway = 0;
+            $total_messenger = 0;
+            $total_queue_price = 0;
+            $total_in_other = 0;
+
+            $total_license = 0;
+            $total_gas = 0;
+            $total_oil = 0;
+            $total_part = 0;
+            $total_percent_price = 0;
+            $total_out_other = 0;
+
             foreach ($all_seller_in_station as $key => $row_rid) {
                 $total_sale = 0;
-                $total_onway = 0;
-                $total_messenger = 0;
-                $total_queue_price = 0;
-                $total_in_other = 0;
-
-                $total_license = 0;
-                $total_gas = 0;
-                $total_oil = 0;
-                $total_part = 0;
-                $total_percent_price = 0;
-                $total_out_other = 0;
 
                 $temp_name = array();
                 foreach ($row_rid as $row_seller) {
@@ -830,6 +836,44 @@ class m_cost extends CI_Model {
 
 
 //        $ans['num'] = $all_seller_in_station;
+        return $ans;
+    }
+
+    function generate_tfoot($tbody) {
+        // 0 1 2 เป็นรหัสรถกับต้นทางปลายทาง
+        $ans = array();
+        $ans[0] = NULL;
+        $ans[1] = NULL;
+        $ans[2] = NULL;
+
+        $index = 3;
+        foreach ($tbody as $key => $row) {
+
+            //รวม income ของทุกคัน
+            foreach ($row['income'] as $row2) {
+                if (isset($ans[$index]))
+                    $ans[$index++] += $row2['price'];
+                else
+                    $ans[$index++] = $row2['price'];
+            }
+
+            //รวม outcome ของทุกคัน
+            foreach ($row['outcome'] as $row2) {
+                if (isset($ans[$index]))
+                    $ans[$index++] += $row2['price'];
+                else
+                    $ans[$index++] = $row2['price'];
+            }
+
+            //รวม balance ของทุกคัน
+            if (isset($ans[$index]))
+                $ans[$index++] += $row['balance'];
+            else
+                $ans[$index++] = $row['balance'];
+
+            $index = 3;
+        }
+
         return $ans;
     }
 

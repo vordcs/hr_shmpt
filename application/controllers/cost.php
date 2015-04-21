@@ -42,7 +42,8 @@ class cost extends CI_Controller {
 //        $data['schedules'] = $this->m_cost->get_schedule($date);
 //        $data['cost_detail'] = $this->m_cost->get_cost_detail();
 //        $data['cost_types'] = $this->m_cost->get_cost_type();
-        $data['all_cost'] = $this->m_cost->check_cost($date);
+        $data['all_cost'] = $this->m_cost->check_cost('2015-04-21');
+//        $data['all_cost'] = $this->m_cost->check_cost($date);
 
         $data_debug = array(
 //            'cost' => $data['cost'],
@@ -57,7 +58,7 @@ class cost extends CI_Controller {
 //            'date' => $this->m_datetime->setTHDateToDB($date),
 //            'detail' => $this->m_route->get_route('264', NULL),
 //            'all_cost' => $data['all_cost'],
-//            'tbody' => $this->m_cost->generate_tbody('264', '1', '2015-03-20'),
+//            'tbody' => $this->m_cost->generate_tbody('264', '1', '2015-04-21'),
         );
 
         $this->m_template->set_Title('ค่าใช้จ่าย');
