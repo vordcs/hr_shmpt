@@ -172,16 +172,18 @@
                                                     <?php } ?>
                                                 </tbody>
                                                 <tfoot>
-                                                    <tr>
-                                                        <td colspan="3" class="text-center td-dark-gray">ยอดรวมแต่ละช่อง</td>
-                                                        <?php
-                                                        foreach ($row_line['tfoot'] as $key => $row) {
-                                                            if ($key < 3)
-                                                                continue;
-                                                            ?>
-                                                            <td class="text-right td-dark-gray"><?= $row ?></td>
-                                                        <?php } ?>
-                                                    </tr>
+                                                    <?php if (isset($row_line['tfoot']) && count($row_line['tfoot']) > 3) { ?>
+                                                        <tr>
+                                                            <td colspan="3" class="text-center td-dark-gray">ยอดรวมแต่ละช่อง</td>
+                                                            <?php
+                                                            foreach ($row_line['tfoot'] as $key => $row) {
+                                                                if ($key < 3)
+                                                                    continue;
+                                                                ?>
+                                                                <td class="text-right td-dark-gray"><?= $row ?></td>
+                                                            <?php } ?>
+                                                        </tr>
+                                                    <?php } ?>
                                                 </tfoot>
                                             </table>   
                                         </div>

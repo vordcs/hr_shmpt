@@ -42,8 +42,7 @@ class cost extends CI_Controller {
 //        $data['schedules'] = $this->m_cost->get_schedule($date);
 //        $data['cost_detail'] = $this->m_cost->get_cost_detail();
 //        $data['cost_types'] = $this->m_cost->get_cost_type();
-        $data['all_cost'] = $this->m_cost->check_cost('2015-04-21');
-//        $data['all_cost'] = $this->m_cost->check_cost($date);
+        $data['all_cost'] = $this->m_cost->check_cost($date);
 
         $data_debug = array(
 //            'cost' => $data['cost'],
