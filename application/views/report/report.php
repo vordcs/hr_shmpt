@@ -2,51 +2,73 @@
     jQuery(document).ready(function ($) {
         $("#mainmenu ul li").removeAttr('class');
         $("#btnReport").addClass("active");
+        $('.datepicker').datepicker({
+            language: 'th-th',
+            format: 'yyyy-m-d'
+        });
     });
 </script>
 
-<div class="container">    
-    <div class="row-fluid">        
-        <div class="page-header">        
-            <h3>
-                <?php echo $page_title; ?>                
-                <font color="#777777">
-                <span style="font-size: 23px; line-height: 23.399999618530273px;"><?php echo $page_title_small; ?></span>                
-                </font>
-            </h3>        
-        </div>
-    </div>
-    <div class="row-fluid">
-        <div class="panel panel-info">
-            <div class="panel-heading">
-                <i class="fa fa-search"></i>&nbsp;ค้นหา
-            </div>
-            <div class="panel-body">
-                <div class="col-md-6 col-md-offset-3">
-                    <form>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label for="">ประเภทรถ</label>
-                                <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Enter">
-                            </div>
-                        </div>
-                        <div class="col-md-8">
-                            <div class="form-group">
-                                <label for="">เส้นทาง</label>
-                                <input type="email" class="form-control" id="" placeholder="Enter">
-                            </div>
-                        </div>
-                        <div class="col-md-12 text-center">
-                            <button type="submit" class="btn btn-default"><i class=" fa fa-search"></i>&nbsp;ค้นหา</button>
-                        </div>
-                    </form>
-                </div>
-
-
+<div class="container-fluid">
+    <div class="row">      
+        <div class="col-md-12">
+            <div class="page-header">
+                <h2>รายงาน <small>ช่วงวันที่ <?= $this->m_datetime->DateThai($begin_date) ?> - <?= $this->m_datetime->DateThai($end_date) ?></small></h2>
             </div>
         </div>
     </div>
 </div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><i class="fa fa-calendar"></i>&nbsp;แสดงตามวันที่กำหนด</h3>
+                </div>
+                <div class="panel-body" style="min-height: 114px;">                
+                    <?= $form_open; ?>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="control-label">วันที่เริ่มต้น</label>
+                                <input type="text" name="begin_date" value="" class="form-control datepicker">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="control-label">วันที่สิ้นสุด</label>
+                                <input type="text" name="end_date" value="" class="form-control datepicker">
+                            </div>
+                        </div>
+                        <div class="col-md-4" style="padding-top: 24px;">
+                            <button type="submit" class="btn btn-success">แสดง</button> 
+                        </div>
+                    </div>
+                    <?= $form_close; ?>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading"><h3 class="panel-title"><i class="fa fa-clock-o"></i> วันที่เวลาปัจจุบัน</h3></div>
+                <div class="panel-body">
+                    <span class="clock" id="clock">
+                        <div id="Date"></div>
+                        <ul id="time">
+                            <li id="hours"> </li>
+                            <li id="point">:</li>
+                            <li id="min"> </li>
+                            <li id="point">:</li>
+                            <li id="sec"> </li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="container">
     <div class="row-fluid">
         <div class="panel panel-info">

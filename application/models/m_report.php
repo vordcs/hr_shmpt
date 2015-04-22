@@ -114,5 +114,7 @@ class m_report extends CI_Model {
         $query = $this->db->get('cost_detail');
         return $query->result_array();
     }
+    
+    //New
 
 }

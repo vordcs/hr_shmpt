@@ -30,6 +30,12 @@ class report extends CI_Controller {
             'routes' => $this->m_route->get_route(),
             'routes_detail' => $this->m_route->get_route_detail(),
             'stations_sale_ticket' => $this->m_station->get_stations_sale_ticket(),
+            
+            //New
+            'form_open'=>  form_open('report'),
+            'form_close'=> form_close(),
+            'begin_date'=> $this->m_datetime->setTHDateToDB('2558-4-22'),
+            'end_date' => $this->m_datetime->setTHDateToDB('2558-4-22'),
         );
 
 
