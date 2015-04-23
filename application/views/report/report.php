@@ -32,13 +32,13 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label class="control-label">วันที่เริ่มต้น</label>
-                                <input type="text" name="begin_date" value="" class="form-control datepicker">
+                                <input type="text" name="begin_date" value="<?= $begin_date ?>" class="form-control datepicker">
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label class="control-label">วันที่สิ้นสุด</label>
-                                <input type="text" name="end_date" value="" class="form-control datepicker">
+                                <input type="text" name="end_date" value="<?= $end_date ?>" class="form-control datepicker">
                             </div>
                         </div>
                         <div class="col-md-4" style="padding-top: 24px;">
@@ -69,11 +69,21 @@
     </div>
 </div>
 
+<div class="container-fluid">
+    <div class="row">      
+        <div class="col-md-12">
+            <div class="page-header">
+                <h3>รายงานช่วงวันที่ <?= $this->m_datetime->DateThai($begin_date) ?> - <?= $this->m_datetime->DateThai($end_date) ?></h3>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="container">
     <div class="row-fluid">
         <div class="panel panel-info">
             <div class="panel-heading">
-                <i class="fa fa-bus"></i>&nbsp;ข้อมูลเส้นทางเดินรถ
+                <i class="fa fa-bus"></i>&nbsp;ข้อมูลเส้นทางเดินรถ 
             </div>
             <table class="table table-striped table-hover">
                 <thead>

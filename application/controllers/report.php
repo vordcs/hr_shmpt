@@ -20,6 +20,10 @@ class report extends CI_Controller {
     }
 
     public function index() {
+        $end_date = $this->m_datetime->getDateToday();
+        $temp_date = str_replace('-', '/', $end_date);
+        $begin_date = date('Y-m-d', strtotime($temp_date . "-7 days"));
+
         $data = array(
             'page_title' => 'รายงาน',
             'page_title_small' => '',
@@ -30,13 +34,13 @@ class report extends CI_Controller {
             'routes' => $this->m_route->get_route(),
             'routes_detail' => $this->m_route->get_route_detail(),
             'stations_sale_ticket' => $this->m_station->get_stations_sale_ticket(),
-            
             //New
-            'form_open'=>  form_open('report'),
-            'form_close'=> form_close(),
-            'begin_date'=> $this->m_datetime->setTHDateToDB('2558-4-22'),
+            'form_open' => form_open('report'),
+            'form_close' => form_close(),
+            'begin_date' => $this->m_datetime->setTHDateToDB('2558-4-22'),
             'end_date' => $this->m_datetime->setTHDateToDB('2558-4-22'),
         );
+
 
 
 
@@ -44,7 +48,7 @@ class report extends CI_Controller {
 //            'vehicles'=>$data['vehicles'],
 //            'stations_sale_ticket'=>$data['stations_sale_ticket'],
 //            ''=>$data[''],
-//            ''=>$data[''],
+            'test' => $begin_date,
         );
 
         $this->m_template->set_Debug($data_debug);
