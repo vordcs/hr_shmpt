@@ -15,6 +15,30 @@ Class m_datetime extends CI_Model {
         return date('Y-m-d');
     }
 
+    function changeENToThai($date) {
+        $str = explode('-', $date);
+        $strYear = trim($str[0]) + 543;
+        $strMonthThai = $str[1];
+        $strDay = $str[2];
+        return $strYear . '-' . $strMonthThai . '-' . $strDay;
+    }
+
+    function changeThaiToEn($date) {
+        $str = explode('-', $date);
+        $strYear = trim($str[0]) - 543;
+        $strMonthThai = $str[1];
+        $strDay = $str[2];
+        return $strYear . '-' . $strMonthThai . '-' . $strDay;
+    }
+
+    public function changeTHDBMonthToText($strDate) {
+        $str = explode('-', $strDate);
+        $strYear = $str[0];
+        $strMonthThai = $this->month_th[(int) $str[1]];
+        $strDay = $str[2];
+        return "$strDay $strMonthThai $strYear";
+    }
+
     function getDatetimeNowTH() {
         $hour = date("H");
         $minute = date("i");
@@ -88,7 +112,7 @@ Class m_datetime extends CI_Model {
             } else {
                 $date = $d->format('Y-m-d');
             }
-        }  else {
+        } else {
             $date = $this->getDateTodayTH();
         }
         return $date;

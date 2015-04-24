@@ -71,8 +71,7 @@
         <div class="navbar navbar-fixed-top sh-nav" role="navigation">
             <div id="top-nav" class="sh-top-nav">          
                 <h4 class="color-white" style="margin: 4px 0px 4px 4px;">บริษัท สหมิตรภาพ(2512) จำกัด</h4>
-                <p class="text-right" style="margin-top: -20px;">
-                    <strong>{elapsed_time}</strong> seconds
+                <p class="text-right" style="margin-top: -20px;">                   
                     <?= 'ยินดีต้อนรับ ' . $username ?>
                     <?= anchor('logout', '<i class="fa fa fa-sign-out"></i> ออกจากระบบ'); ?>
                 </p>

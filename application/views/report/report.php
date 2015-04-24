@@ -13,7 +13,7 @@
     <div class="row">      
         <div class="col-md-12">
             <div class="page-header">
-                <h2>รายงาน <small>ช่วงวันที่ <?= $this->m_datetime->DateThai($begin_date) ?> - <?= $this->m_datetime->DateThai($end_date) ?></small></h2>
+                <h2>รายงาน <small>ช่วงวันที่ <?= $this->m_datetime->changeTHDBMonthToText($begin_date) ?> - <?= $this->m_datetime->changeTHDBMonthToText($end_date) ?></small></h2>
             </div>
         </div>
     </div>
@@ -73,7 +73,7 @@
     <div class="row">      
         <div class="col-md-12">
             <div class="page-header">
-                <h3>รายงานช่วงวันที่ <?= $this->m_datetime->DateThai($begin_date) ?> - <?= $this->m_datetime->DateThai($end_date) ?></h3>
+                <h3>รายงานช่วงวันที่ <?= $this->m_datetime->changeTHDBMonthToText($begin_date) ?> - <?= $this->m_datetime->changeTHDBMonthToText($end_date) ?></h3>
             </div>
         </div>
     </div>
@@ -95,38 +95,14 @@
                     </tr>
                 </thead>
                 <tbody>
-                <div class="tab-content">
-                    <?php
-                    foreach ($routes as $r) {
-                        $rcode = $r['RCode'];
-                        $vtid = $r['VTID'];
-                        $vt_name = $r['VTDescription'];
-                        $route_name = $r['RSource'] . ' - ' . $r['RDestination'];
-                        $id = $vtid . '_' . $rcode;
-                        ?>                       
+                    <?php foreach ($all_route as $row) { ?>
                         <tr>
-                            <td class="text-center">
-                                <?= $vt_name ?>
-                            </td>                                  
-                            <td class="text-center">
-                                <?= $rcode ?>
-                            </td>
-                            <td class="text-left">
-                                <?= $route_name ?>
-                            </td>
-                            <td class="text-center">
-                                <?php
-                                $view = array(
-                                    'class' => 'btn btn-primary',
-                                );
-                                echo anchor("report/view/$rcode/$vtid", '<i class="fa fa-eye"></i>&nbsp;ดูรายงาน', $view);
-                                ?>                                        
-                            </td>
-                        </tr>  
-                        <?php
-                    }
-                    ?>
-                </div>
+                            <td class="text-center"><?= ($row['VTID'] == 1) ? 'รถตู้' : 'รถบัส' ?></td>
+                            <td class="text-center"><?= $row['RCode'] ?></td>
+                            <td class="text-left"><?= $row['RSource'] . ' - ' . $row['RDestination'] ?></td>
+                            <td class="text-center"><?= anchor('report/view/' . $row['RCode'] . '/' . $row['VTID'] . '/' . $begin_date . '/' . $end_date, '<i class="fa fa-eye"></i>&nbsp;ดูรายงาน', array('class' => 'btn btn-primary')) ?></td>
+                        </tr>
+                    <?php } ?>
                 </tbody>
             </table>            
         </div>

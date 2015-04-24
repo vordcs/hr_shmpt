@@ -23,22 +23,19 @@ class report extends CI_Controller {
         $end_date = $this->m_datetime->getDateToday();
         $temp_date = str_replace('-', '/', $end_date);
         $begin_date = date('Y-m-d', strtotime($temp_date . "-7 days"));
+        $begin_date = $this->m_datetime->changeENToThai($begin_date);
+        $end_date = $this->m_datetime->changeENToThai($end_date);
+        if ($this->input->server('REQUEST_METHOD') === 'POST') {
+            $begin_date = $this->input->post('begin_date');
+            $end_date = $this->input->post('end_date');
+        }
 
         $data = array(
-            'page_title' => 'รายงาน',
-            'page_title_small' => '',
-            'previous_page' => '',
-            'next_page' => '',
-            'vehicles' => $this->m_report->get_vehicle(),
-            'vehicle_types' => $this->m_route->get_vehicle_types(),
-            'routes' => $this->m_route->get_route(),
-            'routes_detail' => $this->m_route->get_route_detail(),
-            'stations_sale_ticket' => $this->m_station->get_stations_sale_ticket(),
-            //New
             'form_open' => form_open('report'),
             'form_close' => form_close(),
-            'begin_date' => $this->m_datetime->setTHDateToDB('2558-4-22'),
-            'end_date' => $this->m_datetime->setTHDateToDB('2558-4-22'),
+            'begin_date' => $begin_date,
+            'end_date' => $end_date,
+            'all_route' => $this->m_report->all_route(),
         );
 
 
@@ -48,7 +45,6 @@ class report extends CI_Controller {
 //            'vehicles'=>$data['vehicles'],
 //            'stations_sale_ticket'=>$data['stations_sale_ticket'],
 //            ''=>$data[''],
-            'test' => $begin_date,
         );
 
         $this->m_template->set_Debug($data_debug);
@@ -59,57 +55,31 @@ class report extends CI_Controller {
         $this->m_template->showTemplate();
     }
 
-    public function view($rcode, $vtid) {
-        if ($rcode == null || $vtid == NULL) {
+    public function view($rcode, $vtid, $begin_date, $end_date) {
+        if ($rcode == null || $vtid == NULL || $begin_date == NULL || $end_date == NULL) {
             redirect("report/");
         }
-        $route_detail = $this->m_route->get_route_detail($rcode, $vtid);
-        $source = $route_detail[0]['RSource'];
-        $desination = $route_detail[0]['RDestination'];
-        $vt_name = $route_detail[0]['VTDescription'];
-        $route_name = "$vt_name " . $route_detail[0]['RCode'] . ' ' . ' ' . $source . ' - ' . $desination;
-        $date = $this->m_datetime->DateThaiToDay();
+        $begin_date = $this->m_datetime->changeThaiToEn($begin_date);
+        $end_date = $this->m_datetime->changeThaiToEn($end_date);
 
-        $mounth = date('m');
-        $year = date('Y');
-
-        $str_mounth = $this->m_datetime->getMonthThai((int) $mounth);
-        $str_year = (int) $year + 543;
         $data = array(
-            'page_title' => "$str_mounth  $str_year",
-            'page_title_small' => "$route_name",
-            'previous_page' => '',
-            'next_page' => '',
-            'vehicles' => $this->m_report->get_vehicle($rcode, $vtid),
-            'vehicle_types' => $this->m_route->get_vehicle_types(),
-            'routes' => $route_detail,
-            'stations_sale_ticket' => $this->m_station->get_stations_sale_ticket($rcode, $vtid),
-            'cost' => $this->m_cost->get_cost(),
+            'begin_date' => $begin_date,
+            'end_date' => $end_date,
+            'get_route' => $this->m_report->get_route($rcode, $vtid)[0],
+            'report_vehicle' => $this->m_report->report_vehicle($rcode, $vtid, $begin_date, $end_date),
+            'report_sale' => $this->m_report->report_sale($rcode, $vtid, $begin_date, $end_date),
+            'report_station' => $this->m_report->report_station($rcode, $vtid, $begin_date, $end_date),
         );
 
 
-
-        $data['cost_detail'] = $this->m_cost->get_cost_detail();
-        $data['cost_types'] = $this->m_cost->get_cost_type();
-
-
-
-        $data['number_day'] = cal_days_in_month(CAL_GREGORIAN, $mounth, $year);
-        $data['mounth'] = $mounth;
-        $data['year'] = $year;
-        $data['form_search_mounth'] = $this->m_report->set_form_search_mounth($rcode, $vtid, (int) $mounth);
-
         $data_debug = array(
-//            'vehicles'=>$data['vehicles'],
-//            'stations_sale_ticket'=>$data['stations_sale_ticket'],
-//            'routes'=>$data['routes'],`   
-//            'mounth' => $data['mounth'],
-//            'number_day' => $data['number_day'],
-//            'form_search_mounth'=>$data['form_search_mounth'],
-//            ''=>$data[''],
-//            ''=>$data[''],
-//            ''=>$data[''],
-//            ''=>$data[''],
+//            'begin_date' => $begin_date,
+//            'end_date' => $end_date,
+//            'get_route' => $this->m_report->get_route($rcode, $vtid)[0],
+//            'report_vehicle' => $this->m_report->report_vehicle($rcode, $vtid, $begin_date, $end_date),
+//            'report_sale' => $this->m_report->report_sale($rcode, $vtid, $begin_date, $end_date),
+//            'get_vehicle' => $this->m_report->get_vehicle($rcode, $vtid),
+//            'report_station' => $this->m_report->report_station($rcode, $vtid, $begin_date, $end_date),
         );
 
         $this->m_template->set_Debug($data_debug);
@@ -117,11 +87,7 @@ class report extends CI_Controller {
         $this->m_template->set_Title('รายงาน');
         $this->m_template->set_Permission('REV');
         $this->m_template->set_Content('report/view_report', $data);
-        $this->m_template->showReportTemplate();
-    }
-
-    public function test() {
-        $this->load->view('report/view_report_test');
+        $this->m_template->showTemplate();
     }
 
 }
