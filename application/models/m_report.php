@@ -182,8 +182,8 @@ class m_report extends CI_Model {
         $this->db->join('vehicles_has_schedules as vhs', 'tsd.TSID=vhs.TSID');
         $this->db->where('tsd.ScheduleStatus', '1');
         $this->db->where('tsd.RID', $RID_D);
-        $this->db->where('Date >', $begin_date);
-        $this->db->where('Date <', $end_date);
+        $this->db->where('Date >=', $begin_date);
+        $this->db->where('Date <=', $end_date);
         $query = $this->db->get();
         $temp_d = $query->result_array();
 
@@ -276,14 +276,14 @@ class m_report extends CI_Model {
         $RID_D = end($temp)['RID'];
         $this->db->from('ticket_sale');
         $this->db->where('RID', $RID_S);
-        $this->db->where('DateSale >', $begin_date);
-        $this->db->where('DateSale <', $end_date);
+        $this->db->where('DateSale >=', $begin_date);
+        $this->db->where('DateSale <=', $end_date);
         $query = $this->db->get();
         $temp_sale_s = $query->result_array();
         $this->db->from('ticket_sale');
         $this->db->where('RID', $RID_D);
-        $this->db->where('DateSale >', $begin_date);
-        $this->db->where('DateSale <', $end_date);
+        $this->db->where('DateSale >=', $begin_date);
+        $this->db->where('DateSale <=', $end_date);
         $query = $this->db->get();
         $temp_sale_d = $query->result_array();
 
@@ -357,14 +357,14 @@ class m_report extends CI_Model {
         $RID_D_RSource = end($temp)['RSource'];
         $this->db->from('ticket_sale');
         $this->db->where('RID', $RID_S);
-        $this->db->where('DateSale >', $begin_date);
-        $this->db->where('DateSale <', $end_date);
+        $this->db->where('DateSale >=', $begin_date);
+        $this->db->where('DateSale <=', $end_date);
         $query = $this->db->get();
         $temp_sale_s = $query->result_array();
         $this->db->from('ticket_sale');
         $this->db->where('RID', $RID_D);
-        $this->db->where('DateSale >', $begin_date);
-        $this->db->where('DateSale <', $end_date);
+        $this->db->where('DateSale >=', $begin_date);
+        $this->db->where('DateSale <=', $end_date);
         $query = $this->db->get();
         $temp_sale_d = $query->result_array();
 
