@@ -131,20 +131,22 @@ class vehicle extends CI_Controller {
         $route_name = $route[0]['RCode'] . ' ' . $route[0]['RSource'] . ' - ' . $route[0]['RDestination'];
         $type_name = $route[0]['VTDescription'];
 
+        $form_data = array();
+
         if ($this->m_vehicle->validation_form_edit() && $this->form_validation->run() == TRUE) {
-            $form_data = $this->m_vehicle->get_post_form_edit($rcode,$vtid,$vid);
-//            $this->m_template->set_Debug($form_data);
-//Update data
+            $form_data = $this->m_vehicle->get_post_form_edit($vid);
+
             $this->m_vehicle->update_vehicle($form_data);
             //Alert success and redirect to candidate
             $alert['alert_message'] = 'แก้ไขข้อมูล ' . $type_name . ' เส้นทาง ' . $route_name . ' สำเร็จแล้ว';
             $alert['alert_mode'] = "success";
             $this->session->set_flashdata('alert', $alert);
-            redirect('vehicle/');
+
+//            redirect('vehicle/');
         }
 
 //      get detail and sent to load form
-        $detail = $this->m_vehicle->get_vehicle($rcode,$vtid,$vid);
+        $detail = $this->m_vehicle->get_vehicle($rcode, $vtid, $vid);
         if ($detail[0] != NULL) {
             $detail_driver = $this->m_vehicle->get_employee_driver($vid);
             if (count($detail_driver) > 0) {
@@ -164,7 +166,11 @@ class vehicle extends CI_Controller {
             redirect('vehicle');
         }
 
-//        $this->m_template->set_Debug($data['form']);
+        $data_debug = array(
+            'form_data' => $form_data,
+        );
+
+        $this->m_template->set_Debug($data_debug);
         $this->m_template->set_Title('แก้ไขข้อมูลรถโดยสาร');
         $this->m_template->set_Permission('VEE');
         $this->m_template->set_Content('vehicle/frm_vehicle', $data);

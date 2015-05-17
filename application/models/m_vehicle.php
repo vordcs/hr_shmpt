@@ -111,7 +111,7 @@ class m_vehicle extends CI_Model {
         $data['data_driver']['VID'] = $v_id;
         $this->db->insert('vehicles_driver', $data['data_driver']);
         $vdid = $this->db->insert_id();
-        
+
 //      insert vehicles_current_stations
         $this->insert_vehicles_current_stations($RCode, $VTID, $v_id);
         return $v_id;
@@ -177,7 +177,7 @@ class m_vehicle extends CI_Model {
                 'CurrentStatonSeq' => $station['Seq'],
                 'UpdateDate' => $this->m_datetime->getDateTimeNow(),
             );
-            $this->db->insert('vehicles_current_stations',$data);
+            $this->db->insert('vehicles_current_stations', $data);
         }
     }
 
@@ -568,28 +568,28 @@ class m_vehicle extends CI_Model {
 
     function validation_form_add() {
 ////       ข้อมูลรถ
-//        $this->form_validation->set_rules('NumberPlate', 'ทะเบียนรถ', 'trim|required|xss_clean|callback_check_numberplate');
+        $this->form_validation->set_rules('NumberPlate', 'ทะเบียนรถ', 'trim|xss_clean|callback_check_numberplate');
         $this->form_validation->set_rules('VCode', 'เบอร์รถ', 'trim|required|callback_check_vcode');
-//        $this->form_validation->set_rules('VColor', 'สีรถ', 'trim|required|xss_clean');
-//        $this->form_validation->set_rules('VBrand', 'ยี่ห้อรถ', 'trim|required|xss_clean');
+        $this->form_validation->set_rules('VColor', 'สีรถ', 'trim|xss_clean');
+        $this->form_validation->set_rules('VBrand', 'ยี่ห้อรถ', 'trim|xss_clean');
         $this->form_validation->set_rules('VSeat', 'จำนวนที่นั่ง', 'trim|required|xss_clean');
-//        $this->form_validation->set_rules('VStatus', 'สถานะ', 'trim|required|xss_clean');
+        $this->form_validation->set_rules('VStatus', 'สถานะ', 'trim|xss_clean');
         $this->form_validation->set_rules('VehicleNote', 'หมายเหตุ', 'trim|xss_clean');
 ///      ข้อมูลทะเบียน
         $this->form_validation->set_rules('DateRegistered', 'วันที่ต่อทะเบียน', 'trim|required|xss_clean');
-//        $this->form_validation->set_rules('DateExpire', 'วันหมดอายุ', 'trim|required|xss_clean');
+        $this->form_validation->set_rules('DateExpire', 'วันหมดอายุ', 'trim|required|xss_clean');
         $this->form_validation->set_rules('VRNote', 'หมายเหตุ', 'trim|xss_clean');
 ////       ประกันและพรบ
-//        $this->form_validation->set_rules('InsuranceCompanyName', 'ชื่อบริษัทประกัน', 'trim|required|xss_clean');
-//        $this->form_validation->set_rules('PolicyType', 'ประเภทกรมธรรม์', 'trim|required|xss_clean|callback_check_dropdown');
+        $this->form_validation->set_rules('InsuranceCompanyName', 'ชื่อบริษัทประกัน', 'trim|xss_clean');
+        $this->form_validation->set_rules('PolicyType', 'ประเภทกรมธรรม์', 'trim|xss_clean|callback_check_dropdown');
         $this->form_validation->set_rules('PolicyStart', 'วันที่เริ่มกรมธรรม์', 'trim|required|xss_clean');
-//        $this->form_validation->set_rules('PolicyEnd', 'วันที่สิ้นสุดกรมธรรม์', 'trim|required|xss_clean');
-//        $this->form_validation->set_rules('PolicyNumber', 'เลขที่กรมธรรม์', 'trim|required|xss_clean');
+        $this->form_validation->set_rules('PolicyEnd', 'วันที่สิ้นสุดกรมธรรม์', 'trim|required|xss_clean');
+        $this->form_validation->set_rules('PolicyNumber', 'เลขที่กรมธรรม์', 'trim|xss_clean');
         $this->form_validation->set_rules('ActNote', 'หมายเหตุ', 'trim|xss_clean');
         //พนักงานขับรถ
-//        $this->form_validation->set_rules('EID', 'รหัสพนักงาน', 'trim|required|xss_clean');
-//        $this->form_validation->set_rules('Driverlicense', 'ใบขับขี่', 'trim|required|xss_clean');
-//        $this->form_validation->set_rules('ExpireDate', 'วันหมดอายุ', 'trim|required|xss_clean');
+        $this->form_validation->set_rules('EID', 'รหัสพนักงาน', 'trim|required|xss_clean');
+        $this->form_validation->set_rules('Driverlicense', 'ใบขับขี่', 'trim|xss_clean');
+        $this->form_validation->set_rules('ExpireDate', 'วันหมดอายุ', 'trim|required|xss_clean');
         return TRUE;
     }
 
@@ -599,10 +599,10 @@ class m_vehicle extends CI_Model {
 
 //       ข้อมูลรถ
         $this->form_validation->set_rules('VTID', 'ประเภทรถ', 'trim|required|xss_clean|callback_check_dropdown');
-//        $this->form_validation->set_rules('NumberPlate', 'ทะเบียนรถ', 'trim|required|xss_clean|callback_check_numberplate');
-        $this->form_validation->set_rules('VCode', 'เบอร์รถ', 'trim|required|xss_clean|callback_check_vcode');
-//        $this->form_validation->set_rules('VColor', 'สีรถ', 'trim|required|xss_clean');
-//        $this->form_validation->set_rules('VBrand', 'ยี่ห้อรถ', 'trim|required|xss_clean');
+        $this->form_validation->set_rules('NumberPlate', 'ทะเบียนรถ', 'trim|xss_clean|callback_check_numberplate');
+        $this->form_validation->set_rules('VCode', 'เบอร์รถ', 'trim|xss_clean|callback_check_vcode');
+        $this->form_validation->set_rules('VColor', 'สีรถ', 'trim|xss_clean');
+        $this->form_validation->set_rules('VBrand', 'ยี่ห้อรถ', 'trim|xss_clean');
         $this->form_validation->set_rules('VSeat', 'จำนวนที่นั่ง', 'trim|required|xss_clean');
         $this->form_validation->set_rules('RegNote', 'หมายเหตุ', 'trim|xss_clean');
 
@@ -611,16 +611,16 @@ class m_vehicle extends CI_Model {
         $this->form_validation->set_rules('DateExpire', 'วันหมดอายุ', 'trim|required|xss_clean');
         $this->form_validation->set_rules('VRNote', 'หมายเหตุ', 'trim|xss_clean');
 //       ประกันและพรบ
-//        $this->form_validation->set_rules('InsuranceCompanyName', 'ชื่อบริษัทประกัน', 'trim|required|xss_clean');
-//        $this->form_validation->set_rules('PolicyType', 'ประเภทกรมธรรม์', 'trim|required|xss_clean|callback_check_dropdown');
+        $this->form_validation->set_rules('InsuranceCompanyName', 'ชื่อบริษัทประกัน', 'trim|xss_clean');
+        $this->form_validation->set_rules('PolicyType', 'ประเภทกรมธรรม์', 'trim|xss_clean|callback_check_dropdown');
         $this->form_validation->set_rules('PolicyStart', 'วันที่เริ่มกรมธรรม์', 'trim|required|xss_clean');
         $this->form_validation->set_rules('PolicyEnd', 'วันที่สิ้นสุดกรมธรรม์', 'trim|required|xss_clean');
-//        $this->form_validation->set_rules('PolicyNumber', 'เลขที่กรมธรรม์', 'trim|required|xss_clean');
+        $this->form_validation->set_rules('PolicyNumber', 'เลขที่กรมธรรม์', 'trim|xss_clean');
         $this->form_validation->set_rules('ActNote', 'หมายเหตุ', 'trim|xss_clean');
         //พนักงานขับรถ
-//        $this->form_validation->set_rules('EID', 'รหัสพนักงาน', 'trim|required|xss_clean');
-//        $this->form_validation->set_rules('Driverlicense', 'ใบขับขี่', 'trim|required|xss_clean');
-//        $this->form_validation->set_rules('ExpireDate', 'วันหมดอายุ', 'trim|required|xss_clean');
+        $this->form_validation->set_rules('EID', 'รหัสพนักงาน', 'trim|required|xss_clean');
+        $this->form_validation->set_rules('Driverlicense', 'ใบขับขี่', 'trim|xss_clean');
+        $this->form_validation->set_rules('ExpireDate', 'วันหมดอายุ', 'trim|required|xss_clean');
         return TRUE;
     }
 
@@ -663,7 +663,7 @@ class m_vehicle extends CI_Model {
 //       ข้อมูลรถ        
         $data_vehicle = array(
             'NumberPlate' => $this->input->post('NumberPlate'),
-            'VTID'=>$vtid,
+            'VTID' => $vtid,
             'VCode' => $this->input->post('VCode'),
             'VColor' => $this->input->post('VColor'),
             'VBrand' => $this->input->post('VBrand'),
@@ -711,13 +711,12 @@ class m_vehicle extends CI_Model {
         return $form_data;
     }
 
-    function get_post_form_edit($vid) {
-        $detail = $this->m_vehicle->get_vehicle($vid);
-        if ($detail[0] != NULL) {
-//            $rid = $detail[0]['RID'];
-//            $vtid = $detail[0]['VTID'];
-            $regid = $detail[0]['RegID'];
-            $actid = $detail[0]['ActID'];
+    function get_post_form_edit($VID) {
+        $vehicles = $this->get_vehicle(NULL, NULL, $VID);
+        if (count($vehicles) > 0) {
+            $vehicle = reset($vehicles);
+            $regid = $vehicle['RegID'];
+            $actid = $vehicle['ActID'];
         }
 //       ข้อมูลรถ        
         $data_vehicle = array(
@@ -752,7 +751,7 @@ class m_vehicle extends CI_Model {
             'ExpireDate' => $this->m_datetime->setTHDateToDB($this->input->post('ExpireDate')),
         );
         $form_data = array(
-            'VID' => $vid,
+            'VID' => $VID,
             'RCode' => $this->input->post('RCode'),
             'data_vehicle' => $data_vehicle,
             'data_registered' => $data_registered,

@@ -126,7 +126,7 @@
                                                         'data-content' => "$RouteName",
                                                         'data-toggle' => "modal",
                                                         'data-target' => "#confirm",
-                                                        'data-href' => "seller/delete/$SellerID",
+                                                        'data-href' => "hr/seller/delete/$SellerID",
                                                     );
                                                     $action = anchor('#', '<i class="fa fa-trash-o"></i>', $delete);
                                                     ?>

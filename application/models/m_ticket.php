@@ -252,11 +252,14 @@ class m_ticket extends CI_Model {
         $this->load->model('m_station');
         $this->load->model('m_schedule');
         $this->load->model('hr/m_seller');
+        
+        $array_empty = array();
 
         $stations = $this->m_station->get_stations($RCode, $VTID);
         $num_station = count($stations);
+        $Seq = NULL;
         if ($SID != NULL) {
-            $station_sale = reset($this->m_station->get_stations_sale_ticket($RCode, $VTID, $SID));
+            $station_sale = reset($this->m_station->get_stations($RCode, $VTID, $SID));
             $Seq = $station_sale['Seq'];
             if ($Seq == 1) {
                 $StartPoint = 'S';
@@ -417,11 +420,16 @@ class m_ticket extends CI_Model {
                 'RID' => $rid,
                 'RCode' => $RCode,
                 'VTID' => $VTID,
+                'StartPoint'=>$StartPoint,
+                'SID'=>$SID,
+                'seq'=>$Seq,                
                 'RouteName' => $RouteName,
                 'schedules' => $data_schedule_in_route,
             );
             array_push($data_routes, $temp_route);
         }
+       
+        
         /* -------------set form search ---------------- */
 
         $date_th = $this->m_datetime->setTHDateToDB($Date);
