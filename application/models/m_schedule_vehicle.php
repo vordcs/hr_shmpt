@@ -156,6 +156,7 @@ class m_schedule_vehicle extends CI_Model {
 
     public function insert_schedule($data) {
         $rs = array();
+        $count = 0;
         if (count($data) > 0) {
             for ($i = 0; $i < count($data); $i++) {
                 $tsid = $data[$i]['TSID'];
@@ -164,13 +165,17 @@ class m_schedule_vehicle extends CI_Model {
                 $time_depart = $data[$i]['TimeDepart'];
                 $num_schedule = $this->check_schedule($date, $rid, $time_depart);
                 if ($num_schedule == 0) {
-                    $this->db->insert('t_schedules_day', $data[$i]);
-                    $rs[$i] = "Date $date INSERT -> TSID = " . $tsid;
+                    if ($this->db->insert('t_schedules_day', $data[$i])) {
+                        $rs[$i] = "Date $date INSERT -> TSID = " . $tsid;
+                        $count++;
+                    }
                 } else {
                     $rs[$i] = "Date $date UPDATE -> TSID = " . $tsid;
                 }
             }
         }
+        array_push($rs, count($data));
+        array_push($rs, $count);
         return $rs;
     }
 
@@ -503,8 +508,8 @@ class m_schedule_vehicle extends CI_Model {
             $this->db->insert('vehicles_has_schedules', $data_insert);
             if ($this->db->affected_rows() > 0) {
                 $rs = TRUE;
-            } 
-        } 
+            }
+        }
         return $rs;
     }
 

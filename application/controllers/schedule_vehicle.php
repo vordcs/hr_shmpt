@@ -65,7 +65,7 @@ class schedule_vehicle extends CI_Controller {
 //            'stations' => $data['stations'],
 //            'schedules' => $data['schedules'],
 //            'gen_schedule' => $data['gen_schedule'],
-//            'data_schedule' => $rs,
+            'Check insert_schedule' => $rs,
 //            'get_vehicle_curent_stations' => $get_vehicle_curent_stations,
 //            'vehicles_initicial_station' => $vehicles_initicial_station,
 //            'set_time_initicial_vehicles'=>$set_time_initicial_vehicles,
