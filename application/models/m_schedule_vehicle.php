@@ -384,16 +384,12 @@ class m_schedule_vehicle extends CI_Model {
      */
 
     public function check_schedule($date, $rid, $time_depart) {
-
         $this->db->where('RID', $rid);
         $this->db->where('Date', $date);
         $this->db->where('TimeDepart', $time_depart);
-
         $query = $this->db->get("t_schedules_day");
-
-        $rs = $query->num_rows();
-
-        return $rs;
+        $rs = $query->result_array();
+        return count($rs);
     }
 
     public function get_schedule($date = NULL, $rid = NULL, $TSID = NULL) {
