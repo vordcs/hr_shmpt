@@ -81,12 +81,12 @@
                 <h5>ผลการค้นหา</h5>
                 <table class="table table-hover table-bordered" style="width: 100%">
                     <thead>
-                    <th style="width: 13%" >รหัสพนักงาน</th>
+                    <th style="width: 10%" >รหัสพนักงาน</th>
                     <th style="width: 20%">ชื่อ-สกุล</th>                                          
                     <th style="width: 12%">รหัสบัตรประชาชน</th>
                     <th style="width: 25%">ที่อยู่</th>
                     <th style="width: 20%">รายละเอียด</th>
-                    <th style="width: 10%"></th>
+                    <th style="width: 13%"></th>
                     </thead>
                     <tbody>
                         <?php if (isset($list) && $list == NULL) { ?>
@@ -119,6 +119,7 @@
                                         <?php if ($row['StatusID'] == 0) { ?>
                                             <span class="label label-danger">ลาออก</span>
                                         <?php } else { ?>
+                                            <?= anchor('hr/employee/log/' . $row['EID'], '<i class="fa fa-signal"></i>', array('class' => 'btn btn-success btn-sm')) ?>
                                             <?= anchor('hr/employee/detail/' . $row['EID'], '<i class="fa fa-search"></i>', array('class' => 'btn btn-primary btn-sm')) ?>
                                             <?= anchor('hr/employee/edit/' . $row['EID'], '<i class="fa fa-pencil"></i>', array('class' => 'btn btn-warning btn-sm')) ?>
                                         <?php } ?>
@@ -141,12 +142,12 @@
                 <h5>พนักงานทั้งหมด</h5>
                 <table class="table table-hover table-bordered" style="width: 100%">
                     <thead>
-                    <th style="width: 13%" >รหัสพนักงาน</th>
+                    <th style="width: 10%" >รหัสพนักงาน</th>
                     <th style="width: 20%">ชื่อ-สกุล</th>                                          
                     <th style="width: 12%">รหัสบัตรประชาชน</th>
                     <th style="width: 25%">ที่อยู่</th>
                     <th style="width: 20%">รายละเอียด</th>
-                    <th style="width: 10%"></th>
+                    <th style="width: 13%"></th>
                     </thead>
                     <tbody>   
                         <?php if (isset($list_all) && $list_all == NULL) { ?>
@@ -179,6 +180,7 @@
                                         <?php if ($row['StatusID'] == 0) { ?>
                                             <span class="label label-danger">ลาออก</span>
                                         <?php } else { ?>
+                                            <?= anchor('hr/employee/log/' . $row['EID'], '<i class="fa fa-signal"></i>', array('class' => 'btn btn-success btn-sm')) ?>
                                             <?= anchor('hr/employee/detail/' . $row['EID'], '<i class="fa fa-search"></i>', array('class' => 'btn btn-primary btn-sm')) ?>
                                             <?= anchor('hr/employee/edit/' . $row['EID'], '<i class="fa fa-pencil"></i>', array('class' => 'btn btn-warning btn-sm')) ?>
                                         <?php } ?>

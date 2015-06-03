@@ -127,4 +127,42 @@ class employee extends CI_Controller {
         $this->m_template->showTemplate();
     }
 
+    public function log($EID = NULL) {
+        if ($EID == NULL || $EID == " " || !$this->m_employee->check_employee($EID))
+            redirect('hr/employee');
+
+        $end_date = $this->m_datetime->getDateToday();
+        $temp_date = str_replace('-', '/', $end_date);
+        $begin_date = date('Y-m-d', strtotime($temp_date . "-7 days"));
+        $begin_date = $this->m_datetime->changeENToThai($begin_date);
+        $end_date = $this->m_datetime->changeENToThai($end_date);
+        if ($this->input->server('REQUEST_METHOD') === 'POST') {
+            $begin_date = $this->input->post('begin_date');
+            $end_date = $this->input->post('end_date');
+        }
+
+        $data = array(
+            'form_open' => form_open('hr/employee/log/' . $EID, array('class' => 'inline')),
+            'form_close' => form_close(),
+            'begin_date' => $begin_date,
+            'end_date' => $end_date,
+            'employe' => $this->m_employee->check_employee_detail($EID)
+        );
+        $new_begin = $this->m_datetime->changeThaiToEn($data['begin_date']) . ' 00:00:00';
+        $new_end = $this->m_datetime->changeThaiToEn($data['end_date']) . ' 00:00:00';
+        $data['log_clocking'] = $this->m_employee->check_log_clocking($EID, $new_begin, $new_end);
+
+        $data_debug = array(
+//            '1' => $new_begin,
+//            '2' => $new_end,
+//            'test' => $data['log_clocking'],
+//            'emp' => $data['employe']
+        );
+
+        $this->m_template->set_Debug($data_debug);
+        $this->m_template->set_Permission('HED');
+        $this->m_template->set_Content('hr/log_clock', $data);
+        $this->m_template->showTemplate();
+    }
+
 }

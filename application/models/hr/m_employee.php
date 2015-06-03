@@ -5,6 +5,15 @@ if (!defined('BASEPATH'))
 
 class m_employee extends CI_Model {
 
+    function check_log_clocking($EID, $BEGIN, $END) {
+        $this->db->from("employee_log_clocking");
+        $this->db->where("EID", $EID);
+        $this->db->where('clock_in_date >=', $BEGIN);
+        $this->db->where('clock_in_date <=', $END);
+        $query = $this->db->get();
+        return $query->result_array();
+    }
+
     function check_employee_detail($EID) {
         $data = array();
         $this->db->from('employees AS em');
