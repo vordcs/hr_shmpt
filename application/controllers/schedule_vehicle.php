@@ -40,8 +40,8 @@ class schedule_vehicle extends CI_Controller {
 //      สร้างตารางเวลาเดินรถเดินรถ
         $data['gen_schedule'] = $this->m_schedule_vehicle->run_schedule();
         $rs = $this->m_schedule_vehicle->insert_schedule($data['gen_schedule']);
-
-
+        
+        
 //        กำหนดจุดเริ่มต้นให้กับรถแต่ละคัน
         $vehicles_initicial_station = array();
 //        $vehicles_initicial_station = $this->m_schedule_vehicle->set_vehicles_initicial_station();

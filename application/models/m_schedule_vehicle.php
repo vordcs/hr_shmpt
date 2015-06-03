@@ -155,28 +155,32 @@ class m_schedule_vehicle extends CI_Model {
     /* 1.2 insert  */
 
     public function insert_schedule($data) {
-        $rs = array();
-        $count = 0;
-        if (count($data) > 0) {
-            for ($i = 0; $i < count($data); $i++) {
-                $tsid = $data[$i]['TSID'];
-                $rid = $data[$i]['RID'];
-                $date = $data[$i]['Date'];
-                $time_depart = $data[$i]['TimeDepart'];
-                $num_schedule = $this->check_schedule($date, $rid, $time_depart);
-                if ($num_schedule == 0) {
-                    if ($this->db->insert('t_schedules_day', $data[$i])) {
-                        $rs[$i] = "Date $date INSERT -> TSID = " . $tsid;
-                        $count++;
-                    }
-                } else {
-                    $rs[$i] = "Date $date UPDATE -> TSID = " . $tsid;
-                }
-            }
-        }
-        array_push($rs, count($data));
-        array_push($rs, $count);
-        return $rs;
+//        $rs = array();
+//        $count = 0;
+//        if (count($data) > 0) {
+//            for ($i = 0; $i < count($data); $i++) {
+//                $tsid = $data[$i]['TSID'];
+//                $rid = $data[$i]['RID'];
+//                $date = $data[$i]['Date'];
+//                $time_depart = $data[$i]['TimeDepart'];
+//                $num_schedule = $this->check_schedule($date, $rid, $time_depart);
+//                if ($num_schedule == 0) {
+//                    if ($this->db->insert('t_schedules_day', $data[$i])) {
+//                        $rs[$i] = "Date $date INSERT -> TSID = " . $tsid;
+//                        $count++;
+//                    }
+//                } else {
+//                    $rs[$i] = "Date $date UPDATE -> TSID = " . $tsid;
+//                }
+//            }
+//        }
+//        array_push($rs, count($data));
+//        array_push($rs, $count);
+//        return $rs;
+        if ($this->db->insert_batch('t_schedules_day', $data))
+            return TRUE;
+        else
+            return FALSE;
     }
 
     /*
