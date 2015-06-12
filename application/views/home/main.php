@@ -15,11 +15,18 @@
 ================================================== -->
     <div class="row">
         <h2 class="example-title">ลำดับเวลาการส่งเงิน</h2>
+        <p class="text-right">
+            <?php
+            foreach ($timeline as $key => $row) {
+                echo anchor('home#' . $key, $this->m_datetime->getDateThaiString($key), array('class' => 'label label-primary')).' ';
+            }
+            ?>
+        </p>
         <div class="col-md-12">
             <div class="timeline">
                 <dl>
                     <?php foreach ($timeline as $key => $row) { ?>
-                        <dt><?= $this->m_datetime->getDateThaiString($key) ?></dt>
+                        <dt id="<?= $key ?>"><?= $this->m_datetime->getDateThaiString($key) ?></dt>
                         <?php foreach ($row as $index => $report) { ?>
                             <dd class="pos-<?= (($index % 2) == 0) ? 'right' : 'left' ?> clearfix">
                                 <div class="circ"></div>
@@ -33,7 +40,7 @@
                                         <?php } ?>
                                     </div>
                                     <div class="events-body">
-                                        <a href="#" data-toggle="collapse" data-target="#<?= $report['ReportID'] ?>">
+                                        <a style="cursor:pointer;" data-toggle="collapse" data-target="#<?= $report['ReportID'] ?>">
                                             <h4 class="events-heading"><i class="fa fa-chevron-circle-down"></i> รถ<?= ($report['VTID'] == 1) ? 'ตู้' : 'บัส' ?> สาย:<?= $report['RCode'] ?></h4>
                                         </a>
                                         <div class="collapse" id="<?= $report['ReportID'] ?>">
