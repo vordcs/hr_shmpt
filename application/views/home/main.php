@@ -18,7 +18,7 @@
         <p class="text-right">
             <?php
             foreach ($timeline as $key => $row) {
-                echo anchor('home#' . $key, $this->m_datetime->getDateThaiString($key), array('class' => 'label label-primary')).' ';
+                echo anchor('home#' . $key, $this->m_datetime->getDateThaiString($key), array('class' => 'label label-primary')) . ' ';
             }
             ?>
         </p>
@@ -47,7 +47,7 @@
                                             <p style="margin: 0px;">จำนวนเงินทั้งหมด  <strong><?= $report['Total'] ?></strong> บาท , หักเปอร์เซนต์พนักงาน <strong><?= $report['Vage'] ?></strong> บาท </p>
                                             <p style="margin: 0px;">ยอดสุทธิที่ต้องส่ง  <strong><?= $report['Net'] ?></strong> บาท</p>
                                             <p><strong>ส่งโดย</strong> <?= $report['Title'] . $report['FirstName'] . ' ' . $report['LastName'] ?></p>
-                                            <?php if ($report['ReportStatus'] == 0) { ?>
+                                            <?php if ($report['ReportStatus'] == 0 && $this->session->userdata('permittion') == 'ALL') { ?>
                                                 <p><?= anchor('home/check_report/' . $report['ReportID'] . '/' . $EID, '<i class="fa fa-btc"></i>&nbsp;ยืนยันรับเงินแล้ว', array('class' => 'btn btn-xs btn-success')) ?></p>
                                             <?php } ?>
                                         </div>

@@ -72,11 +72,19 @@ class cost extends CI_Controller {
         $source = $route_detail[0]['RSource'];
         $desination = $route_detail[0]['RDestination'];
         $route_name = 'เส้นทาง ' . $route_detail[0]['RCode'] . ' ' . ' ' . $source . ' - ' . $desination;
-        $date_th = $this->m_datetime->DateThaiToDay();
+
         $date = $this->m_datetime->getDateToday();
+        // ตรวจการส่งค่า POST เพื่อเปลี่ยงแปลง $date ที่จะแสดงข้อมูล
+        if ($this->input->server('REQUEST_METHOD') === 'POST') {
+            $temp = $this->input->post('date');
+            if ($temp != NULL)
+                $date = $this->m_datetime->setTHDateToDB($temp);
+        }
         $data = array(
-            'page_title' => 'ค่าใช้จ่าย ' . $route_name,
-            'page_title_small' => 'ประจำวันที่ ' . $date_th,
+            'date' => $date,
+            'page_title' => 'เพิ่มค่าใช้จ่าย ' . $route_name,
+            'form_open' => form_open('cost/view/' . $rcode . '/' . $vtid, array('class' => 'form-inline')),
+            'form_close' => form_close(),
             'form' => $this->m_cost->set_form_search($rcode, $vtid),
             'route_details' => $route_detail,
             'stations' => $this->m_station->get_stations($rcode, $vtid),
@@ -85,44 +93,43 @@ class cost extends CI_Controller {
             'vtid' => $vtid,
         );
 
-        $data['strtitle'] = '';
-
-        if ($this->m_cost->varlidation_form_search() && $this->form_validation->run() == TRUE) {
-            $from = $this->input->post('DateForm');
-            $to = $this->input->post('DateTo');
-            if ($from != NULL | $to != NULL) {
-                $data['strtitle'] .= 'ผลการค้นหา : ';
-            }
-            if ($from != NULL && $to == NULL) {
-                $data['strtitle'] .='วันที่ ' . $this->m_datetime->getDateThaiString($from);
-                $data['cost'] = $this->m_cost->search_cost($from);
-            }
-            if ($from != NULL && $to != NULL) {
-                $data['strtitle'] .='จากวันที่ ' . $this->m_datetime->getDateThaiString($from);
-                $data['strtitle'] .=' ถึง ' . $this->m_datetime->getDateThaiString($to);
-                $data['cost'] = $this->m_cost->search_cost($from, $to);
-            }
-        }
-
-        $data['vehicles'] = $this->m_vehicle->get_vehicle();
+        $data['vehicles'] = $this->m_vehicle->get_vehicle($rcode, $vtid);
         $data['routes'] = $this->m_route->get_route($rcode, $vtid);
         $data['schedules'] = $this->m_cost->get_schedule($date, $rcode, $vtid);
 
         $data['cost_detail'] = $this->m_cost->get_cost_detail();
         $data['cost_types'] = $this->m_cost->get_cost_type();
 
-        $data['date'] = $date;
+
+        //Make schedule by RID
+        $route_rid = array();
+        foreach ($route_detail as $row) {
+            $route_rid[$row['RID']] = array(
+                'RID' => $row['RID'],
+                'RSource' => $row['RSource'],
+                'RDestination' => $row['RDestination'],
+                'list' => array(),
+            );
+        }
+        foreach ($data['schedules'] as $row) {
+            if (array_key_exists($row['RID'], $route_rid)) {
+                array_push($route_rid[$row['RID']]['list'], $row);
+            }
+        }
+        $data['route_rid'] = $route_rid;
 
         $data_debug = array(
 //            'cost' => $data['cost'],
 //            'cost_detail' => $data['cost_detail'], 
 //            'cost_types' => $data['cost_types'],
 //            'routes' => $data['routes'],
-//            'route_details' => $data["route_details"],F
+//            'route_details' => $data["route_details"],
 //            'stations' => $data['stations'],
 //            'vehicles' => $data['vehicles'],
 //            'form' => $data['form'],
-            'schedules' => $data['schedules'],
+//            'schedules' => $data['schedules'],
+//            'date' => $date,
+//            'test' => $route_rid,
         );
 
         $this->m_template->set_Title("ค่าใช้จ่าย $route_name");

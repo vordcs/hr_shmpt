@@ -108,6 +108,11 @@
                                         <div class="col-md-12">
                                             <p class="lead text-center">ค่าใช้จ่ายประจำวันที่ <?= $row_line['date'] ?></p>
                                         </div>
+                                        <div class="col-md-12 text-right" style="position: absolute;right: 20px;">
+                                            <?php
+                                            echo anchor('cost/view/' . $row_line['RCode'] . '/' . $row_vtid['VTID'], '<i class="fa fa-plus-circle"></i> เพิ่มรายจ่าย (' . $row_line['tab_title'] . ')', array('class' => 'btn btn-success'));
+                                            ?>
+                                        </div>
                                         <div class="col-md-12">                                            
                                             <table class="table table-hover table-bordered">
                                                 <thead>
