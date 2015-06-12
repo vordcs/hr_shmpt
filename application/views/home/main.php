@@ -24,8 +24,14 @@
                             <dd class="pos-<?= (($index % 2) == 0) ? 'right' : 'left' ?> clearfix">
                                 <div class="circ"></div>
                                 <div class="time"><?= date('H:i', strtotime($report['ReportTime'])); ?></div>
-                                <div class="events">
-                                    <div class="pull-right"><?= ($report['ReportStatus'] == 0) ? 'รอตรวจสอบ' : 'ตรวจสอบแล้ว'; ?><span class="label label-primary"><i class="fa fa-info"></i></span></div>
+                                <div class="events well">
+                                    <div class="pull-right">
+                                        <?php if ($report['ReportStatus'] == 0) { ?>
+                                            <span class="badge badge-info"><i class="fa fa-info"></i> รอการตรวจสอบ</span>
+                                        <?php } else { ?>
+                                            <span class="badge badge-success"><i class="fa fa-check"></i> ตรวจสอบแล้ว</span>
+                                        <?php } ?>
+                                    </div>
                                     <div class="events-body">
                                         <a href="#" data-toggle="collapse" data-target="#<?= $report['ReportID'] ?>">
                                             <h4 class="events-heading"><i class="fa fa-chevron-circle-down"></i> รถ<?= ($report['VTID'] == 1) ? 'ตู้' : 'บัส' ?> สาย:<?= $report['RCode'] ?></h4>
@@ -34,6 +40,9 @@
                                             <p style="margin: 0px;">จำนวนเงินทั้งหมด  <strong><?= $report['Total'] ?></strong> บาท , หักเปอร์เซนต์พนักงาน <strong><?= $report['Vage'] ?></strong> บาท </p>
                                             <p style="margin: 0px;">ยอดสุทธิที่ต้องส่ง  <strong><?= $report['Net'] ?></strong> บาท</p>
                                             <p><strong>ส่งโดย</strong> <?= $report['Title'] . $report['FirstName'] . ' ' . $report['LastName'] ?></p>
+                                            <?php if ($report['ReportStatus'] == 0) { ?>
+                                                <p><?= anchor('home/check_report/' . $report['ReportID'] . '/' . $EID, '<i class="fa fa-btc"></i>&nbsp;ยืนยันรับเงินแล้ว', array('class' => 'btn btn-xs btn-success')) ?></p>
+                                            <?php } ?>
                                         </div>
                                     </div>
                                 </div>

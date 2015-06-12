@@ -28,4 +28,25 @@ class m_home extends CI_Model {
         return $ans;
     }
 
+    function check_report($ReportID, $EID) {
+        $data = array(
+            'EID' => $EID,
+            'ReportID' => $ReportID,
+            'ReadDateTime' => $this->m_datetime->getDatetimeNow()
+        );
+        if ($this->db->insert('reading_report', $data)) {
+            $data2 = array(
+                'ReportStatus' => 1
+            );
+            $this->db->where('ReportID', $ReportID);
+            if ($this->db->update('report_day', $data2)) {
+                return TRUE;
+            } else {
+                return FALSE;
+            }
+        } else {
+            return FALSE;
+        }
+    }
+
 }
