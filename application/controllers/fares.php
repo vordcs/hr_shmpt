@@ -39,13 +39,14 @@ class fares extends CI_Controller {
         );
 
         $form_data = array();
+        $SID = NULL;
         if ($this->m_fares->validation_form_search() && $this->form_validation->run() == TRUE) {
             $form_data = $this->m_fares->get_post_form_search();
             $SID = $form_data['SID'];
             $data['data'] = $this->m_fares->set_form_search($RCode, $VTID, $SID);
         }
 
-
+        $data['SID'] = $SID;
 
         $data_debug = array(
 //            'page_title' => 'จุดจอดและค่าโดยสาร ' . $vt_name,
@@ -111,7 +112,7 @@ class fares extends CI_Controller {
         $this->m_template->showTemplate();
     }
 
-    public function edit($rcode, $vtid, $SID) {
+    public function edit($rcode, $vtid, $SID = NULL) {
 
         if ($rcode == NULL || $vtid == NULL || $SID == NULL) {
             echo "<script>window.location.href='javascript:history.back(-1);'</script>";
