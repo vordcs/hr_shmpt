@@ -28,7 +28,7 @@
         <?php echo css('customCSS.css?v=' . $version); ?>
         <?php echo css('site.min.css?v=' . $version); ?>
         <?php echo js('jquery.js?v=' . $version); ?>
-        <?php echo js('bootstrap.js?v=' . $version); ?>
+        <?php //echo js('bootstrap.js?v=' . $version); ?>
         <?php echo js('customJS.js?v=' . $version); ?>
         <?php echo js('site.min.js?v=' . $version); ?>
         <?php echo js('jquery.sortable.js?v=' . $version); ?>
