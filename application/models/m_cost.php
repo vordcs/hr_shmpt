@@ -90,26 +90,17 @@ class m_cost extends CI_Model {
         return $query->result_array();
     }
 
-    public function insert_cost($data) {
+    public function insert_cost($form_data) {
+        //insert cost data  
+        $this->db->insert('cost', $form_data['cost']);
+        $form_data['vehicles_has_cost']['CostID'] = $this->db->insert_id();
 
-//      insert cost data  
-        $this->db->insert('cost', $data['data_cost']);
-        $cost_id = $this->db->insert_id();
-
-//      insert vehicles has cost
-        $vehicle_cost = array(
-            'CostID' => $cost_id,
-            'VID' => $data['data_vehicle'][0]['VID'],
-        );
-
-        $this->db->insert('vehicles_has_cost', $vehicle_cost);
-
-        $rs = $this->get_cost($cost_id);
-        $rs[0]['VTID'] = $data['data_vehicle'][0]['VTID'];
-        $rs[0]['RCode'] = $data['data_vehicle'][0]['RCode'];
-        $rs[0]['VTDescription'] = $data['data_vehicle'][0]['VTDescription'];
-
-        return $rs;
+        //insert vehicles has cost
+        if ($this->db->insert('vehicles_has_cost', $form_data['vehicles_has_cost'])) {
+            return TRUE;
+        } else {
+            return FALSE;
+        }
     }
 
     public function set_form_add($ctid = NULL, $vtid = NULL) {
@@ -144,6 +135,8 @@ class m_cost extends CI_Model {
             'class' => 'form-control');
 
         $dropdown = 'class="selecter_3" data-selecter-options = \'{"cover":"true"}\' ';
+
+
 
         $form_add = array(
             'form' => form_open('cost/add/' . $ctid, array('class' => 'form-horizontal', 'id' => 'form_cost')),
@@ -208,9 +201,6 @@ class m_cost extends CI_Model {
 
     public function validation_form_add() {
         $this->form_validation->set_rules('CostDetailID', 'รายการ', 'trim|required|xss_clean|callback_check_dropdown');
-        $this->form_validation->set_rules('CostDate', 'วันที่ทำรายการ', 'trim|required|xss_clean');
-        $this->form_validation->set_rules('VTID', 'ประเภทรถ', 'trim|required|xss_clean|callback_check_dropdown');
-        $this->form_validation->set_rules('VCode', 'เบอร์รถ', 'trim|required|xss_clean|callback_check_vcode');
         $this->form_validation->set_rules('CostValue', 'จำนวนเงิน', 'trim|required|xss_clean');
         $this->form_validation->set_rules('CostNote', 'หมายเหตุ', 'trim|xss_clean');
         return TRUE;
@@ -227,23 +217,13 @@ class m_cost extends CI_Model {
     }
 
     public function get_post_form_add($ctid) {
-        //ข้อมูลค่าใช้จ่าย
-
-        $data_cost = array(
-            'CostTypeID' => $ctid,
+        $form_data = array(
             'CostDetailID' => $this->input->post('CostDetailID'),
-            'CostDate' => $this->m_datetime->setDateFomat($this->input->post('CostDate')),
             'CostValue' => $this->input->post('CostValue'),
+            'IsCash' => ($this->input->post('IsCash') == 'on') ? '1' : '0',
             'CostNote' => $this->input->post('CostNote'),
         );
-        $vcode = $this->input->post('VCode');
-        $vtid = $this->input->post('VTID');
-        $form_data = array(
-            'data_cost' => $data_cost,
-            'data_vehicle' => $this->get_vehicle($vcode, $vtid),
-        );
-
-        return $form_data;
+        return array('cost' => $form_data);
     }
 
     public function get_schedule($date = NULL, $rcode = NULL, $vtid = NULL, $rid = NULL) {
@@ -309,6 +289,9 @@ class m_cost extends CI_Model {
 
                 //Generate tbody
                 $temp[$temp_key]['tbody'] = $this->generate_tbody($temp[$temp_key]['RCode'], $value['VTID'], $date);
+
+                //Generate tbody with cost vehicle from old tbody
+                $temp[$temp_key]['tbody'] = $this->generate_tbody_cost_vehicle($temp[$temp_key]['tbody'], $date);
 
                 //Generate tbody
                 $temp[$temp_key]['tfoot'] = $this->m_cost->generate_tfoot($temp[$temp_key]['tbody']);
@@ -839,6 +822,282 @@ class m_cost extends CI_Model {
         return $ans;
     }
 
+    function generate_tbody_cost_vehicle($old_tbody, $date) {
+        foreach ($old_tbody as $key => $row) {
+            $temp = $this->check_income_by_VID($row['ref_vid'], $date);
+            foreach ($temp as $row2) {
+                //รายรับ array index = income
+                if ($row2['CostTypeID'] == '1') {
+                    if ($row2['CostDetailID'] == '1') {
+                        //รายทาง onway
+                        if (isset($old_tbody[$key]['income']['onway']['price'])) {
+                            $old_tbody[$key]['income']['onway']['price'] +=$row2['CostValue'];
+                        } else {
+                            $old_tbody[$key]['income']['onway']['price'] = $row2['CostValue'];
+                        }
+                        $temp_array = array(
+                            'EID' => $row2['EID'],
+                            'name' => $row2['Title'] . $row2['FirstName'] . ' ' . $row2['LastName'],
+                            'price' => $row2['CostValue'],
+                        );
+                        $flag_push = -1;
+                        foreach ($old_tbody[$key]['income']['onway']['list'] as $key2 => $row3) {
+                            if ($row3['EID'] == $row2['EID']) {
+                                $flag_push = $key2;
+                                break;
+                            }
+                        }
+                        if ($flag_push == -1) {
+                            array_push($old_tbody[$key]['income']['onway']['list'], $temp_array);
+                        } else {
+                            $old_tbody[$key]['income']['onway']['list'][$flag_push]['price']+=$row2['CostValue'];
+                        }
+                    } elseif ($row2['CostDetailID'] == '6') {
+                        //ค่าของฝาก messenger
+                        if (isset($old_tbody[$key]['income']['messenger']['price'])) {
+                            $old_tbody[$key]['income']['messenger']['price'] +=$row2['CostValue'];
+                        } else {
+                            $old_tbody[$key]['income']['messenger']['price'] = $row2['CostValue'];
+                        }
+                        $temp_array = array(
+                            'EID' => $row2['EID'],
+                            'name' => $row2['Title'] . $row2['FirstName'] . ' ' . $row2['LastName'],
+                            'price' => $row2['CostValue'],
+                        );
+                        $flag_push = -1;
+                        foreach ($old_tbody[$key]['income']['messenger']['list'] as $key2 => $row3) {
+                            if ($row3['EID'] == $row2['EID']) {
+                                $flag_push = $key2;
+                                break;
+                            }
+                        }
+                        if ($flag_push == -1) {
+                            array_push($old_tbody[$key]['income']['messenger']['list'], $temp_array);
+                        } else {
+                            $old_tbody[$key]['income']['messenger']['list'][$flag_push]['price']+=$row2['CostValue'];
+                        }
+                    } elseif ($row2['CostDetailID'] == '7') {
+                        //ค่าคิว queue_price
+                        if (isset($old_tbody[$key]['income']['queue_price']['price'])) {
+                            $old_tbody[$key]['income']['queue_price']['price'] +=$row2['CostValue'];
+                        } else {
+                            $old_tbody[$key]['income']['queue_price']['price'] = $row2['CostValue'];
+                        }
+                        $temp_array = array(
+                            'EID' => $row2['EID'],
+                            'name' => $row2['Title'] . $row2['FirstName'] . ' ' . $row2['LastName'],
+                            'price' => $row2['CostValue'],
+                        );
+                        $flag_push = -1;
+                        foreach ($old_tbody[$key]['income']['queue_price']['list'] as $key2 => $row3) {
+                            if ($row3['EID'] == $row2['EID']) {
+                                $flag_push = $key2;
+                                break;
+                            }
+                        }
+                        if ($flag_push == -1) {
+                            array_push($old_tbody[$key]['income']['queue_price']['list'], $temp_array);
+                        } else {
+                            $old_tbody[$key]['income']['queue_price']['list'][$flag_push]['price']+=$row2['CostValue'];
+                        }
+                    } elseif ($row2['CostDetailID'] == '888') {
+                        //อื่นๆ in_other
+                        if (isset($old_tbody[$key]['income']['in_other']['price'])) {
+                            $old_tbody[$key]['income']['in_other']['price'] +=$row2['CostValue'];
+                        } else {
+                            $old_tbody[$key]['income']['in_other']['price'] = $row2['CostValue'];
+                        }
+                        $temp_array = array(
+                            'EID' => $row2['EID'],
+                            'name' => $row2['Title'] . $row2['FirstName'] . ' ' . $row2['LastName'],
+                            'price' => $row2['CostValue'],
+                        );
+                        $flag_push = -1;
+                        foreach ($old_tbody[$key]['income']['in_other']['list'] as $key2 => $row3) {
+                            if ($row3['EID'] == $row2['EID']) {
+                                $flag_push = $key2;
+                                break;
+                            }
+                        }
+                        if ($flag_push == -1) {
+                            array_push($old_tbody[$key]['income']['in_other']['list'], $temp_array);
+                        } else {
+                            $old_tbody[$key]['income']['in_other']['list'][$flag_push]['price']+=$row2['CostValue'];
+                        }
+                    }
+                    ////// ส่วนของรายจ่าย //////
+                } else {
+                    //รายจ่าย array index = outcome
+                    if ($row2['CostTypeID'] == '2') {
+                        //ค่าเที่ยว license
+                        if (isset($old_tbody[$key]['outcome']['license']['price'])) {
+                            $old_tbody[$key]['outcome']['license']['price'] +=$row2['CostValue'];
+                        } else {
+                            $old_tbody[$key]['outcome']['license']['price'] = $row2['CostValue'];
+                        }
+                        $temp_array = array(
+                            'EID' => $row2['EID'],
+                            'name' => $row2['Title'] . $row2['FirstName'] . ' ' . $row2['LastName'],
+                            'price' => $row2['CostValue'],
+                        );
+                        $flag_push = -1;
+                        foreach ($old_tbody[$key]['outcome']['license']['list'] as $key2 => $row3) {
+                            if ($row3['EID'] == $row2['EID']) {
+                                $flag_push = $key2;
+                                break;
+                            }
+                        }
+                        if ($flag_push == -1) {
+                            array_push($old_tbody[$key]['outcome']['license']['list'], $temp_array);
+                        } else {
+                            $old_tbody[$key]['outcome']['license']['list'][$flag_push]['price']+=$row2['CostValue'];
+                        }
+                    } elseif ($row2['CostTypeID'] == '3') {
+                        //ค่าก๊าซ gas
+                        if (isset($old_tbody[$key]['outcome']['gas']['price'])) {
+                            $old_tbody[$key]['outcome']['gas']['price'] +=$row2['CostValue'];
+                        } else {
+                            $old_tbody[$key]['outcome']['gas']['price'] = $row2['CostValue'];
+                        }
+                        $temp_array = array(
+                            'EID' => $row2['EID'],
+                            'name' => $row2['Title'] . $row2['FirstName'] . ' ' . $row2['LastName'],
+                            'price' => $row2['CostValue'],
+                        );
+                        $flag_push = -1;
+                        foreach ($old_tbody[$key]['outcome']['gas']['list'] as $key2 => $row3) {
+                            if ($row3['EID'] == $row2['EID']) {
+                                $flag_push = $key2;
+                                break;
+                            }
+                        }
+                        if ($flag_push == -1) {
+                            array_push($old_tbody[$key]['outcome']['gas']['list'], $temp_array);
+                        } else {
+                            $old_tbody[$key]['outcome']['gas']['list'][$flag_push]['price']+=$row2['CostValue'];
+                        }
+                    } elseif ($row2['CostTypeID'] == '4') {
+                        //ค่านำมัน oil
+                        if (isset($old_tbody[$key]['outcome']['oil']['price'])) {
+                            $old_tbody[$key]['outcome']['oil']['price'] +=$row2['CostValue'];
+                        } else {
+                            $old_tbody[$key]['outcome']['oil']['price'] = $row2['CostValue'];
+                        }
+                        $temp_array = array(
+                            'EID' => $row2['EID'],
+                            'name' => $row2['Title'] . $row2['FirstName'] . ' ' . $row2['LastName'],
+                            'price' => $row2['CostValue'],
+                        );
+                        $flag_push = -1;
+                        foreach ($old_tbody[$key]['outcome']['oil']['list'] as $key2 => $row3) {
+                            if ($row3['EID'] == $row2['EID']) {
+                                $flag_push = $key2;
+                                break;
+                            }
+                        }
+                        if ($flag_push == -1) {
+                            array_push($old_tbody[$key]['outcome']['oil']['list'], $temp_array);
+                        } else {
+                            $old_tbody[$key]['outcome']['oil']['list'][$flag_push]['price']+=$row2['CostValue'];
+                        }
+                    } elseif ($row2['CostTypeID'] == '5') {
+                        //ค่าอะไหล่ part
+                        if (isset($old_tbody[$key]['outcome']['part']['price'])) {
+                            $old_tbody[$key]['outcome']['part']['price'] +=$row2['CostValue'];
+                        } else {
+                            $old_tbody[$key]['outcome']['part']['price'] = $row2['CostValue'];
+                        }
+                        $temp_array = array(
+                            'EID' => $row2['EID'],
+                            'name' => $row2['Title'] . $row2['FirstName'] . ' ' . $row2['LastName'],
+                            'price' => $row2['CostValue'],
+                        );
+                        $flag_push = -1;
+                        foreach ($old_tbody[$key]['outcome']['part']['list'] as $key2 => $row3) {
+                            if ($row3['EID'] == $row2['EID']) {
+                                $flag_push = $key2;
+                                break;
+                            }
+                        }
+                        if ($flag_push == -1) {
+                            array_push($old_tbody[$key]['outcome']['part']['list'], $temp_array);
+                        } else {
+                            $old_tbody[$key]['outcome']['part']['list'][$flag_push]['price']+=$row2['CostValue'];
+                        }
+                    } elseif ($row2['CostTypeID'] == '8') {
+                        //เปอร์เซนต์ percent_price
+                        if (isset($old_tbody[$key]['outcome']['percent_price']['price'])) {
+                            $old_tbody[$key]['outcome']['percent_price']['price'] +=$row2['CostValue'];
+                        } else {
+                            $old_tbody[$key]['outcome']['percent_price']['price'] = $row2['CostValue'];
+                        }
+                        $temp_array = array(
+                            'EID' => $row2['EID'],
+                            'name' => $row2['Title'] . $row2['FirstName'] . ' ' . $row2['LastName'],
+                            'price' => $row2['CostValue'],
+                        );
+                        $flag_push = -1;
+                        foreach ($old_tbody[$key]['outcome']['percent_price']['list'] as $key2 => $row3) {
+                            if ($row3['EID'] == $row2['EID']) {
+                                $flag_push = $key2;
+                                break;
+                            }
+                        }
+                        if ($flag_push == -1) {
+                            array_push($old_tbody[$key]['outcome']['percent_price']['list'], $temp_array);
+                        } else {
+                            $old_tbody[$key]['outcome']['percent_price']['list'][$flag_push]['price']+=$row2['CostValue'];
+                        }
+                    } elseif ($row2['CostTypeID'] == '999') {
+                        //อื่นๆ out_other
+                        if (isset($old_tbody[$key]['outcome']['out_other']['price'])) {
+                            $old_tbody[$key]['outcome']['out_other']['price'] +=$row2['CostValue'];
+                        } else {
+                            $old_tbody[$key]['outcome']['out_other']['price'] = $row2['CostValue'];
+                        }
+                        $temp_array = array(
+                            'EID' => $row2['EID'],
+                            'name' => $row2['Title'] . $row2['FirstName'] . ' ' . $row2['LastName'],
+                            'price' => $row2['CostValue'],
+                        );
+                        $flag_push = -1;
+                        foreach ($old_tbody[$key]['outcome']['out_other']['list'] as $key2 => $row3) {
+                            if ($row3['EID'] == $row2['EID']) {
+                                $flag_push = $key2;
+                                break;
+                            }
+                        }
+                        if ($flag_push == -1) {
+                            array_push($old_tbody[$key]['outcome']['out_other']['list'], $temp_array);
+                        } else {
+                            $old_tbody[$key]['outcome']['out_other']['list'][$flag_push]['price']+=$row2['CostValue'];
+                        }
+                    }
+                }
+
+                // Caculate new balance
+                $balance = 0;
+                $balance += $old_tbody[$key]['income']['0']['price'];
+                $balance += $old_tbody[$key]['income']['1']['price'];
+                $balance += $old_tbody[$key]['income']['onway']['price'];
+                $balance += $old_tbody[$key]['income']['messenger']['price'];
+                $balance += $old_tbody[$key]['income']['queue_price']['price'];
+                $balance += $old_tbody[$key]['income']['in_other']['price'];
+
+                $balance -= $old_tbody[$key]['outcome']['license']['price'];
+                $balance -= $old_tbody[$key]['outcome']['gas']['price'];
+                $balance -= $old_tbody[$key]['outcome']['oil']['price'];
+                $balance -= $old_tbody[$key]['outcome']['part']['price'];
+                $balance -= $old_tbody[$key]['outcome']['percent_price']['price'];
+                $balance -= $old_tbody[$key]['outcome']['out_other']['price'];
+
+                $old_tbody[$key]['balance'] = $balance;
+            }
+        }
+
+        return $old_tbody;
+    }
+
     function generate_tfoot($tbody) {
         // 0 1 2 เป็นรหัสรถกับต้นทางปลายทาง
         $ans = array();
@@ -875,6 +1134,18 @@ class m_cost extends CI_Model {
         }
 
         return $ans;
+    }
+
+    function check_income_by_VID($VID, $date) {
+        $this->db->select('*');
+        $this->db->from('vehicles_has_cost');
+        $this->db->join('cost', 'cost.CostID = vehicles_has_cost.CostID', 'left');
+        $this->db->join('cost_detail', 'cost_detail.CostDetailID = cost.CostDetailID', 'left');
+        $this->db->join('employees', 'cost.CreateBy = employees.EID', 'left');
+        $this->db->where('vehicles_has_cost.VID', $VID);
+        $this->db->where('cost.CostDate', $date);
+        $query = $this->db->get();
+        return $query->result_array();
     }
 
 }

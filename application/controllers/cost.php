@@ -57,7 +57,9 @@ class cost extends CI_Controller {
 //            'date' => $this->m_datetime->setTHDateToDB($date),
 //            'detail' => $this->m_route->get_route('264', NULL),
 //            'all_cost' => $data['all_cost'],
-//            'tbody' => $this->m_cost->generate_tbody('264', '1', '2015-04-21'),
+//            'tbody' => $this->m_cost->generate_tbody('264', '1', '2015-06-10'),
+//            'check_income_by_VID' => $this->m_cost->check_income_by_VID('1', '2015-06-10'),
+//            'tbodyNew' => $this->m_cost->generate_tbody_cost_vehicle($this->m_cost->generate_tbody('264', '1', '2015-06-10'), '2015-06-10'),
         );
 
         $this->m_template->set_Title('ค่าใช้จ่าย');
@@ -67,13 +69,14 @@ class cost extends CI_Controller {
         $this->m_template->showTemplate();
     }
 
-    public function view($rcode, $vtid) {
+    public function view($rcode, $vtid, $date = NULL) {
         $route_detail = $this->m_route->get_route_detail($rcode, $vtid);
         $source = $route_detail[0]['RSource'];
         $desination = $route_detail[0]['RDestination'];
         $route_name = 'เส้นทาง ' . $route_detail[0]['RCode'] . ' ' . ' ' . $source . ' - ' . $desination;
 
-        $date = $this->m_datetime->getDateToday();
+        if ($date == NULL)
+            $date = $this->m_datetime->getDateToday();
         // ตรวจการส่งค่า POST เพื่อเปลี่ยงแปลง $date ที่จะแสดงข้อมูล
         if ($this->input->server('REQUEST_METHOD') === 'POST') {
             $temp = $this->input->post('date');
@@ -85,21 +88,35 @@ class cost extends CI_Controller {
             'page_title' => 'เพิ่มค่าใช้จ่าย ' . $route_name,
             'form_open' => form_open('cost/view/' . $rcode . '/' . $vtid, array('class' => 'form-inline')),
             'form_close' => form_close(),
-            'form' => $this->m_cost->set_form_search($rcode, $vtid),
-            'route_details' => $route_detail,
-            'stations' => $this->m_station->get_stations($rcode, $vtid),
-            'cost' => $this->m_cost->get_cost(),
             'rcode' => $rcode,
-            'vtid' => $vtid,
+            'vtid' => $vtid
         );
 
         $data['vehicles'] = $this->m_vehicle->get_vehicle($rcode, $vtid);
         $data['routes'] = $this->m_route->get_route($rcode, $vtid);
         $data['schedules'] = $this->m_cost->get_schedule($date, $rcode, $vtid);
 
-        $data['cost_detail'] = $this->m_cost->get_cost_detail();
-        $data['cost_types'] = $this->m_cost->get_cost_type();
-
+//        $data['cost_detail'] = $this->m_cost->get_cost_detail();
+//        $data['cost_types'] = $this->m_cost->get_cost_type();
+        //Check vehicle cost
+        foreach ($data['vehicles'] as $key => $row) {
+            $data['vehicles'][$key]['cost']['1'] = array('total' => 0, 'list' => array());
+            $data['vehicles'][$key]['cost']['2'] = array('total' => 0, 'list' => array());
+            $temp = $this->m_cost->check_income_by_VID($row['VID'], $date);
+            foreach ($temp as $row2) {
+                //รายรับ
+                if ($row2['CostTypeID'] == 1) {
+                    $data['vehicles'][$key]['cost']['1']['total'] += $row2['CostValue'];
+                    array_push($data['vehicles'][$key]['cost']['1']['list'], array('CostDetail' => $row2['CostDetail'],
+                        'CostValue' => $row2['CostValue'], 'Name' => $row2['Title'] . $row2['FirstName'] . ' ' . $row2['LastName'],));
+                } else {
+                    //รายจ่าย
+                    $data['vehicles'][$key]['cost']['2']['total'] += $row2['CostValue'];
+                    array_push($data['vehicles'][$key]['cost']['2']['list'], array('CostDetail' => $row2['CostDetail'],
+                        'CostValue' => $row2['CostValue'], 'Name' => $row2['Title'] . $row2['FirstName'] . ' ' . $row2['LastName'],));
+                }
+            }
+        }
 
         //Make schedule by RID
         $route_rid = array();
@@ -130,6 +147,8 @@ class cost extends CI_Controller {
 //            'schedules' => $data['schedules'],
 //            'date' => $date,
 //            'test' => $route_rid,
+//            'input_modal_add' => $data['input_modal_add'],
+//            'check_income_by_VID' => $this->m_cost->check_income_by_VID('1', '2015-06-14'),
         );
 
         $this->m_template->set_Title("ค่าใช้จ่าย $route_name");
@@ -139,28 +158,55 @@ class cost extends CI_Controller {
         $this->m_template->showTemplate();
     }
 
-    public function add($ctid, $vtid = NULL) {
+    public function add($rcode = NULL, $vtid = NULL, $vid = NULL, $ctid = NULL, $date = NULL) {
+        if ($rcode == NULL || $vtid == NULL || $vid == NULL || $ctid == NULL || $date == NULL)
+            redirect('cost');
+
         $page_title = 'เพิ่ม ' . $this->m_cost->get_cost_type($ctid)[0]['CostTypeName'] . ' ';
         $page_title .= $this->m_vehicle->get_vehicle_types($vtid)[0]['VTDescription'];
 
         if ($this->m_cost->validation_form_add() && $this->form_validation->run() == TRUE) {
             $form_data = $this->m_cost->get_post_form_add($ctid);
-//            $this->m_template->set_Debug($form_data);
+            //Combined post and data
+            $form_data['cost']['CostDate'] = $date;
+            $form_data['cost']['CostTypeID'] = $ctid;
+            $form_data['cost']['CreateBy'] = $this->session->userdata('username');
+            $form_data['cost']['CreateDate'] = $this->m_datetime->getDatetimeNow();
+            $form_data['vehicles_has_cost']['VID'] = $vid;
+
             $rs = $this->m_cost->insert_cost($form_data);
-//            $this->m_template->set_Debug($rs);
-            $this->session->set_flashdata('tab_active', $rs[0]['VTID'] . '_' . $rs[0]['RCode']);
-            redirect('cost/');
+            $form_data['status'] = $rs;
+            if ($rs == TRUE) {
+                //Alert success and redirect to candidate
+                $alert['alert_message'] = "บันทึกรายการค่าใช้จ่ายสำเร็จ";
+                $alert['alert_mode'] = "success";
+                $this->session->set_flashdata('alert', $alert);
+            } else {
+                //Alert success and redirect to candidate
+                $alert['alert_message'] = "กรุณาลองใหม่อีกครั้ง";
+                $alert['alert_mode'] = "danger";
+                $this->session->set_flashdata('alert', $alert);
+            }
+
+            redirect('cost/view/' . $rcode . '/' . $vtid . '/' . $date);
         }
         $data = array(
             'page_title' => $page_title,
             'form' => $this->m_cost->set_form_add($ctid, $vtid),
+            'date' => $date,
+            'vehicle' => $this->m_vehicle->get_vehicle($rcode, $vtid, $vid, NULL)[0],
+            'form_open' => form_open('cost/add/' . $rcode . '/' . $vtid . '/' . $vid . '/' . $ctid . '/' . $date, array('class' => 'form-horizontal')),
+            'form_close' => form_close(),
         );
+        $data['page_title'] = $data['page_title'] . ' ' . $data['vehicle']['VCode'];
+
         $data_debug = array(
-            'form' => $data['form'],
-//            'vehicles' => $data['vehicles'],
+//            'form' => $data['form'],
+//            'get_vehicle' => $data['vehicle'],
+//            'form_data' => (isset($form_data)) ? $form_data : '',
         );
 
-//        $this->m_template->set_Debug($data_debug);
+        $this->m_template->set_Debug($data_debug);
         $this->m_template->set_Permission('COA');
         $this->m_template->set_Content('cost/frm_cost', $data);
         $this->m_template->showTemplate();
