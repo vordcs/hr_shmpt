@@ -793,7 +793,7 @@ class m_cost extends CI_Model {
             $temp['income'] = $income;
             $temp['income']['onway'] = $all_onway;
             $temp['income']['messenger'] = $all_messenger;
-            $temp['income']['queue_price'] = $all_in_other;
+            $temp['income']['queue_price'] = $all_queue_price;
             $temp['income']['in_other'] = $all_in_other;
 
             $temp['outcome']['license'] = $all_license;
