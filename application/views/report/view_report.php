@@ -137,3 +137,53 @@
         </div>
     </div>
 </div>
+
+<div class="container">
+    <div class="row-fluid">
+        <div class="col-md-12">
+            <div class="panel panel-default" style="overflow: auto;">
+                <div class="panel-heading" style="width: max-content;">
+                    <i class="fa fa-bus"></i>&nbsp;รายงานข้อมูลรถ
+                </div>
+                <table class="table table-responsive table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th rowspan="2">เบอร์รถ</th>
+                            <th colspan="4" class="th-grass">รายรับ</th>
+                            <th colspan="6" class="th-bittersweet">รายจ่าย</th>
+                        </tr>
+                        <tr>
+                            <th class="th-grass">รายทาง</th>
+                            <th class="th-grass">ค่าของฝาก</th>
+                            <th class="th-grass">ค่าคิว</th>
+                            <th class="th-grass">อื่นๆ</th>
+                            <th class="th-bittersweet">ค่าเที่ยว</th>
+                            <th class="th-bittersweet">ค่าก๊าซ</th>
+                            <th class="th-bittersweet">ค่านำมัน</th>
+                            <th class="th-bittersweet">ค่าอะไหล่</th>
+                            <th class="th-bittersweet">เปอร์เซนต์</th>
+                            <th class="th-bittersweet">อื่นๆ</th>				
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($report_vehicle_cost['tbody'] as $row) { ?>
+                            <tr>
+                                <td class="text-center"><?= $row['vehicle']['VCode'] ?></td>
+                                <td class="td-grass text-right"><?= $row['onway'] ?></td>
+                                <td class="td-grass text-right"><?= $row['messenger'] ?></td>
+                                <td class="td-grass text-right"><?= $row['queue_price'] ?></td>
+                                <td class="td-grass text-right"><?= $row['in_other'] ?></td>
+                                <td class="td-bittersweet text-right"><?= $row['license'] ?></td>
+                                <td class="td-bittersweet text-right"><?= $row['gas'] ?></td>
+                                <td class="td-bittersweet text-right"><?= $row['oil'] ?></td>
+                                <td class="td-bittersweet text-right"><?= $row['part'] ?></td>
+                                <td class="td-bittersweet text-right"><?= $row['percent_price'] ?></td>
+                                <td class="td-bittersweet text-right"><?= $row['out_other'] ?></td>
+                            </tr>
+                        <?php } ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

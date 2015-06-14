@@ -172,8 +172,8 @@ class m_report extends CI_Model {
         $this->db->join('vehicles_has_schedules as vhs', 'tsd.TSID=vhs.TSID');
         $this->db->where('tsd.ScheduleStatus', '1');
         $this->db->where('tsd.RID', $RID_S);
-        $this->db->where('Date >', $begin_date);
-        $this->db->where('Date <', $end_date);
+        $this->db->where('Date >=', $begin_date);
+        $this->db->where('Date <=', $end_date);
         $query = $this->db->get();
         $temp_s = $query->result_array();
 
@@ -338,7 +338,7 @@ class m_report extends CI_Model {
         array_push($ans['thead'], $temp);
         foreach ($temp_station as $row) {
             $temp = array(
-                'th' => '<em>ลง</em> ' . $row['StationName'].'(คน)'
+                'th' => '<em>ลง</em> ' . $row['StationName'] . '(คน)'
             );
             array_push($ans['thead'], $temp);
         }
@@ -412,6 +412,134 @@ class m_report extends CI_Model {
         }
         $ans['tbody'] = $temp_body;
 //        $temp_body
+
+        return $ans;
+    }
+
+    function report_vehicle_cost($rcode, $vtid, $begin_date, $end_date) {
+        $ans = array(
+            'tbody' => array(),
+        );
+
+        //Make tbody
+        //Check round
+        $where = array(
+            'RCode' => $rcode,
+            'VTID' => $vtid,
+        );
+
+        $temp_vehicle = $this->get_vehicle($rcode, $vtid);
+        foreach ($temp_vehicle as $row) {
+            $all_onway = 0;
+            $all_messenger = 0;
+            $all_queue_price = 0;
+            $all_in_other = 0;
+
+            $all_license = 0;
+            $all_gas = 0;
+            $all_oil = 0;
+            $all_part = 0;
+            $all_percent_price = 0;
+            $all_out_other = 0;
+
+            /*
+             * Count income and outcome from vehicles_has_cost
+             */
+            $this->db->select('*');
+            $this->db->from('vehicles_has_cost');
+            $this->db->join('cost', 'cost.CostID = vehicles_has_cost.CostID', 'left');
+            $this->db->join('cost_detail', 'cost_detail.CostDetailID = cost.CostDetailID', 'left');
+            $this->db->where('vehicles_has_cost.VID', $row['VID']);
+            $this->db->where('cost.CostDate >=', $begin_date);
+            $this->db->where('cost.CostDate <=', $end_date);
+            $query = $this->db->get();
+            $temp_vhs1 = $query->result_array();
+
+            /*
+             * Count income and outcome from t_schedules_day_has_cost
+             */
+            $this->db->select('*');
+            $this->db->from('vehicles_has_schedules');
+            $this->db->join('t_schedules_day', 't_schedules_day.TSID = vehicles_has_schedules.TSID', 'left');
+            $this->db->where('vehicles_has_schedules.VID', $row['VID']);
+            $this->db->where('t_schedules_day.Date >=', $begin_date);
+            $this->db->where('t_schedules_day.Date <=', $end_date);
+            $query = $this->db->get();
+            $temp = $query->result_array();
+
+            $temp_vhs2 = array();
+            foreach ($temp as $row2) {
+                $this->db->select('*');
+                $this->db->from('t_schedules_day_has_cost');
+                $this->db->join('cost', 'cost.CostID = t_schedules_day_has_cost.CostID', 'left');
+                $this->db->where('t_schedules_day_has_cost.TSID', $row2['TSID']);
+                $query = $this->db->get();
+                $temp2 = $query->result_array();
+                $temp_vhs2 = array_merge($temp_vhs2, $temp2);
+            }
+
+            //Combined array data and unset
+            $temp = array_merge($temp_vhs1, $temp_vhs2);
+            unset($temp_vhs1);
+            unset($temp_vhs2);
+
+            //Calculate
+            foreach ($temp as $row2) {
+                //รายรับ
+                if ($row2['CostTypeID'] == '1') {
+                    if ($row2['CostDetailID'] == '1') {
+                        //รายทาง onway
+                        $all_onway+=$row2['CostValue'];
+                    } elseif ($row2['CostDetailID'] == '6') {
+                        //ค่าของฝาก messenger
+                        $all_messenger+=$row2['CostValue'];
+                    } elseif ($row2['CostDetailID'] == '7') {
+                        //ค่าคิว queue_price
+                        $all_queue_price+=$row2['CostValue'];
+                    } elseif ($row2['CostDetailID'] == '888') {
+                        //อื่นๆ in_other
+                        $all_in_other+=$row2['CostValue'];
+                    }
+                } else {
+                    //รายจ่าย
+                    if ($row2['CostTypeID'] == '2') {
+                        //ค่าเที่ยว license
+                        $all_license+=$row2['CostValue'];
+                    } elseif ($row2['CostTypeID'] == '3') {
+                        //ค่าก๊าซ gas
+                        $all_gas+=$row2['CostValue'];
+                    } elseif ($row2['CostTypeID'] == '4') {
+                        //ค่านำมัน oil
+                        $all_oil+=$row2['CostValue'];
+                    } elseif ($row2['CostTypeID'] == '5') {
+                        //ค่าอะไหล่ part
+                        $all_part+=$row2['CostValue'];
+                    } elseif ($row2['CostTypeID'] == '8') {
+                        //เปอร์เซนต์ percent_price
+                        $all_percent_price+=$row2['CostValue'];
+                    } elseif ($row2['CostTypeID'] == '999') {
+                        //อื่นๆ out_other
+                        $all_out_other+=$row2['CostValue'];
+                    }
+                }
+            }
+
+            //Sum data
+            $temp = array(
+                'vehicle' => array('VCode' => $row['VCode'], 'VID' => $row['VID']),
+                'onway' => $all_onway,
+                'messenger' => $all_messenger,
+                'queue_price' => $all_queue_price,
+                'in_other' => $all_in_other,
+                'license' => $all_license,
+                'gas' => $all_gas,
+                'oil' => $all_oil,
+                'part' => $all_part,
+                'percent_price' => $all_percent_price,
+                'out_other' => $all_out_other,
+            );
+            array_push($ans['tbody'], $temp);
+        }
 
         return $ans;
     }
