@@ -550,7 +550,9 @@ class m_cost extends CI_Model {
                     $count++;
                 }
             }
-            $temp['ref_l_station'] = $temp_count[0]['RID'];
+
+            if (isset($temp_count[0]))
+                $temp['ref_l_station'] = $temp_count[0]['RID'];
             $temp['l_station'] = $count;
 
             // วนนับจำนวนเงินของรถคันนั้นๆที่ขายได้จาก $all_seller_in_station
