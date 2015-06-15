@@ -20,12 +20,14 @@ class Home extends CI_Controller {
 //            'route' => $route,
             'timeline' => $this->m_home->check_report_day(),
             'EID' => $this->session->userdata('username'),
+            'permittion' => $this->session->userdata('permittion'),
         );
 
 
         $data_debug = array(
 //            'timeline' => $this->m_home->check_report_day(),
 //            'EID'=>$this->session->userdata('username'),
+//            'permittion' => $this->session->userdata('permittion'),
         );
 
         $this->m_template->set_Debug($data_debug);
