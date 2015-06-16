@@ -5,6 +5,8 @@ if (!defined('BASEPATH'))
 
 class m_report extends CI_Model {
 
+    private $mCostID = array();
+
     public function set_form_search($mounth = NULL, $year = NULL) {
 
         //ข้อมูลเส้นทาง
@@ -417,6 +419,9 @@ class m_report extends CI_Model {
     }
 
     function report_vehicle_cost($rcode, $vtid, $begin_date, $end_date) {
+        //Reset mCostID
+        $this->mCostID = array();
+
         $ans = array(
             'thead' => $this->generate_thead($rcode, $vtid),
             'tbody' => array(),
@@ -452,6 +457,92 @@ class m_report extends CI_Model {
 
         $temp_vehicle = $this->get_vehicle($rcode, $vtid);
         foreach ($temp_vehicle as $row) {
+            $balance = 0;
+            /*
+             * Calculate income each station by VID
+             */
+            /*
+             * หาคนขายของแต่ละสถานี
+             */
+            $all_seller_in_station = array();
+            $sql_select = 't_stations.SID,t_stations.StationName';
+            $this->db->select($sql_select);
+            $this->db->from('t_stations');
+            $this->db->where('RCode', $rcode);
+            $this->db->where('VTID', $vtid);
+            $this->db->where('IsSaleTicket', '1');
+            $this->db->order_by('Seq', 'ASC');
+            $query = $this->db->get();
+            $all_seller_in_station = $query->result_array();
+            foreach ($all_seller_in_station as $key2 => $row2) {
+                $this->db->select('se.EID');
+                $this->db->from('sellers as se');
+                $this->db->join('employees', 'employees.EID = se.EID');
+                $this->db->where('se.SID', $row2['SID']);
+                $query = $this->db->get();
+                $all_seller_in_station[$key2]['VID'] = $row['VID'];
+                $all_seller_in_station[$key2]['sellers'] = $query->result_array();
+            }
+
+            /*
+             * หาตั๋วทั้งหมดในช่วงเวลาที่กำหนด
+             */
+            $all_ticket = array();
+            $this->db->from('t_routes as tr');
+            $this->db->where('tr.RCode', $rcode);
+            $this->db->where('tr.VTID', $vtid);
+            $this->db->order_by('tr.StartPoint', 'ASC');
+            $query = $this->db->get();
+            $temp_routes = $query->result_array();
+            foreach ($temp_routes as $row2) {
+                $this->db->select('*,tsd.RID as RID');
+                $this->db->from('t_schedules_day as tsd');
+                $this->db->join('vehicles_has_schedules as vhs', 'vhs.TSID=tsd.TSID');
+                $this->db->where('tsd.Date >=', $begin_date);
+                $this->db->where('tsd.Date <=', $end_date);
+                $this->db->where('tsd.RID', $row2['RID']);
+                $this->db->where('tsd.ScheduleStatus', '1');
+                $query = $this->db->get();
+                $temp_schedules_day = $query->result_array();
+
+                //ตรวจตั๋วที่ขายจาก TSID แล้วรวมเป็นเงินเลย
+                foreach ($temp_schedules_day as $key3 => $row3) {
+                    $this->db->select('ts.TicketID,ts.Seat,ts.PriceSeat,ts.Seller');
+                    $this->db->from('ticket_sale as ts');
+                    $this->db->where('ts.TSID', $row3['TSID']);
+                    $this->db->where('ts.VID', $row['VID']); //ตรวจจากรถคันนั้นๆ
+                    $this->db->where('ts.StatusSeat', '1'); //ไม่ว่างหรือขายแล้ว
+                    $query = $this->db->get();
+                    $temp = $query->result_array();
+                    if (!empty($temp))
+                        $all_ticket = array_merge($all_ticket, $temp);
+                }
+            }
+
+            /*
+             * คำนวนเงินที่ได้แต่ละสถานีจาก ตั๋วที่จาก โดยนายท่าที่ประจำสถานี้นั้นๆ
+             */
+            foreach ($all_seller_in_station as $key2 => $row2) {
+                $total_sale = 0;
+                foreach ($row2['sellers'] as $key3 => $row3) {
+                    if (!isset($all_seller_in_station[$key2]['sellers'][$key3]['total_sale'])) {
+                        $all_seller_in_station[$key2]['sellers'][$key3]['total_sale'] = 0;
+                    }
+                    foreach ($all_ticket as $key4 => $row4) {
+                        if ($row3['EID'] == $row4['Seller']) {
+                            $all_seller_in_station[$key2]['sellers'][$key3]['total_sale'] += $row4['PriceSeat'];
+                            $total_sale+=$row4['PriceSeat'];
+                        }
+                    }
+                }
+                $all_seller_in_station[$key2]['total'] = $total_sale;
+                $balance+=$total_sale;
+            }
+
+//            return $all_seller_in_station;
+
+
+
             $all_onway = 0;
             $all_messenger = 0;
             $all_queue_price = 0;
@@ -507,6 +598,20 @@ class m_report extends CI_Model {
 
             //Calculate
             foreach ($temp as $row2) {
+                //ตรวจสอบ CostID กับ mCostID ก่อนนำไปรวม
+                $flag_have = FALSE;
+                foreach ($this->mCostID as $CostID) {
+                    if ($CostID == $row2['CostID']) {
+                        $flag_have = TRUE;
+                        break;
+                    }
+                }
+                if ($flag_have) {
+                    continue;
+                } else {
+                    array_push($this->mCostID, $row2['CostID']);
+                }
+
                 //รายรับ
                 if ($row2['CostTypeID'] == '1') {
                     if ($row2['CostDetailID'] == '1') {
@@ -524,22 +629,22 @@ class m_report extends CI_Model {
                     }
                 } else {
                     //รายจ่าย
-                    if ($row2['CostTypeID'] == '2') {
+                    if ($row2['CostDetailID'] == '2') {
                         //ค่าเที่ยว license
                         $all_license+=$row2['CostValue'];
-                    } elseif ($row2['CostTypeID'] == '3') {
+                    } elseif ($row2['CostDetailID'] == '3') {
                         //ค่าก๊าซ gas
                         $all_gas+=$row2['CostValue'];
-                    } elseif ($row2['CostTypeID'] == '4') {
+                    } elseif ($row2['CostDetailID'] == '4') {
                         //ค่านำมัน oil
                         $all_oil+=$row2['CostValue'];
-                    } elseif ($row2['CostTypeID'] == '5') {
+                    } elseif ($row2['CostDetailID'] == '5') {
                         //ค่าอะไหล่ part
                         $all_part+=$row2['CostValue'];
-                    } elseif ($row2['CostTypeID'] == '8') {
+                    } elseif ($row2['CostDetailID'] == '8') {
                         //เปอร์เซนต์ percent_price
                         $all_percent_price+=$row2['CostValue'];
-                    } elseif ($row2['CostTypeID'] == '999') {
+                    } elseif ($row2['CostDetailID'] == '999') {
                         //อื่นๆ out_other
                         $all_out_other+=$row2['CostValue'];
                     }
@@ -547,12 +652,23 @@ class m_report extends CI_Model {
             }
 
             //Sum data
+            $balance+=$all_onway;
+            $balance+=$all_messenger;
+            $balance+=$all_queue_price;
+            $balance+=$all_in_other;
+            $balance-=$all_license;
+            $balance-=$all_gas;
+            $balance-=$all_oil;
+            $balance-=$all_part;
+            $balance-=$all_percent_price;
+            $balance-=$all_out_other;
             $temp = array(
                 'vehicle' => array('VCode' => $row['VCode'], 'VID' => $row['VID']),
                 'ref_f_station' => '',
                 'f_station' => '',
                 'ref_l_station' => '',
                 'l_station' => '',
+                'income' => $all_seller_in_station,
                 'onway' => $all_onway,
                 'messenger' => $all_messenger,
                 'queue_price' => $all_queue_price,
@@ -563,6 +679,7 @@ class m_report extends CI_Model {
                 'part' => $all_part,
                 'percent_price' => $all_percent_price,
                 'out_other' => $all_out_other,
+                'balance' => $balance
             );
 
             //Count round from all_round
@@ -650,26 +767,88 @@ class m_report extends CI_Model {
     }
 
     function test($rcode, $vtid, $begin_date, $end_date) {
-        $all_round = array();
-        $this->db->from('t_routes as tr');
-        $this->db->where('tr.RCode', $rcode);
-        $this->db->where('tr.VTID', $vtid);
-        $this->db->order_by('tr.StartPoint', 'ASC');
-        $query = $this->db->get();
-        $temp_routes = $query->result_array();
-        foreach ($temp_routes as $row) {
-            $this->db->select('*,tsd.RID as RID');
-            $this->db->from('t_schedules_day as tsd');
-            $this->db->join('vehicles_has_schedules as vhs', 'vhs.TSID=tsd.TSID');
-            $this->db->where('tsd.Date >=', $begin_date);
-            $this->db->where('tsd.Date <=', $end_date);
-            $this->db->where('tsd.RID', $row['RID']);
-            $this->db->where('tsd.ScheduleStatus', '1');
+        if (TRUE) {
+            /*
+             * หาคนขายของแต่ละสถานี
+             */
+            $all_seller_in_station = array();
+            $sql_select = 't_stations.SID,t_stations.StationName';
+            $this->db->select($sql_select);
+            $this->db->from('t_stations');
+            $this->db->where('RCode', $rcode);
+            $this->db->where('VTID', $vtid);
+            $this->db->where('IsSaleTicket', '1');
+            $this->db->order_by('Seq', 'ASC');
             $query = $this->db->get();
-            $temp_schedules_day = $query->result_array();
-            $all_round[$row['RID']] = $temp_schedules_day;
+            $all_seller_in_station = $query->result_array();
+            foreach ($all_seller_in_station as $key => $row) {
+                $this->db->select('se.EID');
+                $this->db->from('sellers as se');
+                $this->db->join('employees', 'employees.EID = se.EID');
+                $this->db->where('se.SID', $row['SID']);
+                $query = $this->db->get();
+                $all_seller_in_station[$key]['VID'] = '12';
+                $all_seller_in_station[$key]['sellers'] = $query->result_array();
+            }
+//        return $all_seller_in_station;
+
+            /*
+             * หาตั๋วทั้งหมดในช่วงเวลาที่กำหนด
+             */
+            $all_ticket = array();
+            $this->db->from('t_routes as tr');
+            $this->db->where('tr.RCode', $rcode);
+            $this->db->where('tr.VTID', $vtid);
+            $this->db->order_by('tr.StartPoint', 'ASC');
+            $query = $this->db->get();
+            $temp_routes = $query->result_array();
+            foreach ($temp_routes as $row) {
+                $this->db->select('*,tsd.RID as RID');
+                $this->db->from('t_schedules_day as tsd');
+                $this->db->join('vehicles_has_schedules as vhs', 'vhs.TSID=tsd.TSID');
+                $this->db->where('tsd.Date >=', $begin_date);
+                $this->db->where('tsd.Date <=', $end_date);
+                $this->db->where('tsd.RID', $row['RID']);
+                $this->db->where('tsd.ScheduleStatus', '1');
+                $query = $this->db->get();
+                $temp_schedules_day = $query->result_array();
+
+                //ตรวจตั๋วที่ขายจาก TSID แล้วรวมเป็นเงินเลย
+                foreach ($temp_schedules_day as $key => $row2) {
+                    $this->db->select('ts.TicketID,ts.Seat,ts.PriceSeat,ts.Seller');
+                    $this->db->from('ticket_sale as ts');
+                    $this->db->where('ts.TSID', $row2['TSID']);
+                    $this->db->where('ts.VID', '12'); //ตรวจจากรถคันนั้นๆ
+                    $this->db->where('ts.StatusSeat', '1'); //ไม่ว่างหรือขายแล้ว
+                    $query = $this->db->get();
+                    $temp = $query->result_array();
+                    if (!empty($temp))
+                        $all_ticket = array_merge($all_ticket, $temp);
+                }
+            }
+//        return $all_ticket;
+
+            /*
+             * คำนวนเงินที่ได้แต่ละสถานีจาก ตั๋วที่จาก โดยนายท่าที่ประจำสถานี้นั้นๆ
+             */
+            foreach ($all_seller_in_station as $key => $row) {
+                $total_sale = 0;
+                foreach ($row['sellers'] as $key2 => $row2) {
+                    if (!isset($all_seller_in_station[$key]['sellers'][$key2]['total_sale'])) {
+                        $all_seller_in_station[$key]['sellers'][$key2]['total_sale'] = 0;
+                    }
+                    foreach ($all_ticket as $key3 => $row3) {
+                        if ($row2['EID'] == $row3['Seller']) {
+                            $all_seller_in_station[$key]['sellers'][$key2]['total_sale'] += $row3['PriceSeat'];
+                            $total_sale+=$row3['PriceSeat'];
+                        }
+                    }
+                }
+                $all_seller_in_station[$key]['total'] = $total_sale;
+            }
+
+            return $all_seller_in_station;
         }
-        return $all_round;
     }
 
 }

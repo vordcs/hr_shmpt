@@ -81,7 +81,7 @@ class report extends CI_Controller {
 //            'report_sale' => $this->m_report->report_sale($rcode, $vtid, $begin_date, $end_date),
 //            'get_vehicle' => $this->m_report->get_vehicle($rcode, $vtid),
 //            'report_station' => $this->m_report->report_station($rcode, $vtid, $begin_date, $end_date),
-            'report_vehicle_cost' => $this->m_report->report_vehicle_cost($rcode, $vtid, $begin_date, $end_date),
+//            'report_vehicle_cost' => $this->m_report->report_vehicle_cost($rcode, $vtid, $begin_date, $end_date),
 //            'test' => $this->m_report->test($rcode, $vtid, $begin_date, $end_date),
         );
 
