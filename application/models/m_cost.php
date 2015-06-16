@@ -5,6 +5,8 @@ if (!defined('BASEPATH'))
 
 class m_cost extends CI_Model {
 
+    private $mCostID = array();
+
     public function get_cost($cid = null, $ctid = NULL) {
         $this->db->join('cost_type', 'cost_type.CostTypeID = cost.CostTypeID');
         $this->db->join('cost_detail', 'cost_detail.CostDetailID = cost.CostDetailID');
@@ -257,6 +259,9 @@ class m_cost extends CI_Model {
      */
 
     function check_cost($date = NULL) {
+        //Reset mCost
+        $this->mCostID = array();
+
         if ($date == NULL) {
             $date = $this->m_datetime->getDateToday();
         }
@@ -291,16 +296,13 @@ class m_cost extends CI_Model {
                 $temp[$temp_key]['tbody'] = $this->generate_tbody($temp[$temp_key]['RCode'], $value['VTID'], $date);
 
                 //Generate tbody with cost vehicle from old tbody
-//                $temp[$temp_key]['tbody'] = $this->generate_tbody_cost_vehicle($temp[$temp_key]['tbody'], $date);
+                $temp[$temp_key]['tbody'] = $this->generate_tbody_cost_vehicle($temp[$temp_key]['tbody'], $date);
 
                 //Generate tbody
                 $temp[$temp_key]['tfoot'] = $this->m_cost->generate_tfoot($temp[$temp_key]['tbody']);
             }
             $ans[$key]['line'] = $temp;
         }
-
-
-
 
         return $ans;
     }
@@ -668,6 +670,8 @@ class m_cost extends CI_Model {
                         if ($ticket['VID'] == $vehicle['VID']) {
                             $total_onway+=$ticket['CostValue'];
                             $temp_data_onway['price']+=$ticket['CostValue'];
+                            //ทำการจำ CostID ที่เคยนำมาคิดแล้วใส่ mCostID
+                            array_push($this->mCostID, $ticket['CostID']);
                         }
                     }
                     $temp_sale = $row_seller['messenger'];
@@ -675,6 +679,8 @@ class m_cost extends CI_Model {
                         if ($ticket['VID'] == $vehicle['VID']) {
                             $total_messenger+=$ticket['CostValue'];
                             $temp_data_messenger['price']+=$ticket['CostValue'];
+                            //ทำการจำ CostID ที่เคยนำมาคิดแล้วใส่ mCostID
+                            array_push($this->mCostID, $ticket['CostID']);
                         }
                     }
                     $temp_sale = $row_seller['queue_price'];
@@ -682,6 +688,8 @@ class m_cost extends CI_Model {
                         if ($ticket['VID'] == $vehicle['VID']) {
                             $total_queue_price+=$ticket['CostValue'];
                             $temp_data_queue_price['price']+=$ticket['CostValue'];
+                            //ทำการจำ CostID ที่เคยนำมาคิดแล้วใส่ mCostID
+                            array_push($this->mCostID, $ticket['CostID']);
                         }
                     }
                     $temp_sale = $row_seller['in_other'];
@@ -689,6 +697,8 @@ class m_cost extends CI_Model {
                         if ($ticket['VID'] == $vehicle['VID']) {
                             $total_in_other+=$ticket['CostValue'];
                             $temp_data_in_other['price']+=$ticket['CostValue'];
+                            //ทำการจำ CostID ที่เคยนำมาคิดแล้วใส่ mCostID
+                            array_push($this->mCostID, $ticket['CostID']);
                         }
                     }
                     $temp_sale = $row_seller['license'];
@@ -696,6 +706,8 @@ class m_cost extends CI_Model {
                         if ($ticket['VID'] == $vehicle['VID']) {
                             $total_license+=$ticket['CostValue'];
                             $temp_data_license['price']+=$ticket['CostValue'];
+                            //ทำการจำ CostID ที่เคยนำมาคิดแล้วใส่ mCostID
+                            array_push($this->mCostID, $ticket['CostID']);
                         }
                     }
                     $temp_sale = $row_seller['gas'];
@@ -703,6 +715,8 @@ class m_cost extends CI_Model {
                         if ($ticket['VID'] == $vehicle['VID']) {
                             $total_gas+=$ticket['CostValue'];
                             $temp_data_gas['price']+=$ticket['CostValue'];
+                            //ทำการจำ CostID ที่เคยนำมาคิดแล้วใส่ mCostID
+                            array_push($this->mCostID, $ticket['CostID']);
                         }
                     }
                     $temp_sale = $row_seller['oil'];
@@ -710,6 +724,8 @@ class m_cost extends CI_Model {
                         if ($ticket['VID'] == $vehicle['VID']) {
                             $total_oil+=$ticket['CostValue'];
                             $temp_data_oil['price']+=$ticket['CostValue'];
+                            //ทำการจำ CostID ที่เคยนำมาคิดแล้วใส่ mCostID
+                            array_push($this->mCostID, $ticket['CostID']);
                         }
                     }
                     $temp_sale = $row_seller['part'];
@@ -717,6 +733,8 @@ class m_cost extends CI_Model {
                         if ($ticket['VID'] == $vehicle['VID']) {
                             $total_part+=$ticket['CostValue'];
                             $temp_data_part['price']+=$ticket['CostValue'];
+                            //ทำการจำ CostID ที่เคยนำมาคิดแล้วใส่ mCostID
+                            array_push($this->mCostID, $ticket['CostID']);
                         }
                     }
                     $temp_sale = $row_seller['percent_price'];
@@ -724,6 +742,8 @@ class m_cost extends CI_Model {
                         if ($ticket['VID'] == $vehicle['VID']) {
                             $total_percent_price+=$ticket['CostValue'];
                             $temp_data_percent_price['price']+=$ticket['CostValue'];
+                            //ทำการจำ CostID ที่เคยนำมาคิดแล้วใส่ mCostID
+                            array_push($this->mCostID, $ticket['CostID']);
                         }
                     }
                     $temp_sale = $row_seller['out_other'];
@@ -731,6 +751,8 @@ class m_cost extends CI_Model {
                         if ($ticket['VID'] == $vehicle['VID']) {
                             $total_out_other+=$ticket['CostValue'];
                             $temp_data_out_other['price']+=$ticket['CostValue'];
+                            //ทำการจำ CostID ที่เคยนำมาคิดแล้วใส่ mCostID
+                            array_push($this->mCostID, $ticket['CostID']);
                         }
                     }
                     array_push($temp_name, $temp_data_sale);
@@ -1139,16 +1161,34 @@ class m_cost extends CI_Model {
     }
 
     function check_income_by_VID($VID, $date) {
-        $this->db->select('*');
-        $this->db->from('vehicles_has_cost');
-        $this->db->join('cost', 'cost.CostID = vehicles_has_cost.CostID', 'left');
+        $sql_select = 'vhc.CostID,cost.CostDate,cost.CostTypeID,cost.CostDetailID,cost.CostValue,';
+        $sql_select.='cost_detail.CostDetail,cost.CostNote,cost.CreateBy,employees.EID,';
+        $sql_select.='employees.Title,employees.FirstName,employees.LastName';
+        $this->db->select($sql_select);
+        $this->db->from('vehicles_has_cost as vhc');
+        $this->db->join('cost', 'cost.CostID = vhc.CostID', 'left');
         $this->db->join('cost_detail', 'cost_detail.CostDetailID = cost.CostDetailID', 'left');
         $this->db->join('employees', 'cost.CreateBy = employees.EID', 'left');
-        $this->db->where('vehicles_has_cost.VID', $VID);
+        $this->db->where('vhc.VID', $VID);
         $this->db->where('cost.CostDate', $date);
         $query = $this->db->get();
-//        return $this->db->last_query();
-        return $query->result_array();
+//        return $this->db->last_query(); 
+        $ans = $query->result_array();
+        $temp_costID = $this->mCostID;
+        foreach ($ans as $key => $row) {
+            $flag_have = FALSE;
+            foreach ($temp_costID as $CostID) {
+                if ($row['CostID'] == $CostID) {
+                    $flag_have = TRUE;
+                    break;
+                }
+            }
+            if ($flag_have)
+                unset($ans[$key]);
+        }
+//        return $this->mCostID;
+//        return $query->result_array();
+        return $ans;
     }
 
 }
