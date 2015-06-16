@@ -418,6 +418,7 @@ class m_report extends CI_Model {
 
     function report_vehicle_cost($rcode, $vtid, $begin_date, $end_date) {
         $ans = array(
+            'thead' => $this->generate_thead($rcode, $vtid),
             'tbody' => array(),
         );
 
@@ -427,6 +428,27 @@ class m_report extends CI_Model {
             'RCode' => $rcode,
             'VTID' => $vtid,
         );
+
+        //All schedules
+        $all_round = array();
+        $this->db->from('t_routes as tr');
+        $this->db->where('tr.RCode', $rcode);
+        $this->db->where('tr.VTID', $vtid);
+        $this->db->order_by('tr.StartPoint', 'ASC');
+        $query = $this->db->get();
+        $temp_routes = $query->result_array();
+        foreach ($temp_routes as $row) {
+            $this->db->select('*,tsd.RID as RID');
+            $this->db->from('t_schedules_day as tsd');
+            $this->db->join('vehicles_has_schedules as vhs', 'vhs.TSID=tsd.TSID');
+            $this->db->where('tsd.Date >=', $begin_date);
+            $this->db->where('tsd.Date <=', $end_date);
+            $this->db->where('tsd.RID', $row['RID']);
+            $this->db->where('tsd.ScheduleStatus', '1');
+            $query = $this->db->get();
+            $temp_schedules_day = $query->result_array();
+            $all_round[$row['RID']] = $temp_schedules_day;
+        }
 
         $temp_vehicle = $this->get_vehicle($rcode, $vtid);
         foreach ($temp_vehicle as $row) {
@@ -527,6 +549,10 @@ class m_report extends CI_Model {
             //Sum data
             $temp = array(
                 'vehicle' => array('VCode' => $row['VCode'], 'VID' => $row['VID']),
+                'ref_f_station' => '',
+                'f_station' => '',
+                'ref_l_station' => '',
+                'l_station' => '',
                 'onway' => $all_onway,
                 'messenger' => $all_messenger,
                 'queue_price' => $all_queue_price,
@@ -538,10 +564,112 @@ class m_report extends CI_Model {
                 'percent_price' => $all_percent_price,
                 'out_other' => $all_out_other,
             );
+
+            //Count round from all_round
+            reset($all_round);
+            $temp_count = current($all_round);
+            $count = 0;
+            foreach ($temp_count as $key_r => $round) {
+                if ($row['VID'] == $round['VID']) {
+                    $count++;
+                }
+            }
+            $temp['ref_f_station'] = $temp_count[0]['RID'];
+            $temp['f_station'] = $count;
+
+            $temp_count = next($all_round);
+            $count = 0;
+            foreach ($temp_count as $round) {
+                if ($row['VID'] == $round['VID']) {
+                    $count++;
+                }
+            }
+            $temp['ref_l_station'] = $temp_count[0]['RID'];
+            $temp['l_station'] = $count;
+
+            //Complete data row by VID
             array_push($ans['tbody'], $temp);
         }
 
         return $ans;
+    }
+
+    function generate_thead($rcode, $vtid) {
+        $ans = array();
+
+        //Prepare data for use to make thead
+        $this->db->from('t_stations');
+        $this->db->where('RCode', $rcode);
+        $this->db->where('VTID', $vtid);
+        $this->db->where('IsSaleTicket', '1');
+        $this->db->order_by('Seq', 'ASC');
+        $query = $this->db->get();
+        $temp_station = $query->result_array();
+
+        $this->db->from('cost_detail');
+        $this->db->where('CostTypeID', '1');
+        $this->db->order_by('CostDetailID', 'ASC');
+        $query = $this->db->get();
+        $temp_income = $query->result_array();
+
+        $this->db->from('cost_detail');
+        $this->db->where('CostTypeID', '2');
+        $this->db->order_by('CostDetailID', 'ASC');
+        $query = $this->db->get();
+        $temp_charge = $query->result_array();
+
+        //Gen car number
+        $ans['carnum'] = 'เบอร์รถ';
+
+        //Gen frequencies
+        $ans['frequencies'][0] = $temp_station[0]['StationName'];
+        $ans['frequencies'][1] = end($temp_station)['StationName'];
+
+        //Gen income
+        $temp2 = array();
+        foreach ($temp_station as $row) {
+            array_push($temp2, $row['StationName']);
+        }
+        foreach ($temp_income as $row) {
+            array_push($temp2, $row['CostDetail']);
+        }
+        $ans['income'] = $temp2;
+
+        //Gen charge
+        $temp3 = array();
+        foreach ($temp_charge as $row) {
+            array_push($temp3, $row['CostDetail']);
+        }
+        $ans['charge'] = $temp3;
+
+        //Gen balance
+        $ans['balance'] = 'คงเหลือ';
+
+
+        return $ans;
+    }
+
+    function test($rcode, $vtid, $begin_date, $end_date) {
+        $all_round = array();
+        $this->db->from('t_routes as tr');
+        $this->db->where('tr.RCode', $rcode);
+        $this->db->where('tr.VTID', $vtid);
+        $this->db->order_by('tr.StartPoint', 'ASC');
+        $query = $this->db->get();
+        $temp_routes = $query->result_array();
+        foreach ($temp_routes as $row) {
+            $this->db->select('*,tsd.RID as RID');
+            $this->db->from('t_schedules_day as tsd');
+            $this->db->join('vehicles_has_schedules as vhs', 'vhs.TSID=tsd.TSID');
+            $this->db->where('tsd.Date >=', $begin_date);
+            $this->db->where('tsd.Date <=', $end_date);
+            $this->db->where('tsd.RID', $row['RID']);
+            $this->db->where('tsd.ScheduleStatus', '1');
+            $query = $this->db->get();
+            $temp_schedules_day = $query->result_array();
+            $all_round[$row['RID']] = $temp_schedules_day;
+        }
+        return $all_round;
     }
 
 }

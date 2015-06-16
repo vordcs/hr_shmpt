@@ -148,6 +148,23 @@
                 <table class="table table-responsive table-striped table-hover">
                     <thead>
                         <tr>
+                            <th rowspan="2" class="th-blue-jeans"><?= $report_vehicle_cost['thead']['carnum'] ?></th>
+                            <th colspan="2" class="th-bittersweet">จำนวนเที่ยว</th>
+                            <th colspan="<?= count($report_vehicle_cost['thead']['income']) ?>">รายรับ</th>
+                            <th colspan="<?= count($report_vehicle_cost['thead']['charge']) ?>" class="th-grass">รายจ่าย</th>
+                            <th rowspan="2" class="th-dark-gray"><?= $report_vehicle_cost['thead']['balance'] ?></th>
+                        </tr>
+                        <tr>
+                            <th class="th-bittersweet"><em>ไป</em> <?= $report_vehicle_cost['thead']['frequencies'][0] ?></th>
+                            <th class="th-bittersweet"><em>ไป</em> <?= $report_vehicle_cost['thead']['frequencies'][1] ?></th>
+                            <?php foreach ($report_vehicle_cost['thead']['income'] as $row_income) { ?>
+                                <th><?= $row_income ?></th>
+                            <?php } ?>
+                            <?php foreach ($report_vehicle_cost['thead']['charge'] as $row_charge) { ?>
+                                <th class="th-grass"><?= $row_charge ?></th>
+                            <?php } ?>
+                        </tr>
+                        <tr>
                             <th rowspan="2">เบอร์รถ</th>
                             <th colspan="4" class="th-grass">รายรับ</th>
                             <th colspan="6" class="th-bittersweet">รายจ่าย</th>
@@ -168,7 +185,9 @@
                     <tbody>
                         <?php foreach ($report_vehicle_cost['tbody'] as $row) { ?>
                             <tr>
-                                <td class="text-center"><?= $row['vehicle']['VCode'] ?></td>
+                                <td class="td-blue-jeans text-center"><?= $row['vehicle']['VCode'] ?></td>
+                                <td class="td-bittersweet text-center"><?= $row['f_station'] ?></td>
+                                <td class="td-bittersweet text-center"><?= $row['l_station'] ?></td>
                                 <td class="td-grass text-right"><?= $row['onway'] ?></td>
                                 <td class="td-grass text-right"><?= $row['messenger'] ?></td>
                                 <td class="td-grass text-right"><?= $row['queue_price'] ?></td>

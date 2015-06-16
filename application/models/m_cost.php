@@ -291,7 +291,7 @@ class m_cost extends CI_Model {
                 $temp[$temp_key]['tbody'] = $this->generate_tbody($temp[$temp_key]['RCode'], $value['VTID'], $date);
 
                 //Generate tbody with cost vehicle from old tbody
-                $temp[$temp_key]['tbody'] = $this->generate_tbody_cost_vehicle($temp[$temp_key]['tbody'], $date);
+//                $temp[$temp_key]['tbody'] = $this->generate_tbody_cost_vehicle($temp[$temp_key]['tbody'], $date);
 
                 //Generate tbody
                 $temp[$temp_key]['tfoot'] = $this->m_cost->generate_tfoot($temp[$temp_key]['tbody']);
@@ -930,7 +930,7 @@ class m_cost extends CI_Model {
                     ////// ส่วนของรายจ่าย //////
                 } else {
                     //รายจ่าย array index = outcome
-                    if ($row2['CostTypeID'] == '2') {
+                    if ($row2['CostDetailID'] == '2') {
                         //ค่าเที่ยว license
                         if (isset($old_tbody[$key]['outcome']['license']['price'])) {
                             $old_tbody[$key]['outcome']['license']['price'] +=$row2['CostValue'];
@@ -954,7 +954,7 @@ class m_cost extends CI_Model {
                         } else {
                             $old_tbody[$key]['outcome']['license']['list'][$flag_push]['price']+=$row2['CostValue'];
                         }
-                    } elseif ($row2['CostTypeID'] == '3') {
+                    } elseif ($row2['CostDetailID'] == '3') {
                         //ค่าก๊าซ gas
                         if (isset($old_tbody[$key]['outcome']['gas']['price'])) {
                             $old_tbody[$key]['outcome']['gas']['price'] +=$row2['CostValue'];
@@ -978,7 +978,7 @@ class m_cost extends CI_Model {
                         } else {
                             $old_tbody[$key]['outcome']['gas']['list'][$flag_push]['price']+=$row2['CostValue'];
                         }
-                    } elseif ($row2['CostTypeID'] == '4') {
+                    } elseif ($row2['CostDetailID'] == '4') {
                         //ค่านำมัน oil
                         if (isset($old_tbody[$key]['outcome']['oil']['price'])) {
                             $old_tbody[$key]['outcome']['oil']['price'] +=$row2['CostValue'];
@@ -1002,7 +1002,7 @@ class m_cost extends CI_Model {
                         } else {
                             $old_tbody[$key]['outcome']['oil']['list'][$flag_push]['price']+=$row2['CostValue'];
                         }
-                    } elseif ($row2['CostTypeID'] == '5') {
+                    } elseif ($row2['CostDetailID'] == '5') {
                         //ค่าอะไหล่ part
                         if (isset($old_tbody[$key]['outcome']['part']['price'])) {
                             $old_tbody[$key]['outcome']['part']['price'] +=$row2['CostValue'];
@@ -1026,7 +1026,7 @@ class m_cost extends CI_Model {
                         } else {
                             $old_tbody[$key]['outcome']['part']['list'][$flag_push]['price']+=$row2['CostValue'];
                         }
-                    } elseif ($row2['CostTypeID'] == '8') {
+                    } elseif ($row2['CostDetailID'] == '8') {
                         //เปอร์เซนต์ percent_price
                         if (isset($old_tbody[$key]['outcome']['percent_price']['price'])) {
                             $old_tbody[$key]['outcome']['percent_price']['price'] +=$row2['CostValue'];
@@ -1050,7 +1050,7 @@ class m_cost extends CI_Model {
                         } else {
                             $old_tbody[$key]['outcome']['percent_price']['list'][$flag_push]['price']+=$row2['CostValue'];
                         }
-                    } elseif ($row2['CostTypeID'] == '999') {
+                    } elseif ($row2['CostDetailID'] == '999') {
                         //อื่นๆ out_other
                         if (isset($old_tbody[$key]['outcome']['out_other']['price'])) {
                             $old_tbody[$key]['outcome']['out_other']['price'] +=$row2['CostValue'];
@@ -1147,6 +1147,7 @@ class m_cost extends CI_Model {
         $this->db->where('vehicles_has_cost.VID', $VID);
         $this->db->where('cost.CostDate', $date);
         $query = $this->db->get();
+//        return $this->db->last_query();
         return $query->result_array();
     }
 

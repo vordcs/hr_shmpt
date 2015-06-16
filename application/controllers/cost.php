@@ -60,6 +60,7 @@ class cost extends CI_Controller {
 //            'tbody' => $this->m_cost->generate_tbody('264', '1', '2015-06-10'),
 //            'check_income_by_VID' => $this->m_cost->check_income_by_VID('1', '2015-06-10'),
 //            'tbodyNew' => $this->m_cost->generate_tbody_cost_vehicle($this->m_cost->generate_tbody('264', '1', '2015-06-10'), '2015-06-10'),
+//            'check'=>$this->m_cost->check_income_by_VID('5', $date),
         );
 
         $this->m_template->set_Title('ค่าใช้จ่าย');
