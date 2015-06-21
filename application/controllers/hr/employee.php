@@ -31,6 +31,7 @@ class employee extends CI_Controller {
         }
 
         $data['form_open'] = form_open('hr/employee');
+        $data['form_open_join'] = form_open('hr/employee/join');
         $data['form_input'] = $this->m_employee->set_form_search();
         $data['form_close'] = form_close();
 
@@ -163,6 +164,36 @@ class employee extends CI_Controller {
         $this->m_template->set_Permission('HED');
         $this->m_template->set_Content('hr/log_clock', $data);
         $this->m_template->showTemplate();
+    }
+
+    public function join() {
+        $permittion = $this->session->userdata('permittion');
+        if (($permittion == 'ALL' || $permittion == 'HEI') == FALSE) {
+            redirect('hr/employee');
+        }
+
+        if ($this->input->server('REQUEST_METHOD') === 'POST') {
+            $EID = $this->input->post('EID');
+            if ($EID == NUll || !$this->m_employee->check_employee($EID))
+                redirect('hr/employee');
+
+            $data = array(
+                'StatusID' => '1',
+            );
+
+            $this->db->where('EID', $EID);
+            if ($this->db->update('employees', $data)) {
+                //Alert success and redirect to candidate
+                $alert['alert_message'] = "กลับเข้าทำงานแล้ว";
+                $alert['alert_mode'] = "success";
+                $this->session->set_flashdata('alert', $alert);
+            } else {
+                $alert['alert_message'] = "กรุณาลองใหม่อีกครั้ง";
+                $alert['alert_mode'] = "danger";
+                $this->session->set_flashdata('alert', $alert);
+            }
+            redirect('hr/employee');
+        }
     }
 
 }

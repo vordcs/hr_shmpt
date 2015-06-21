@@ -2,6 +2,12 @@
     jQuery(document).ready(function ($) {
         $("#mainmenu ul li").removeAttr('class');
         $("#btnHR").addClass("active");
+
+        $('#modal_join').on('show.bs.modal', function (e) {
+            $(this).find("[name='EID']").val($(e.relatedTarget).data('eid'));
+            $(this).find("#em_id").html($(e.relatedTarget).data('eid'));
+            $(this).find("#em_name").html($(e.relatedTarget).data('name'));
+        });
     });
 
 </script>
@@ -117,7 +123,12 @@
                                     </td>
                                     <td class="text-center">
                                         <?php if ($row['StatusID'] == 0) { ?>
-                                            <span class="label label-danger">ลาออก</span>
+                                            <?php
+                                            $pre_edit = 'data-name="' . $row['Title'] . $row['FirstName'] . ' ' . $row['LastName'] . '"';
+                                            $pre_edit .= 'data-eid="' . $row['EID'] . '"';
+                                            ?>
+                                            <span class="label label-danger">สถานะ ลาออก</span> 
+                                            <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modal_join" <?= $pre_edit ?>><i class="fa fa-undo"></i> กลับเข้าทำงาน</button>
                                         <?php } else { ?>
                                             <?= anchor('hr/employee/log/' . $row['EID'], '<i class="fa fa-signal"></i>', array('class' => 'btn btn-success btn-sm')) ?>
                                             <?= anchor('hr/employee/detail/' . $row['EID'], '<i class="fa fa-search"></i>', array('class' => 'btn btn-primary btn-sm')) ?>
@@ -178,7 +189,12 @@
                                     </td>
                                     <td class="text-center">
                                         <?php if ($row['StatusID'] == 0) { ?>
-                                            <span class="label label-danger">ลาออก</span>
+                                            <?php
+                                            $pre_edit = 'data-name="' . $row['Title'] . $row['FirstName'] . ' ' . $row['LastName'] . '"';
+                                            $pre_edit .= 'data-eid="' . $row['EID'] . '"';
+                                            ?>
+                                            <span class="label label-danger">สถานะ ลาออก</span> 
+                                            <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modal_join" <?= $pre_edit ?>><i class="fa fa-undo"></i> กลับเข้าทำงาน</button>
                                         <?php } else { ?>
                                             <?= anchor('hr/employee/log/' . $row['EID'], '<i class="fa fa-signal"></i>', array('class' => 'btn btn-success btn-sm')) ?>
                                             <?= anchor('hr/employee/detail/' . $row['EID'], '<i class="fa fa-search"></i>', array('class' => 'btn btn-primary btn-sm')) ?>
@@ -198,3 +214,25 @@
 
 </div>
 <hr>
+<!-- Modal join -->
+<?= $form_open_join ?>
+<div class="modal fade bs-example-modal-sm" id="modal_join" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="modal-title">กลับเข้าทำงานอีกครั้ง</h4>
+            </div>
+            <div class="modal-body" id="modal-body">
+                <p>รหัสพนักงาน <span id="em_id"></span></p>
+                <p>ชื่อพนักงาน <span id="em_name"></span></p>
+                <input name="EID" type="hidden"/>
+            </div>
+            <div class="modal-footer" align="center">
+                <button type="button" class="btn btn-default" data-dismiss="modal" id="btn_no"><i class="fa fa-times fa-lg"></i>&nbsp;ยกเลิก</button>
+                <button type="submit" class="btn btn-primary"><i class="fa fa-check fa-lg"></i>&nbsp;บันทึก</button>
+            </div>
+        </div>
+    </div>
+</div>
+<?= $form_close ?>
