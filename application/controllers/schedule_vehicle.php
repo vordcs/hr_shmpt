@@ -15,7 +15,7 @@ class schedule_vehicle extends CI_Controller {
         $this->m_template->set_Language(array('plan'));
     }
 
-    public function index() {
+    private function index() {
         $data = array(
             'page_title' => 'ทดสอบรัน รอบรถ ',
             'page_title_small' => '',
@@ -40,8 +40,8 @@ class schedule_vehicle extends CI_Controller {
 //      สร้างตารางเวลาเดินรถเดินรถ
         $data['gen_schedule'] = $this->m_schedule_vehicle->run_schedule();
         $rs = $this->m_schedule_vehicle->insert_schedule($data['gen_schedule']);
-        
-        
+
+
 //        กำหนดจุดเริ่มต้นให้กับรถแต่ละคัน
         $vehicles_initicial_station = array();
 //        $vehicles_initicial_station = $this->m_schedule_vehicle->set_vehicles_initicial_station();
@@ -77,11 +77,19 @@ class schedule_vehicle extends CI_Controller {
         $data['routes'] = $this->m_schedule_vehicle->get_routes();
         $data['route_detail'] = $this->m_schedule_vehicle->get_routes_detail();
 
-        $this->m_template->set_Debug($data_debug);
-        $this->m_template->set_Title("ระบบจัดตารางเวลาเดินรถอัตติโนมัติ");
-        $this->m_template->set_Permission('SVI');
-        $this->m_template->set_Content('schedule/schedule_vehicle', $data);
-        $this->m_template->showTemplate();
+//        $this->m_template->set_Debug($data_debug);
+//        $this->m_template->set_Title("ระบบจัดตารางเวลาเดินรถอัตติโนมัติ");
+//        $this->m_template->set_Permission('SVI');
+//        $this->m_template->set_Content('schedule/schedule_vehicle', $data);
+//        $this->m_template->showTemplate();
+    }
+
+    public function cron() {
+        if ($this->input->is_cli_request()) {
+            $this->index();
+        } else {
+            show_404();
+        }
     }
 
 }
