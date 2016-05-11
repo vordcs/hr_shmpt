@@ -2,6 +2,11 @@
     jQuery(document).ready(function ($) {
         $("#mainmenu ul li").removeAttr('class');
         $("#btnSchedule").addClass("active");
+
+        $('.datepicker').datepicker({
+            language: 'th-th',
+            format: 'yyyy-m-d'
+        });
     });
 </script>
 <style>
@@ -28,51 +33,40 @@ function last_around($start_time, $interval_time, $number) {
 <div class="container">
     <div class="row">        
         <div class="page-header">
-            <h3>ตารางเวลาเดินรถ&nbsp;
-                <small></small>
+            <h3><?= $page_title ?>&nbsp;
+                <small><?= $page_title_small ?></small>
             </h3>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-
-        </div>
-    </div>
-    <div class="row animated fadeInUp hidden">
+    </div>   
+    <div class="row animated fadeInUp">
         <div class="col-md-12">
             <div class="panel panel-info">
                 <div class="panel-heading">
                     <h3 class="panel-title"><i class="fa fa-search"></i>&nbsp;ค้นหา</h3>
                 </div>
                 <div class="panel-body">
-                    <?php echo $form_search['form']; ?>
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <label class="control-label">รหัสเส้นทาง</label>
-                            <?php echo $form_search['RCode']; ?>
+                    <div class="col-md-10 col-md-offset-1">
+                        <?php echo $form_search['form']; ?>
+                        <div class="col-md-3">
+                            <label class="control-label">ประเภทรถ</label>
+                            <?php echo $form_search['VTID']; ?>
+                        </div>  
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                <label class="control-label">เส้นทาง</label>
+                                <?php echo $form_search['RCode']; ?>
+                            </div>
+                        </div>                                          
+                        <div class="col-md-4">                                
+                            <label class="control-label">วันที่</label>
+                            <?php echo $form_search['Date']; ?>                              
+                        </div>  
+                        <br>
+                        <div class="col-md-12 text-center">
+                            <button type="submit" class="btn btn-default">&nbsp;&nbsp;ค้นหา&nbsp;&nbsp;</button>
                         </div>
+                        <?php echo form_close(); ?>  
                     </div>
-                    <div class="col-md-2">
-                        <label class="control-label">ประเภทรถ</label>
-                        <?php echo $form_search['VTID']; ?>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label class="control-label">ต้นทาง</label>
-                            <?php echo $form_search['RSource']; ?>
-                        </div>
-                    </div>
-                    <div class="col-md-4">                                
-                        <label class="control-label">ปลายทาง</label>
-                        <?php echo $form_search['RDestination']; ?>                              
-                    </div>  
-                    <br>
-                    <div class="col-md-12 text-center">
-                        <button type="submit" class="btn btn-default">&nbsp;&nbsp;ค้นหา&nbsp;&nbsp;</button>
-                    </div>
-                    <?php echo form_close(); ?>  
-
-
                 </div>
             </div>
         </div>     
@@ -89,7 +83,7 @@ function last_around($start_time, $interval_time, $number) {
                         $vtid = $v_type['VTID'];
                         $vt_name = $v_type['VTDescription']
                         ?>
-                        <h3><?= $vt_name ?></h3> 
+                        <h3><?= $vt_name ?> : <small><?= $page_title_small ?></small></h3> 
 
                         <?php
                         $num_v = 0;
@@ -102,7 +96,7 @@ function last_around($start_time, $interval_time, $number) {
                             ?>
                             <div class="col-md-12">
                                 <div class="well" style="padding-bottom: 100px;padding-top: 100px;">
-                                    <p class="lead text-center">ไม่พบข้อมูล</p>
+                                    <p class="lead text-center">ไม่พบข้อมูล : <small><?= $page_title_small ?></small></p>
                                 </div>
                             </div> 
                             <?php

@@ -6,6 +6,11 @@ if (!defined('BASEPATH')) {
 
 class m_schedule extends CI_Model {
 
+    public function __construct() {
+        parent::__construct();
+//        $this->load->model('m_route', 'route');
+    }
+
     public function get_schedule($date = NULL, $rcode = NULL, $vtid = NULL, $rid = NULL, $TSID = NULL) {
         $this->db->select('*,t_schedules_day.TSID as TSID,t_schedules_day.RID as RID');
         $this->db->join('t_routes', ' t_schedules_day.RID = t_routes.RID ', 'left');
@@ -79,7 +84,7 @@ class m_schedule extends CI_Model {
                         $temp+=$travel_time;
                         $time = strtotime("+$temp minutes", strtotime($start_time));
                     }
-                    
+
                     $time_depart = date('H:i', $time);
 
                     if ($sid != NULL && $sid == $s['SID']) {
@@ -310,39 +315,33 @@ class m_schedule extends CI_Model {
         return $query->result_array();
     }
 
-    public function set_form_search($rcode = NULL, $vtid = NULL) {
-        $i_RCode = array(
-            'name' => 'RCode',
-            'value' => set_value('RID'),
-            'placeholder' => 'รหัสเส้นทาง',
-            'class' => 'form-control');
-
-        $i_VTID[0] = 'เลือกประเภทรถ';
+    public function set_form_search() {
+        //ข้อมูลเส้นทาง
+        $i_RCode[0] = 'เส้นทางทั้งหมด';
+        foreach ($this->get_route() as $value) {
+            $i_RCode[$value['RCode']] = $value['RCode'] . ' ' . $value['RSource'] . ' - ' . $value['RDestination'];
+        }
+        $i_VTID[0] = 'ประเภทรถทั้งหมด';
         foreach ($this->get_vehicle_types() as $value) {
             $i_VTID[$value['VTID']] = $value['VTDescription'];
         }
-        $i_RSource = array(
-            'name' => 'RSource',
-            'value' => set_value('RSource'),
-            'placeholder' => 'ต้นทาง',
-            'class' => 'form-control');
 
-        $i_RDestination = array(
-            'name' => 'RDestination',
-            'value' => set_value('RDestination'),
-            'placeholder' => 'ปลายทาง',
-            'class' => 'form-control');
-
-        $dropdown = 'class="selecter_3" data-selecter-options = \'{"cover":"true"}\' ';
+        $i_Date = array(
+            'name' => 'Date',
+            'value' => set_value('Date'),
+            'placeholder' => 'Date',
+            'class' => 'form-control datepicker'
+        );
 
 
+
+        $dropdown = 'class="form-control" data-selecter-options = \'{"cover":"true"}\' ';
 
         $form_search_route = array(
             'form' => form_open('schedule/', array('id' => 'form_search_schedule')),
-            'RCode' => form_input($i_RCode),
+            'RCode' => form_dropdown('RCode', $i_RCode, set_value('RCode'), $dropdown),
             'VTID' => form_dropdown('VTID', $i_VTID, set_value('VTID'), $dropdown),
-            'RSource' => form_input($i_RSource),
-            'RDestination' => form_input($i_RDestination),
+            'Date' => form_input($i_Date),
         );
         return $form_search_route;
     }
@@ -483,9 +482,8 @@ class m_schedule extends CI_Model {
     public function validation_form_search() {
         $this->form_validation->set_rules('RCode', 'รหัสเส้นทาง', 'trim|xss_clean');
         $this->form_validation->set_rules('VTID', 'ประเภทรถ', 'trim|xss_clean');
-        $this->form_validation->set_rules('RSource', 'ต้นทาง', 'trim|xss_clean');
-        $this->form_validation->set_rules('RDestination', 'ปลายทาง', 'trim|xss_clean');
-        return TRUE;
+        $this->form_validation->set_rules('Date', 'วันที่', 'trim|xss_clean');
+        return $this->form_validation->run();
     }
 
     public function validation_form_add() {

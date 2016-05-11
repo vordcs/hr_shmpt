@@ -18,18 +18,31 @@ class schedule extends CI_Controller {
     }
 
     public function index() {
+        $date = $this->m_datetime->getDateToday();
+        $VTID = NULL;
+        $RCode = NULL;
 
+        if ($this->m_schedule->validation_form_search()) {
+            if ($this->input->post('Date') != NULL) {
+                $date = $this->m_datetime->setTHDateToDB($this->input->post('Date'));
+            }
+            if ($this->input->post('VTID') != 0) {
+                $VTID = $this->input->post('VTID');
+            }
+            if ($this->input->post('RCode') != 0) {
+                $RCode = $this->input->post('RCode');
+            }            
+        }
         $data = array(
+            'page_title' => 'ตารางเวลาเดินรถ',
+            'page_title_small' => 'ประจำวันที่ : ' . $this->m_datetime->DateThai($date),
             'form_search' => $this->m_schedule->set_form_search(),
-            'page_title' => '',
-            'page_title_small' => '',
             'route_detail' => $this->m_route->get_route_detail(),
         );
-
-        $data['schedules'] = $this->m_schedule->get_schedule($this->m_datetime->getDateToday());
+        $data['schedules'] = $this->m_schedule->get_schedule($date);
         $data['vehicles'] = $this->m_schedule->get_vehicle();
-        $data['vehicles_type'] = $this->m_vehicle->get_vehicle_types();
-        $data['route'] = $this->m_route->get_route();
+        $data['vehicles_type'] = $this->m_vehicle->get_vehicle_types($VTID);
+        $data['route'] = $this->m_route->get_route($RCode);
         $data['stations'] = $this->m_station->get_stations();
         $data['schedule_master'] = $this->m_route->get_schedule_manual();
 
