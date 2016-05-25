@@ -394,96 +394,146 @@ class m_cost extends CI_Model {
                 $temp_sale = $query->result_array();
                 $temp_seller[$key]['sale'] = $temp_sale;
 
-                // รายทาง, ค่าฝากของ, อื่นๆ ที่คนนั้นรับ
+                // รายทาง, ค่าฝากของ, อื่นๆ ที่คนนั้นรับ จาก vehicles_has_cost และ t_schedules_day_has_cost
                 $this->db->from('cost as co');
-                $this->db->join('vehicles_has_cost as vhc', 'vhc.CostID=co.CostID');
+                $this->db->join('vehicles_has_cost as vhc', 'vhc.CostID=co.CostID', 'left');
+                $this->db->join('t_schedules_day_has_cost as tsdhc', 'tsdhc.CostID=co.CostID', 'left');
+                $this->db->join('vehicles_has_schedules as vhs', 'vhs.TSID=tsdhc.TSID', 'left');
                 $this->db->where('co.CreateBy', $row2['EID']);
                 $this->db->where('co.CostDate', $date);
-                $this->db->where('co.CostDetailID', '1'); // 1 = รายทาง
                 $query = $this->db->get();
                 $temp_sale = $query->result_array();
-                $temp_seller[$key]['onway'] = $temp_sale;
+                $temp_seller[$key]['onway'] = array();
+                $temp_seller[$key]['messenger'] = array();
+                $temp_seller[$key]['queue_price'] = array();
+                $temp_seller[$key]['in_other'] = array();
+                $temp_seller[$key]['license'] = array();
+                $temp_seller[$key]['gas'] = array();
+                $temp_seller[$key]['oil'] = array();
+                $temp_seller[$key]['part'] = array();
+                $temp_seller[$key]['percent_price'] = array();
+                $temp_seller[$key]['out_other'] = array();
+                foreach ($temp_sale as &$row3) {
+                    if ($row3['CostDetailID'] == '1') {
+                        // 1 = รายทาง
+                        array_push($temp_seller[$key]['onway'], $row3);
+                    } elseif ($row3['CostDetailID'] == '6') {
+                        // 6 = ฝากของ
+                        array_push($temp_seller[$key]['messenger'], $row3);
+                    } elseif ($row3['CostDetailID'] == '7') {
+                        // 7 = ค่าคิว
+                        array_push($temp_seller[$key]['queue_price'], $row3);
+                    } elseif ($row3['CostDetailID'] == '888') {
+                        // 888 = รายรับอื่นๆ
+                        array_push($temp_seller[$key]['in_other'], $row3);
+                    } elseif ($row3['CostDetailID'] == '2') {
+                        // 2 = ค่าเที่ยว
+                        array_push($temp_seller[$key]['license'], $row3);
+                    } elseif ($row3['CostDetailID'] == '4') {
+                        // 4 = ค่าน้ำมัน
+                        array_push($temp_seller[$key]['oil'], $row3);
+                    } elseif ($row3['CostDetailID'] == '5') {
+                        // 5 = ค่าอะไหล่
+                        array_push($temp_seller[$key]['part'], $row3);
+                    } elseif ($row3['CostDetailID'] == '8') {
+                        // 8 = ค่าเปอร์เซ็นต์
+                        array_push($temp_seller[$key]['percent_price'], $row3);
+                    } elseif ($row3['CostDetailID'] == '999') {
+                        // 999 = รายจ่ายอื่น
+                        array_push($temp_seller[$key]['out_other'], $row3);
+                    }
+                }
 
-                $this->db->from('cost as co');
-                $this->db->join('vehicles_has_cost as vhc', 'vhc.CostID=co.CostID');
-                $this->db->where('co.CreateBy', $row2['EID']);
-                $this->db->where('co.CostDate', $date);
-                $this->db->where('co.CostDetailID', '6'); // 6 = ฝากของ
-                $query = $this->db->get();
-                $temp_sale = $query->result_array();
-                $temp_seller[$key]['messenger'] = $temp_sale;
-
-                $this->db->from('cost as co');
-                $this->db->join('vehicles_has_cost as vhc', 'vhc.CostID=co.CostID');
-                $this->db->where('co.CreateBy', $row2['EID']);
-                $this->db->where('co.CostDate', $date);
-                $this->db->where('co.CostDetailID', '7'); // 7 = ค่าคิว
-                $query = $this->db->get();
-                $temp_sale = $query->result_array();
-                $temp_seller[$key]['queue_price'] = $temp_sale;
-
-                $this->db->from('cost as co');
-                $this->db->join('vehicles_has_cost as vhc', 'vhc.CostID=co.CostID');
-                $this->db->where('co.CreateBy', $row2['EID']);
-                $this->db->where('co.CostDate', $date);
-                $this->db->where('co.CostDetailID', '888'); // 888 = รายรับอื่นๆ
-                $query = $this->db->get();
-                $temp_sale = $query->result_array();
-                $temp_seller[$key]['in_other'] = $temp_sale;
-
-                $this->db->from('cost as co');
-                $this->db->join('vehicles_has_cost as vhc', 'vhc.CostID=co.CostID');
-                $this->db->where('co.CreateBy', $row2['EID']);
-                $this->db->where('co.CostDate', $date);
-                $this->db->where('co.CostDetailID', '2'); // 2 = ค่าเที่ยว
-                $query = $this->db->get();
-                $temp_sale = $query->result_array();
-                $temp_seller[$key]['license'] = $temp_sale;
-
-                $this->db->from('cost as co');
-                $this->db->join('vehicles_has_cost as vhc', 'vhc.CostID=co.CostID');
-                $this->db->where('co.CreateBy', $row2['EID']);
-                $this->db->where('co.CostDate', $date);
-                $this->db->where('co.CostDetailID', '3'); // 3 = ค่าก๊าซ
-                $query = $this->db->get();
-                $temp_sale = $query->result_array();
-                $temp_seller[$key]['gas'] = $temp_sale;
-
-                $this->db->from('cost as co');
-                $this->db->join('vehicles_has_cost as vhc', 'vhc.CostID=co.CostID');
-                $this->db->where('co.CreateBy', $row2['EID']);
-                $this->db->where('co.CostDate', $date);
-                $this->db->where('co.CostDetailID', '4'); // 4 = ค่าน้ำมัน
-                $query = $this->db->get();
-                $temp_sale = $query->result_array();
-                $temp_seller[$key]['oil'] = $temp_sale;
-
-                $this->db->from('cost as co');
-                $this->db->join('vehicles_has_cost as vhc', 'vhc.CostID=co.CostID');
-                $this->db->where('co.CreateBy', $row2['EID']);
-                $this->db->where('co.CostDate', $date);
-                $this->db->where('co.CostDetailID', '5'); // 5 = ค่าอะไหล่
-                $query = $this->db->get();
-                $temp_sale = $query->result_array();
-                $temp_seller[$key]['part'] = $temp_sale;
-
-                $this->db->from('cost as co');
-                $this->db->join('vehicles_has_cost as vhc', 'vhc.CostID=co.CostID');
-                $this->db->where('co.CreateBy', $row2['EID']);
-                $this->db->where('co.CostDate', $date);
-                $this->db->where('co.CostDetailID', '8'); // 8 = ค่าเปอร์เซ็นต์
-                $query = $this->db->get();
-                $temp_sale = $query->result_array();
-                $temp_seller[$key]['percent_price'] = $temp_sale;
-
-                $this->db->from('cost as co');
-                $this->db->join('vehicles_has_cost as vhc', 'vhc.CostID=co.CostID');
-                $this->db->where('co.CreateBy', $row2['EID']);
-                $this->db->where('co.CostDate', $date);
-                $this->db->where('co.CostDetailID', '999'); // 999 = รายจ่ายอื่น
-                $query = $this->db->get();
-                $temp_sale = $query->result_array();
-                $temp_seller[$key]['out_other'] = $temp_sale;
+//                // รายทาง, ค่าฝากของ, อื่นๆ ที่คนนั้นรับ
+//                $this->db->from('cost as co');
+//                $this->db->join('vehicles_has_cost as vhc', 'vhc.CostID=co.CostID');
+//                $this->db->where('co.CreateBy', $row2['EID']);
+//                $this->db->where('co.CostDate', $date);
+//                $this->db->where('co.CostDetailID', '1'); // 1 = รายทาง
+//                $query = $this->db->get();
+//                $temp_sale = $query->result_array();
+//                $temp_seller[$key]['onway'] = $temp_sale;
+//
+//                $this->db->from('cost as co');
+//                $this->db->join('vehicles_has_cost as vhc', 'vhc.CostID=co.CostID');
+//                $this->db->where('co.CreateBy', $row2['EID']);
+//                $this->db->where('co.CostDate', $date);
+//                $this->db->where('co.CostDetailID', '6'); // 6 = ฝากของ
+//                $query = $this->db->get();
+//                $temp_sale = $query->result_array();
+//                $temp_seller[$key]['messenger'] = $temp_sale;
+//
+//                $this->db->from('cost as co');
+//                $this->db->join('vehicles_has_cost as vhc', 'vhc.CostID=co.CostID');
+//                $this->db->where('co.CreateBy', $row2['EID']);
+//                $this->db->where('co.CostDate', $date);
+//                $this->db->where('co.CostDetailID', '7'); // 7 = ค่าคิว
+//                $query = $this->db->get();
+//                $temp_sale = $query->result_array();
+//                $temp_seller[$key]['queue_price'] = $temp_sale;
+//
+//                $this->db->from('cost as co');
+//                $this->db->join('vehicles_has_cost as vhc', 'vhc.CostID=co.CostID');
+//                $this->db->where('co.CreateBy', $row2['EID']);
+//                $this->db->where('co.CostDate', $date);
+//                $this->db->where('co.CostDetailID', '888'); // 888 = รายรับอื่นๆ
+//                $query = $this->db->get();
+//                $temp_sale = $query->result_array();
+//                $temp_seller[$key]['in_other'] = $temp_sale;
+//
+//                $this->db->from('cost as co');
+//                $this->db->join('vehicles_has_cost as vhc', 'vhc.CostID=co.CostID');
+//                $this->db->where('co.CreateBy', $row2['EID']);
+//                $this->db->where('co.CostDate', $date);
+//                $this->db->where('co.CostDetailID', '2'); // 2 = ค่าเที่ยว
+//                $query = $this->db->get();
+//                $temp_sale = $query->result_array();
+//                $temp_seller[$key]['license'] = $temp_sale;
+//
+//                $this->db->from('cost as co');
+//                $this->db->join('vehicles_has_cost as vhc', 'vhc.CostID=co.CostID');
+//                $this->db->where('co.CreateBy', $row2['EID']);
+//                $this->db->where('co.CostDate', $date);
+//                $this->db->where('co.CostDetailID', '3'); // 3 = ค่าก๊าซ
+//                $query = $this->db->get();
+//                $temp_sale = $query->result_array();
+//                $temp_seller[$key]['gas'] = $temp_sale;
+//
+//                $this->db->from('cost as co');
+//                $this->db->join('vehicles_has_cost as vhc', 'vhc.CostID=co.CostID');
+//                $this->db->where('co.CreateBy', $row2['EID']);
+//                $this->db->where('co.CostDate', $date);
+//                $this->db->where('co.CostDetailID', '4'); // 4 = ค่าน้ำมัน
+//                $query = $this->db->get();
+//                $temp_sale = $query->result_array();
+//                $temp_seller[$key]['oil'] = $temp_sale;
+//
+//                $this->db->from('cost as co');
+//                $this->db->join('vehicles_has_cost as vhc', 'vhc.CostID=co.CostID');
+//                $this->db->where('co.CreateBy', $row2['EID']);
+//                $this->db->where('co.CostDate', $date);
+//                $this->db->where('co.CostDetailID', '5'); // 5 = ค่าอะไหล่
+//                $query = $this->db->get();
+//                $temp_sale = $query->result_array();
+//                $temp_seller[$key]['part'] = $temp_sale;
+//
+//                $this->db->from('cost as co');
+//                $this->db->join('vehicles_has_cost as vhc', 'vhc.CostID=co.CostID');
+//                $this->db->where('co.CreateBy', $row2['EID']);
+//                $this->db->where('co.CostDate', $date);
+//                $this->db->where('co.CostDetailID', '8'); // 8 = ค่าเปอร์เซ็นต์
+//                $query = $this->db->get();
+//                $temp_sale = $query->result_array();
+//                $temp_seller[$key]['percent_price'] = $temp_sale;
+//
+//                $this->db->from('cost as co');
+//                $this->db->join('vehicles_has_cost as vhc', 'vhc.CostID=co.CostID');
+//                $this->db->where('co.CreateBy', $row2['EID']);
+//                $this->db->where('co.CostDate', $date);
+//                $this->db->where('co.CostDetailID', '999'); // 999 = รายจ่ายอื่น
+//                $query = $this->db->get();
+//                $temp_sale = $query->result_array();
+//                $temp_seller[$key]['out_other'] = $temp_sale;
             }
 
             $all_seller_in_station[$row['SID']] = $temp_seller;
@@ -600,6 +650,9 @@ class m_cost extends CI_Model {
                 $total_sale = 0;
 
                 $temp_name = array();
+//                echo '<pre>';
+//                print_r($row_rid);
+//                echo '</pre>';
                 foreach ($row_rid as $row_seller) {
                     //Temp
                     $temp_data_sale = array(
