@@ -25,7 +25,11 @@ class schedule_vehicle extends CI_Controller {
 
         /*
          * ลบ file barcode,QRcode
+         * อิงจากที่อยู่จริง เพราะแยก Folder กัน
+         * ticket/assets/barcode
          */
+
+        delete_files('../ticket/assets/barcode/', TRUE);
 
 //        $folder_barcode = FCPATH . "assets/barcode";
 //        delete_files($folder_barcode,true);
