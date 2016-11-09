@@ -44,6 +44,10 @@
         <?php echo js('bootstrap-datepicker-thai.js?v=' . $version); ?>  
         <?php echo js('/locales/bootstrap-datepicker.th.js?v=' . $version); ?>  
 
+        <!-- DataTables  -->
+        <?php echo css('../plugins/DataTables/media/css/dataTables.bootstrap.min.css?v=' . $version); ?>
+        <?php echo js('../plugins/DataTables/media/js/jquery.dataTables.js?v=' . $version); ?>
+        <?php echo js('../plugins/DataTables/media/js/dataTables.bootstrap.min.js?v=' . $version); ?>
 
 
         <script type="text/javascript">

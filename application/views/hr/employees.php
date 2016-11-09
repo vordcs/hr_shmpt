@@ -2,6 +2,27 @@
     jQuery(document).ready(function ($) {
         $("#mainmenu ul li").removeAttr('class');
         $("#btnHR").addClass("active");
+        $('.dataTable').DataTable({
+            "columnDefs": [
+                {"visible": false, "targets": 2}
+            ],
+            "order": [[2, 'asc']],
+            "drawCallback": function (settings) {
+                var api = this.api();
+                var rows = api.rows({page: 'current'}).nodes();
+                var last = null;
+
+                api.column(2, {page: 'current'}).data().each(function (group, i) {
+                    if (last !== group) {
+                        $(rows).eq(i).before(
+                                '<tr class="group info"><td colspan="6">' + group + '</td></tr>'
+                                );
+
+                        last = group;
+                    }
+                });
+            }
+        });
 
         $('#modal_join').on('show.bs.modal', function (e) {
             $(this).find("[name='EID']").val($(e.relatedTarget).data('eid'));
@@ -85,32 +106,29 @@
         <div class="row">
             <div class="col-sm-12">
                 <h5>ผลการค้นหา</h5>
-                <table class="table table-hover table-bordered" style="width: 100%">
+                <table class="table table-hover table-bordered dataTable" style="width: 100%">
                     <thead>
-                    <th style="width: 10%" >รหัสพนักงาน</th>
-                    <th style="width: 20%">ชื่อ-สกุล</th>                                          
-                    <th style="width: 12%">รหัสบัตรประชาชน</th>
-                    <th style="width: 25%">ที่อยู่</th>
-                    <th style="width: 20%">รายละเอียด</th>
-                    <th style="width: 13%"></th>
+                        <tr>
+                            <th style="width: 10%" >รหัสพนักงาน</th>
+                            <th style="width: 20%">ชื่อ-สกุล</th>
+                            <th style="width: 20%">ตำแหน่ง</th>
+                            <th style="width: 12%">รหัสบัตรประชาชน</th>
+                            <th style="width: 25%">ที่อยู่</th>
+                            <th style="width: 20%">รายละเอียด</th>
+                            <th style="width: 13%"></th>
+                        </tr>
                     </thead>
                     <tbody>
                         <?php if (isset($list) && $list == NULL) { ?>
                             <tr><td class="text-center" colspan="6">ไม่พบข้อมูลพนักงานที่ค้นหา</td></tr>
                         <?php } else { ?>
                             <?php
-                            $temp = NULL;
                             foreach ($list as $row) {
-                                if ($temp != $row['PID']) {
-                                    $temp = $row['PID'];
-                                    ?>
-                                    <tr class="info">
-                                        <td colspan="6"><h5>ตำแหน่งงานที่ <?= $row['PositionName'] ?></h5></td>
-                                    </tr>
-                                <?php } ?>
+                                ?>
                                 <tr>
                                     <td class="text-center"><?= $row['EID'] ?></td>
                                     <td><?= $row['Title'] . $row['FirstName'] . ' ' . $row['LastName'] ?></td>
+                                    <td><h5>ตำแหน่งงานที่ <?= $row['PositionName'] ?></h5></td>
                                     <td class="text-center"><?= $row['PersonalID'] ?></td>
                                     <td>
                                         <?= '<strong>บ้านเลขที่</strong> ' . $row['CurrentHouseNumber'] . ' <strong>หมู่ที่</strong> ' . $row['CurrentMu'] ?>
@@ -151,32 +169,33 @@
         <div class="row">
             <div class="col-sm-12">
                 <h5>พนักงานทั้งหมด</h5>
-                <table class="table table-hover table-bordered" style="width: 100%">
+                <table class="table table-hover table-bordered dataTable" style="width: 100%">
                     <thead>
-                    <th style="width: 10%" >รหัสพนักงาน</th>
-                    <th style="width: 20%">ชื่อ-สกุล</th>                                          
-                    <th style="width: 12%">รหัสบัตรประชาชน</th>
-                    <th style="width: 25%">ที่อยู่</th>
-                    <th style="width: 20%">รายละเอียด</th>
-                    <th style="width: 13%"></th>
+                        <tr>
+                            <th style="width: 10%" >รหัสพนักงาน</th>
+                            <th style="width: 20%">ชื่อ-สกุล</th>
+                            <th style="width: 20%">ตำแหน่ง</th>
+                            <th style="width: 12%">รหัสบัตรประชาชน</th>
+                            <th style="width: 25%">ที่อยู่</th>
+                            <th style="width: 20%">รายละเอียด</th>
+                            <th style="width: 13%"></th>
+                        </tr>
                     </thead>
                     <tbody>   
                         <?php if (isset($list_all) && $list_all == NULL) { ?>
                             <tr><td class="text-center" colspan="6">ไม่พบข้อมูลพนักงานที่ค้นหา</td></tr>
                         <?php } else { ?>
                             <?php
-                            $temp = NULL;
                             foreach ($list_all as $row) {
-                                if ($temp != $row['PID']) {
-                                    $temp = $row['PID'];
-                                    ?>
-                                    <tr class="info">
-                                        <td colspan="6"><h5>ตำแหน่งงานที่ <?= $row['PositionName'] ?></h5></td>
-                                    </tr>
-                                <?php } ?>
+                                //ต้องการซ่อนถ้าใครออกแล้ว เพราะอยากเพิ่มใหม่แค่การกดกลับมาทำงาน
+                                if ($row['StatusDescription'] == 'ออก') {
+                                    continue;
+                                }
+                                ?>
                                 <tr>
                                     <td class="text-center"><?= $row['EID'] ?></td>
                                     <td><?= $row['Title'] . $row['FirstName'] . ' ' . $row['LastName'] ?></td>
+                                    <td><h5>ตำแหน่งงานที่ <?= $row['PositionName'] ?></h5></td>
                                     <td class="text-center"><?= $row['PersonalID'] ?></td>
                                     <td>
                                         <?= '<strong>บ้านเลขที่</strong> ' . $row['CurrentHouseNumber'] . ' <strong>หมู่ที่</strong> ' . $row['CurrentMu'] ?>

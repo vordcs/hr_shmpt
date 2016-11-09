@@ -9,6 +9,8 @@
         $("#mainmenu ul li").removeAttr('class');
         $("#btnHR").addClass("active");
         $('#myTab a[href="#tabEmployees"]').tab('show') // Select tab by name
+
+        $('.dataTable').DataTable();
     });
 
 </script>
@@ -70,7 +72,7 @@
             <div class="panel panel-default">
                 <div class="panel-heading">ผู้สมัครงาน</div>
                 <div class="panel-body">
-                    <table class="table table-bordered">
+                    <table class="table table-bordered dataTable">
                         <thead>
                             <tr>
                                 <th style="width: 10%">ลำดับ</th>
@@ -100,7 +102,14 @@
                                 }
                             } else {
                                 ?>
-                                <tr><td colspan="6" class="text-center">ไม่พบข้อมูลผู้สมัครงานที่ยังไม่ได้รับอนุมัติ</td></tr>
+                                <tr>
+                                    <td colspan="6" class="text-center">ไม่พบข้อมูลผู้สมัครงานที่ยังไม่ได้รับอนุมัติ</td>
+                                    <td style="display: none;"></td>
+                                    <td style="display: none;"></td>
+                                    <td style="display: none;"></td>
+                                    <td style="display: none;"></td>
+                                    <td style="display: none;"></td>
+                                </tr>
                             <?php } ?>
                         </tbody>
                     </table>
