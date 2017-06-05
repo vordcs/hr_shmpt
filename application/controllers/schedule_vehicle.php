@@ -30,6 +30,7 @@ class schedule_vehicle extends CI_Controller {
          */
 
         delete_files('../ticket/assets/barcode/', TRUE);
+        delete_files('../ticket/assets/qrcode/', TRUE);
 
 //        $folder_barcode = FCPATH . "assets/barcode";
 //        delete_files($folder_barcode,true);
